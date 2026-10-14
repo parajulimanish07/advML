@@ -1,0 +1,167 @@
+{
+ "id": "w2.l6",
+ "title": "PixelRNN, PixelCNN & WaveNet",
+ "blurb": "Raster-scan images, masked and dilated convolutions",
+ "source": [
+  {
+   "file": "W2",
+   "page": 24
+  },
+  {
+   "file": "W2",
+   "page": 27
+  },
+  {
+   "file": "W2",
+   "page": 28
+  },
+  {
+   "file": "W2",
+   "page": 29
+  }
+ ],
+ "hook": {
+  "title": "Reading with a flashlight",
+  "text": "A convolution is a small **flashlight** sliding across the page. For image generation, we may only shine it on pixels already painted (above and to the left), so we tape over the rest: a **masked convolution**. For audio we need to see far into the past without enormous flashlights, so the beam **skips**: layer 1 looks at neighbours, layer 2 at every 2nd sample, layer 3 every 4th. That's a **dilated** convolution; a handful of layers sees seconds of sound.",
+  "recall": "Remember the flashlight: masking keeps it from lighting the future, dilation lets a few layers see far into the past, and convolutions can all run in parallel, unlike a pixel-by-pixel RNN."
+ },
+ "explore": {
+  "component": "convrf",
+  "intro": "Two tabs: dilated 1-D (WaveNet) and a 2-D masked convolution (PixelCNN).",
+  "tasks": [
+   "WaveNet tab: set 4 layers. Compare the receptive field with and without dilation.",
+   "PixelCNN tab: which pixels are yellow, and why those?"
+  ],
+  "takeaway": "Masked conv keeps raster-scan order; dilation grows the receptive field quickly. PixelCNN gives similar quality to PixelRNN but trains much faster."
+ },
+ "build": {
+  "type": "fill",
+  "prompt": "Complete the PixelCNN idea.",
+  "template": "PixelCNN uses {0} convolutions so each pixel only sees {1} pixels in raster-scan order, which lets training run {2}.",
+  "blanks": [
+   {
+    "options": [
+     "masked",
+     "dilated",
+     "pooling"
+    ],
+    "correct": 0
+   },
+   {
+    "options": [
+     "earlier",
+     "later",
+     "all"
+    ],
+    "correct": 0
+   },
+   {
+    "options": [
+     "in parallel",
+     "strictly sequentially",
+     "only on CPUs"
+    ],
+    "correct": 0
+   }
+  ],
+  "explanation": "Slides 25–26: masked convolutions preserve raster-scan order; convolutions are easy to parallelise on modern hardware.",
+  "source": {
+   "file": "W2",
+   "page": 27
+  }
+ },
+ "questions": [
+  {
+   "id": "w2.l6.q1",
+   "type": "mcq",
+   "prompt": "How do PixelCNN and PixelRNN compare in the slides?",
+   "options": [
+    "PixelCNN is similar in quality but much faster",
+    "PixelCNN is far worse and slower",
+    "PixelRNN is faster",
+    "They are identical"
+   ],
+   "correct": 0,
+   "explanation": "“Similar performance to PixelRNN, but much faster.” Convolutions parallelise.",
+   "source": {
+    "file": "W2",
+    "page": 28
+   }
+  },
+  {
+   "id": "w2.l6.q2",
+   "type": "mcq",
+   "prompt": "What do masked convolutions in PixelCNN preserve?",
+   "options": [
+    "Translation invariance",
+    "Raster-scan (autoregressive) order",
+    "Colour balance",
+    "The learning rate"
+   ],
+   "correct": 1,
+   "explanation": "The mask zeroes out weights on pixels not yet generated.",
+   "source": {
+    "file": "W2",
+    "page": 27
+   }
+  },
+  {
+   "id": "w2.l6.q3",
+   "type": "numeric",
+   "prompt": "WaveNet dilation: at layer $d$ the kernel touches the signal at every $2^d$ entries. What is the spacing at layer $d=3$?",
+   "value": 8,
+   "tol": 0.5,
+   "explanation": "$2^3=8$.",
+   "source": {
+    "file": "W2",
+    "page": 29
+   }
+  },
+  {
+   "id": "w2.l6.q4",
+   "type": "numeric",
+   "prompt": "PixelRNN models each pixel as 3 colours, each a categorical variable with 256 values. How many softmax outputs per pixel in total?",
+   "value": 768,
+   "tol": 0.5,
+   "explanation": "$3\\times256=768$.",
+   "source": {
+    "file": "W2",
+    "page": 24
+   }
+  },
+  {
+   "id": "w2.l6.q5",
+   "type": "false",
+   "prompt": "Which statement is FALSE?",
+   "options": [
+    "PixelRNN models pixels in raster-scan order with LSTMs + masking",
+    "PixelRNN likelihood evaluation is sequential and slow",
+    "PixelCNN, like PixelRNN, must evaluate likelihoods strictly sequentially",
+    "WaveNet uses dilated convolutions to enlarge the receptive field"
+   ],
+   "correct": 2,
+   "explanation": "PixelCNN’s whole point is parallel convolutions during likelihood evaluation.",
+   "source": {
+    "file": "W2",
+    "page": 28
+   }
+  },
+  {
+   "id": "w2.l6.q6",
+   "type": "bug",
+   "prompt": "*“PixelCNN works because each convolution sees the full neighbourhood, including pixels below and to the right.”* What is wrong?",
+   "options": [
+    "Nothing",
+    "It would let a pixel see the future (and itself); the kernel must be masked to raster-scan-earlier pixels",
+    "Convolutions can’t see neighbours",
+    "Pixels below are always zero anyway"
+   ],
+   "correct": 1,
+   "explanation": "Flashlight without tape lights up the answer.",
+   "source": {
+    "file": "W2",
+    "page": 27
+   }
+  }
+ ]
+}

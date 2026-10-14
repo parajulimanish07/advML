@@ -1,0 +1,171 @@
+{
+ "id": "w3.l4",
+ "title": "Reparameterisation & the log-var trick",
+ "blurb": "Moving randomness outside so gradients can flow",
+ "source": [
+  {
+   "file": "W3",
+   "page": 27
+  },
+  {
+   "file": "W3",
+   "page": 28
+  },
+  {
+   "file": "W3",
+   "page": 62
+  },
+  {
+   "file": "W3",
+   "page": 63
+  },
+  {
+   "file": "W3",
+   "page": 64
+  }
+ ],
+ "hook": {
+  "title": "Roll a standard die, then stretch it",
+  "text": "Imagine training a machine that *rolls a dice* in the middle and a result at the end. You'd like to know how nudging the machine's dials changes the final score, but the dice-shaking is a black box: you can't differentiate through randomness. The trick: **roll a fixed standard die first** ($\\epsilon$, from $\\mathcal N(0,1)$, outside the machine), then use the dials to stretch and shift the roll: $z=\\mu+\\sigma\\epsilon$. Now the randomness is just an input and the dials ($\\mu,\\sigma$) sit in an ordinary differentiable formula.",
+  "recall": "Remember the standard die: sample $\\epsilon$ outside, then $z=\\mu+\\sigma\\epsilon$ is a deterministic, differentiable function of $\\mu,\\sigma$. The network can output $\\log\\sigma^2$ so any real number is a valid output."
+ },
+ "explore": {
+  "component": "reparam",
+  "intro": "Grey: the standard normal die $\\epsilon$. Green: its stretched, shifted version $z$. Toy objective $r(z)=(z-2)^2$.",
+  "tasks": [
+   "Move $\\mu$ and $\\log\\sigma^2$: the green histogram is just the grey one stretched and shifted.",
+   "Compare the reparameterised gradient estimates with the true ones. Increase $K$."
+  ],
+  "takeaway": "$\\nabla_\\phi\\mathbb E_{q}[r(z)]=\\mathbb E_{\\epsilon}[\\nabla_\\phi r(g(\\epsilon;\\phi))]$ with $g=\\mu+\\sigma\\epsilon$; estimate by Monte Carlo and backprop. The log-var trick: $z=\\mu+e^{\\log(\\sigma^2)/2}\\epsilon$."
+ },
+ "build": {
+  "type": "fill",
+  "prompt": "Complete the reparameterisation.",
+  "template": "$z={0}+{1}\\odot\\epsilon,\\quad \\epsilon\\sim{2}$",
+  "blanks": [
+   {
+    "options": [
+     "μ_φ(x)",
+     "σ_φ(x)",
+     "ε"
+    ],
+    "correct": 0
+   },
+   {
+    "options": [
+     "μ_φ(x)",
+     "σ_φ(x)",
+     "log σ²"
+    ],
+    "correct": 1
+   },
+   {
+    "options": [
+     "N(0, I)",
+     "N(μ, σ²)",
+     "Uniform(0,1)"
+    ],
+    "correct": 0
+   }
+  ],
+  "explanation": "Slide 36–37: $z_{\\phi,n}=\\mu_\\phi(x_n)+\\sigma_\\phi(x_n)\\odot\\epsilon$ with $\\epsilon\\sim\\mathcal N(0,I)$.",
+  "source": {
+   "file": "W3",
+   "page": 37
+  }
+ },
+ "questions": [
+  {
+   "id": "w3.l4.q1",
+   "type": "mcq",
+   "prompt": "Why is the reparameterisation trick used?",
+   "options": [
+    "To make $\\epsilon$ trainable",
+    "To let gradients flow to $\\phi$ through the sampled $z$ by writing $z=g(\\epsilon;\\phi)$ with the randomness outside",
+    "To avoid computing the KL term",
+    "To reduce the number of layers"
+   ],
+   "correct": 1,
+   "explanation": "The gradient w.r.t. $\\phi$ is the harder one because the expectation depends on $\\phi$; moving the randomness out makes it differentiable.",
+   "source": {
+    "file": "W3",
+    "page": 62
+   }
+  },
+  {
+   "id": "w3.l4.q2",
+   "type": "numeric",
+   "prompt": "$\\mu=2$, $\\sigma=0.5$, $\\epsilon=1.2$. What is $z=\\mu+\\sigma\\epsilon$?",
+   "value": 2.6,
+   "tol": 0.01,
+   "explanation": "$2+0.5\\cdot1.2=2.6$.",
+   "source": {
+    "file": "W3",
+    "page": 63
+   }
+  },
+  {
+   "id": "w3.l4.q3",
+   "type": "numeric",
+   "prompt": "The encoder outputs $\\log\\sigma^2=\\ln4\\approx1.386$. What is $\\sigma=e^{\\log(\\sigma^2)/2}$?",
+   "value": 2,
+   "tol": 0.01,
+   "explanation": "$e^{\\ln4/2}=e^{\\ln2}=2$. Outputting the log lets the network use any real number while keeping $\\sigma>0$.",
+   "source": {
+    "file": "W3",
+    "page": 28
+   }
+  },
+  {
+   "id": "w3.l4.q4",
+   "type": "false",
+   "prompt": "Which statement about reparameterisation is FALSE?",
+   "options": [
+    "It writes $z=\\mu+\\sigma\\epsilon$ with $\\epsilon\\sim\\mathcal N(0,I)$",
+    "It makes $z$ a deterministic function of $(\\epsilon,\\phi)$",
+    "It estimates $\\mathbb E_\\epsilon[\\nabla_\\phi r(g(\\epsilon;\\phi))]$ with Monte Carlo",
+    "It works for any discrete latent variable"
+   ],
+   "correct": 3,
+   "explanation": "The slide states it only works for continuous $z$ (and only some distributions). REINFORCE is the general alternative mentioned later.",
+   "source": {
+    "file": "W3",
+    "page": 61
+   }
+  },
+  {
+   "id": "w3.l4.q5",
+   "type": "mcq",
+   "prompt": "Which gradient is “easy” and which is harder for the ELBO?",
+   "options": [
+    "$\\nabla_\\theta$ easy; $\\nabla_\\phi$ harder, since the expectation depends on $\\phi$",
+    "Both are equally trivial",
+    "$\\nabla_\\phi$ easy; $\\nabla_\\theta$ harder",
+    "Neither exists"
+   ],
+   "correct": 0,
+   "explanation": "With $\\theta$ the expectation’s distribution doesn’t change; with $\\phi$ it does.",
+   "source": {
+    "file": "W3",
+    "page": 61
+   }
+  },
+  {
+   "id": "w3.l4.q6",
+   "type": "bug",
+   "prompt": "*“I sample $z\\sim\\mathcal N(\\mu,\\sigma^2)$ and backpropagate through the sampling step: sampling is differentiable.”* The error:",
+   "options": [
+    "Nothing",
+    "Sampling itself isn’t differentiable w.r.t. its parameters; reparameterise: sample $\\epsilon$ then set $z=\\mu+\\sigma\\epsilon$",
+    "Backprop can’t be used with Gaussians",
+    "$\\sigma$ must be zero"
+   ],
+   "correct": 1,
+   "explanation": "Black-box dice vs standard die plus dials.",
+   "source": {
+    "file": "W3",
+    "page": 62
+   }
+  }
+ ]
+}

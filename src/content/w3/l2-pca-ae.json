@@ -1,0 +1,166 @@
+{
+ "id": "w3.l2",
+ "title": "PCA & autoencoders",
+ "blurb": "Directions of max variance, bottleneck autoencoders and their variants",
+ "source": [
+  {
+   "file": "W3",
+   "page": 13
+  },
+  {
+   "file": "W3",
+   "page": 14
+  },
+  {
+   "file": "W3",
+   "page": 15
+  },
+  {
+   "file": "W3",
+   "page": 16
+  },
+  {
+   "file": "W3",
+   "page": 17
+  },
+  {
+   "file": "W3",
+   "page": 19
+  },
+  {
+   "file": "W3",
+   "page": 20
+  },
+  {
+   "file": "W3",
+   "page": 21
+  }
+ ],
+ "hook": {
+  "title": "Choosing the best shadow",
+  "text": "A 3-D sculpture casts a 2-D shadow. Rotate the lamp: from some angles the shadow shows almost everything about the shape, from others it collapses to a blob. **PCA** picks the lamp angle where the shadow is **widest** (max variance). An **autoencoder** learns its own way of casting a shadow (the encoder) *and* of rebuilding the sculpture from it (the decoder), squeezing everything through a narrow bottleneck.",
+  "recall": "Remember the shadow: widest shadow = most variance kept = least reconstruction error. A linear autoencoder with MSE finds roughly the same shadow as PCA."
+ },
+ "explore": {
+  "component": "pca",
+  "intro": "80 two-dimensional points; you choose the 1-D direction of the code.",
+  "tasks": [
+   "Drag the angle. Where is the variance kept largest, and where is the reconstruction error smallest?",
+   "Press *Snap to PC1*. Does kept + lost ever change?"
+  ],
+  "takeaway": "PCA: find directions of max variance, transform, keep the top few. Kept variance + lost variance = constant, so the widest shadow minimises reconstruction error."
+ },
+ "build": {
+  "type": "order",
+  "prompt": "Order the three PCA steps shown on the slides.",
+  "items": [
+   "Find the directions of maximum variance",
+   "Transform the features into those directions",
+   "Keep only a subset of the directions with the most variance (dimensionality reduction)"
+  ],
+  "explanation": "Slides 12–14, in this order.",
+  "source": {
+   "file": "W3",
+   "page": 13
+  }
+ },
+ "questions": [
+  {
+   "id": "w3.l2.q1",
+   "type": "mcq",
+   "prompt": "PCA’s first step is to:",
+   "options": [
+    "Find directions of maximum variance",
+    "Minimise the KL divergence",
+    "Sample from the posterior",
+    "Train a decoder"
+   ],
+   "correct": 0,
+   "explanation": "The widest shadow.",
+   "source": {
+    "file": "W3",
+    "page": 13
+   }
+  },
+  {
+   "id": "w3.l2.q2",
+   "type": "mcq",
+   "prompt": "An MLP autoencoder with **no** non-linear activations trained with MSE is:",
+   "options": [
+    "Very similar to PCA",
+    "Identical to a VAE",
+    "Equivalent to a GAN",
+    "Unable to reconstruct"
+   ],
+   "correct": 0,
+   "explanation": "Slide 16’s red note: without non-linearities and with MSE it is very similar to PCA (but the latent dimensions need not be orthogonal).",
+   "source": {
+    "file": "W3",
+    "page": 16
+   }
+  },
+  {
+   "id": "w3.l2.q3",
+   "type": "numeric",
+   "prompt": "The slide’s convolutional AE compresses $28\\times28=784$ inputs to a 32-dimensional latent. What is the compression ratio $784/32$?",
+   "value": 24.5,
+   "tol": 0.01,
+   "explanation": "$784/32=24.5$: a very narrow bottleneck.",
+   "source": {
+    "file": "W3",
+    "page": 17
+   }
+  },
+  {
+   "id": "w3.l2.q4",
+   "type": "false",
+   "prompt": "Which statement about autoencoder variants is FALSE?",
+   "options": [
+    "Denoising AE: add dropout/noise to the input and learn to reconstruct the clean image",
+    "Sparse AE: add an $L_1$ penalty $\\sum_i|Enc_i(x)|$ on the code",
+    "Dropout layers force the network to learn redundant features",
+    "Sparse AE adds an $L_2$ penalty on the decoder weights"
+   ],
+   "correct": 3,
+   "explanation": "The sparsity penalty is $L_1$ on the **code**: $\\mathcal L=\\|x-Dec(Enc(x))\\|_2^2+\\sum_i|Enc_i(x)|$.",
+   "source": {
+    "file": "W3",
+    "page": 21
+   }
+  },
+  {
+   "id": "w3.l2.q5",
+   "type": "bug",
+   "prompt": "*“In a linear autoencoder the latent dimensions are exactly the principal components: orthogonal and ordered by variance.”* What’s the problem?",
+   "options": [
+    "Nothing",
+    "The slide notes the latent dimensions are not necessarily orthogonal and will have roughly the same variance, unlike PCA components",
+    "Autoencoders have no latent dimensions",
+    "PCA can’t be linear"
+   ],
+   "correct": 1,
+   "explanation": "Same shadow *subspace*, but the AE doesn’t sort its axes the way PCA does.",
+   "source": {
+    "file": "W3",
+    "page": 16
+   }
+  },
+  {
+   "id": "w3.l2.q6",
+   "type": "mcq",
+   "prompt": "The reconstruction loss on the AE slide is:",
+   "options": [
+    "$\\mathcal L(x,x')=\\|x-x'\\|_2^2=\\sum_i(x_i-x'_i)^2$",
+    "$\\sum_ix_i\\log x'_i$ only",
+    "$\\|x\\|_1$",
+    "$D_{KL}(x\\|x')$"
+   ],
+   "correct": 0,
+   "explanation": "Squared error between input and reconstruction.",
+   "source": {
+    "file": "W3",
+    "page": 16
+   }
+  }
+ ]
+}

@@ -1,0 +1,194 @@
+{
+ "title": "The Variational Kraken",
+ "intro": "Everything from Week 3: latent variables, autoencoders, VAEs, the ELBO, reparameterisation and variational inference.",
+ "questions": [
+  {
+   "id": "w3.boss.q1",
+   "type": "numeric",
+   "prompt": "Part 1. Compute $p(z{=}1\\mid x)$ (3 decimals).",
+   "value": 0.462,
+   "tol": 0.003,
+   "explanation": "$\\frac{0.3\\cdot0.2}{0.3\\cdot0.2+0.7\\cdot0.1}=0.06/0.13\\approx0.462$.",
+   "source": {
+    "file": "W3",
+    "page": 9
+   },
+   "scenario": "**Scenario A (mixture).** A 2-component Gaussian mixture has prior weights $p(z{=}1)=0.3$, $p(z{=}2)=0.7$. At an observed $x$ the component densities are $\\mathcal N_1(x)=0.2$ and $\\mathcal N_2(x)=0.1$.",
+   "step": "Scenario A · part 1 of 2"
+  },
+  {
+   "id": "w3.boss.q2",
+   "type": "mcq",
+   "prompt": "Part 2. Under the posterior, which component more likely generated $x$?",
+   "options": [
+    "Component 1, because its density is higher",
+    "Component 2, because $p(z{=}2|x)\\approx0.538>0.462$ (prior favours it)",
+    "They are equally likely",
+    "Neither"
+   ],
+   "correct": 1,
+   "explanation": "The posterior weighs density *and* prior: $0.07/0.13\\approx0.538$.",
+   "source": {
+    "file": "W3",
+    "page": 9
+   },
+   "scenario": "**Scenario A (mixture).** A 2-component Gaussian mixture has prior weights $p(z{=}1)=0.3$, $p(z{=}2)=0.7$. At an observed $x$ the component densities are $\\mathcal N_1(x)=0.2$ and $\\mathcal N_2(x)=0.1$.",
+   "step": "Scenario A · part 2 of 2"
+  },
+  {
+   "id": "w3.boss.q3",
+   "type": "numeric",
+   "prompt": "Part 1. Compute $z=\\mu+\\sigma\\epsilon$.",
+   "value": 1.0,
+   "tol": 0.01,
+   "explanation": "$0.5+0.5\\cdot1.0=1.0$.",
+   "source": {
+    "file": "W3",
+    "page": 26
+   },
+   "scenario": "**Scenario B (one VAE forward pass, 1-D latent).** The encoder outputs $\\mu=0.5$ and $\\log\\sigma^2=\\ln0.25$ (so $\\sigma=0.5$). The sampled noise is $\\epsilon=1.0$. Later the decoder’s reconstruction term is $\\mathbb E_q[\\log p(x|z)]=-1.2$.",
+   "step": "Scenario B · part 1 of 3"
+  },
+  {
+   "id": "w3.boss.q4",
+   "type": "numeric",
+   "prompt": "Part 2. Compute the KL term $-\\tfrac12(1+\\log\\sigma^2-\\mu^2-\\sigma^2)$ for this single latent dimension (3 decimals).",
+   "value": 0.443,
+   "tol": 0.004,
+   "explanation": "$\\log\\sigma^2=\\ln0.25=-1.386$; $\\mu^2=0.25$; $\\sigma^2=0.25$. $1-1.386-0.25-0.25=-0.886$, so $-\\tfrac12(-0.886)=0.443$.",
+   "source": {
+    "file": "W3",
+    "page": 29
+   },
+   "scenario": "**Scenario B (one VAE forward pass, 1-D latent).** The encoder outputs $\\mu=0.5$ and $\\log\\sigma^2=\\ln0.25$ (so $\\sigma=0.5$). The sampled noise is $\\epsilon=1.0$. Later the decoder’s reconstruction term is $\\mathbb E_q[\\log p(x|z)]=-1.2$.",
+   "step": "Scenario B · part 2 of 3"
+  },
+  {
+   "id": "w3.boss.q5",
+   "type": "numeric",
+   "prompt": "Part 3. Using the reconstruction term and your KL, what is the ELBO (3 decimals)?",
+   "value": -1.643,
+   "tol": 0.005,
+   "explanation": "ELBO $=\\mathbb E_q[\\log p(x|z)]-D_{KL}(q\\|p(z))=-1.2-0.443=-1.643$.",
+   "source": {
+    "file": "W3",
+    "page": 33
+   },
+   "scenario": "**Scenario B (one VAE forward pass, 1-D latent).** The encoder outputs $\\mu=0.5$ and $\\log\\sigma^2=\\ln0.25$ (so $\\sigma=0.5$). The sampled noise is $\\epsilon=1.0$. Later the decoder’s reconstruction term is $\\mathbb E_q[\\log p(x|z)]=-1.2$.",
+   "step": "Scenario B · part 3 of 3"
+  },
+  {
+   "id": "w3.boss.q6",
+   "type": "numeric",
+   "prompt": "Part 1. What is $D_{KL}(q\\|p(z|x))$ for this $q$?",
+   "value": 0.6,
+   "tol": 0.01,
+   "explanation": "$\\log p(x)=\\text{ELBO}+D_{KL}$, so $-4.0-(-4.6)=0.6$.",
+   "source": {
+    "file": "W3",
+    "page": 70
+   },
+   "scenario": "**Scenario C (bound).** For some $x$ the true log-evidence is $\\log p(x;\\theta)=-4.0$. A particular variational distribution $q$ gives ELBO $=-4.6$.",
+   "step": "Scenario C · part 1 of 2"
+  },
+  {
+   "id": "w3.boss.q7",
+   "type": "numeric",
+   "prompt": "Part 2. If we replaced $q$ by the true posterior $p(z|x;\\theta)$, what would the ELBO be?",
+   "value": -4.0,
+   "tol": 0.01,
+   "explanation": "The bound is tight when $q=p(z|x;\\theta)$: ELBO $=\\log p(x)=-4.0$.",
+   "source": {
+    "file": "W3",
+    "page": 50
+   },
+   "scenario": "**Scenario C (bound).** For some $x$ the true log-evidence is $\\log p(x;\\theta)=-4.0$. A particular variational distribution $q$ gives ELBO $=-4.6$.",
+   "step": "Scenario C · part 2 of 2"
+  },
+  {
+   "id": "w3.boss.q8",
+   "type": "false",
+   "prompt": "Which statement is FALSE?",
+   "options": [
+    "The reparameterisation trick writes $z=\\mu+\\sigma\\epsilon$ with $\\epsilon\\sim\\mathcal N(0,I)$",
+    "It lets gradients flow to $\\phi$ through $z$",
+    "It works for continuous latents (and only some distributions)",
+    "It works for any discrete latent variable"
+   ],
+   "correct": 3,
+   "explanation": "Slide 60: only for continuous $z$ and some distributions.",
+   "source": {
+    "file": "W3",
+    "page": 61
+   }
+  },
+  {
+   "id": "w3.boss.q9",
+   "type": "bug",
+   "prompt": "*“To sample new images from my VAE I encode a training image and decode its mean.”*",
+   "options": [
+    "That’s correct",
+    "That gives a reconstruction; new samples come from $z\\sim\\mathcal N(0,I)$ decoded by $p_\\theta(x|z)$",
+    "The decoder can only decode noise",
+    "Encoding is impossible"
+   ],
+   "correct": 1,
+   "explanation": "Ancestral sampling: $z\\sim p(z)$, $x\\sim p(x|z;\\theta)$.",
+   "source": {
+    "file": "W3",
+    "page": 39
+   }
+  },
+  {
+   "id": "w3.boss.q10",
+   "type": "mcq",
+   "prompt": "What does the KL term of the VAE loss achieve?",
+   "options": [
+    "It makes reconstruction exact",
+    "It pulls each $q_\\phi(z|x)$ toward $\\mathcal N(0,I)$, making the latent space continuous and sampleable",
+    "It removes the decoder",
+    "It increases the learning rate"
+   ],
+   "correct": 1,
+   "explanation": "Islands → continent.",
+   "source": {
+    "file": "W3",
+    "page": 29
+   }
+  },
+  {
+   "id": "w3.boss.q11",
+   "type": "mcq",
+   "prompt": "A linear AE trained with MSE and no non-linearities is closest to:",
+   "options": [
+    "PCA",
+    "A GAN",
+    "A mixture of Gaussians",
+    "REINFORCE"
+   ],
+   "correct": 0,
+   "explanation": "Slide 16 note: very similar to PCA, but the latent dimensions need not be orthogonal.",
+   "source": {
+    "file": "W3",
+    "page": 16
+   }
+  },
+  {
+   "id": "w3.boss.q12",
+   "type": "mcq",
+   "prompt": "Amortised inference:",
+   "options": [
+    "Learns one function $f_\\lambda:x\\mapsto\\phi$ instead of an optimisation per data point",
+    "Requires a new optimisation for every test point",
+    "Removes the need for $\\theta$",
+    "Is exact for any $x$"
+   ],
+   "correct": 0,
+   "explanation": "The size chart.",
+   "source": {
+    "file": "W3",
+    "page": 65
+   }
+  }
+ ]
+}

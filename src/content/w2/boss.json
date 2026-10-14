@@ -1,0 +1,204 @@
+{
+ "title": "The Masked Mimic",
+ "intro": "Everything from Week 2: autoregressive models, NADE/MADE, RNNs and attention, PixelCNN, KL and maximum likelihood.",
+ "questions": [
+  {
+   "id": "w2.boss.q1",
+   "type": "numeric",
+   "prompt": "Part 1. Compute $p(x_1{=}1,\\,x_2{=}0,\\,x_3{=}0)$ (the first three pixels).",
+   "value": 0.144,
+   "tol": 0.002,
+   "explanation": "$0.6\\times(1-0.7)\\times(1-0.2)=0.6\\times0.3\\times0.8=0.144$.",
+   "source": {
+    "file": "W2",
+    "page": 7
+   },
+   "scenario": "**Scenario A (FVSBN).** A 4-pixel binary image is modelled by an FVSBN. The model gives $p(x_1{=}1)=0.6$, $p(x_2{=}1\\mid x_1{=}1)=0.7$, $p(x_3{=}1\\mid x_1{=}1,x_2{=}0)=0.2$.",
+   "step": "Scenario A · part 1 of 3"
+  },
+  {
+   "id": "w2.boss.q2",
+   "type": "numeric",
+   "prompt": "Part 2. How many parameters does this 4-pixel FVSBN have in total ($1+2+\\dots+n$)?",
+   "value": 10,
+   "tol": 0.5,
+   "explanation": "$1+2+3+4=10$.",
+   "source": {
+    "file": "W2",
+    "page": 7
+   },
+   "scenario": "**Scenario A (FVSBN).** A 4-pixel binary image is modelled by an FVSBN. The model gives $p(x_1{=}1)=0.6$, $p(x_2{=}1\\mid x_1{=}1)=0.7$, $p(x_3{=}1\\mid x_1{=}1,x_2{=}0)=0.2$.",
+   "step": "Scenario A · part 2 of 3"
+  },
+  {
+   "id": "w2.boss.q3",
+   "type": "mcq",
+   "prompt": "Part 3. Can pixels $x_2,x_3,x_4$ be sampled in parallel from this model?",
+   "options": [
+    "Yes: each conditional is independent",
+    "No: each pixel conditions on the already-sampled earlier pixels, so sampling is sequential",
+    "Yes, but only on a GPU",
+    "Only $x_4$ must wait"
+   ],
+   "correct": 1,
+   "explanation": "The painter needs earlier strokes before choosing later ones.",
+   "source": {
+    "file": "W2",
+    "page": 7
+   },
+   "scenario": "**Scenario A (FVSBN).** A 4-pixel binary image is modelled by an FVSBN. The model gives $p(x_1{=}1)=0.6$, $p(x_2{=}1\\mid x_1{=}1)=0.7$, $p(x_3{=}1\\mid x_1{=}1,x_2{=}0)=0.2$.",
+   "step": "Scenario A · part 3 of 3"
+  },
+  {
+   "id": "w2.boss.q4",
+   "type": "numeric",
+   "prompt": "Part 1. Compute $D(p\\|q)=\\sum_xp(x)\\ln\\frac{p(x)}{q(x)}$ (3 decimals).",
+   "value": 0.144,
+   "tol": 0.003,
+   "explanation": "$0.5\\ln2+0.5\\ln(2/3)\\approx0.1438$.",
+   "source": {
+    "file": "W2",
+    "page": 35
+   },
+   "scenario": "**Scenario B (KL).** The data distribution is $p=(0.5,0.5)$ over two outcomes and your model is $q=(0.25,0.75)$.",
+   "step": "Scenario B · part 1 of 2"
+  },
+  {
+   "id": "w2.boss.q5",
+   "type": "numeric",
+   "prompt": "Part 2. What would $D(p\\|p)$ be (a perfect model)?",
+   "value": 0,
+   "tol": 0.001,
+   "explanation": "KL is 0 iff the two distributions are equal.",
+   "source": {
+    "file": "W2",
+    "page": 35
+   },
+   "scenario": "**Scenario B (KL).** The data distribution is $p=(0.5,0.5)$ over two outcomes and your model is $q=(0.25,0.75)$.",
+   "step": "Scenario B · part 2 of 2"
+  },
+  {
+   "id": "w2.boss.q6",
+   "type": "mcq",
+   "prompt": "Part 1. Which **inputs** can this hidden unit depend on (input rank $\\le m$)?",
+   "options": [
+    "$x_3$ only",
+    "$x_3$ and $x_1$",
+    "$x_1$ and $x_2$",
+    "all three"
+   ],
+   "correct": 1,
+   "explanation": "Hidden unit with number 2 sees the first two variables of the ordering: $x_3$ (rank 1) and $x_1$ (rank 2).",
+   "source": {
+    "file": "W2",
+    "page": 17
+   },
+   "scenario": "**Scenario C (MADE).** MADE over $x_1,x_2,x_3$ with ordering $x_3,x_1,x_2$ (ranks: $x_3{=}1$, $x_1{=}2$, $x_2{=}3$). One hidden unit is assigned the number $m=2$.",
+   "step": "Scenario C · part 1 of 2"
+  },
+  {
+   "id": "w2.boss.q7",
+   "type": "mcq",
+   "prompt": "Part 2. Which **outputs** may this hidden unit feed (output rank strictly $>m$)?",
+   "options": [
+    "$\\hat x_3$",
+    "$\\hat x_1$",
+    "$\\hat x_2$ only",
+    "all three"
+   ],
+   "correct": 2,
+   "explanation": "Only rank 3 is strictly greater than 2: $\\hat x_2$, the last variable in the ordering, which may depend on $x_3$ and $x_1$.",
+   "source": {
+    "file": "W2",
+    "page": 17
+   },
+   "scenario": "**Scenario C (MADE).** MADE over $x_1,x_2,x_3$ with ordering $x_3,x_1,x_2$ (ranks: $x_3{=}1$, $x_1{=}2$, $x_2{=}3$). One hidden unit is assigned the number $m=2$.",
+   "step": "Scenario C · part 2 of 2"
+  },
+  {
+   "id": "w2.boss.q8",
+   "type": "false",
+   "prompt": "Which statement is FALSE?",
+   "options": [
+    "RNNs have a constant number of parameters w.r.t. sequence length",
+    "RNN training requires sequential likelihood evaluation",
+    "Exploding/vanishing gradients affect RNNs",
+    "RNN generation can be parallelised across time steps"
+   ],
+   "correct": 3,
+   "explanation": "Generation is sequential in any autoregressive model.",
+   "source": {
+    "file": "W2",
+    "page": 20
+   }
+  },
+  {
+   "id": "w2.boss.q9",
+   "type": "mcq",
+   "prompt": "NADE’s weight tying:",
+   "options": [
+    "Reduces parameters and speeds up computation",
+    "Makes every conditional identical",
+    "Removes the hidden layer",
+    "Lets $\\hat x_i$ see $x_i$"
+   ],
+   "correct": 0,
+   "explanation": "Shared $W,c$; pixel-specific output weights.",
+   "source": {
+    "file": "W2",
+    "page": 10
+   }
+  },
+  {
+   "id": "w2.boss.q10",
+   "type": "bug",
+   "prompt": "*“My higher training log-likelihood proves my samples look better.”* The flaw:",
+   "options": [
+    "None",
+    "Higher likelihood doesn’t necessarily mean better-looking samples (and training likelihood isn’t generalisation)",
+    "Likelihood can’t be computed",
+    "Samples never matter"
+   ],
+   "correct": 1,
+   "explanation": "Recap slide: higher log-likelihood ≠ better-looking samples.",
+   "source": {
+    "file": "W2",
+    "page": 40
+   }
+  },
+  {
+   "id": "w2.boss.q11",
+   "type": "mcq",
+   "prompt": "The attention mechanism builds its distribution over the history by:",
+   "options": [
+    "Comparing the query with all keys (dot product) and applying a softmax",
+    "Averaging all hidden states uniformly",
+    "Using only the last hidden state",
+    "Sorting tokens alphabetically"
+   ],
+   "correct": 0,
+   "explanation": "Query · keys → softmax → weighted sum.",
+   "source": {
+    "file": "W2",
+    "page": 22
+   }
+  },
+  {
+   "id": "w2.boss.q12",
+   "type": "false",
+   "prompt": "Which statement about PixelCNN is FALSE?",
+   "options": [
+    "It uses masked convolutions to preserve raster-scan order",
+    "It gives similar performance to PixelRNN but is much faster",
+    "It must evaluate likelihoods strictly sequentially, like PixelRNN",
+    "Convolutions are easy to parallelise on modern hardware"
+   ],
+   "correct": 2,
+   "explanation": "Parallel convolutions are the whole point.",
+   "source": {
+    "file": "W2",
+    "page": 28
+   }
+  }
+ ]
+}

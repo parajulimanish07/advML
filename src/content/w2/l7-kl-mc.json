@@ -1,0 +1,151 @@
+{
+ "id": "w2.l7",
+ "title": "KL divergence & Monte Carlo",
+ "blurb": "Measuring “how close”, estimating by sampling",
+ "source": [
+  {
+   "file": "W2",
+   "page": 31
+  },
+  {
+   "file": "W2",
+   "page": 32
+  },
+  {
+   "file": "W2",
+   "page": 35
+  },
+  {
+   "file": "W2",
+   "page": 36
+  }
+ ],
+ "hook": {
+  "title": "The surprise tax",
+  "text": "You built a model $q$ of the world; reality is $p$. KL divergence is the **average extra surprise** you suffer each time you use $q$ to explain events that actually come from $p$. If your model is perfect, the tax is zero; otherwise it's positive. And since you can't average over every possible event, you **poll**: ask $T$ random people instead of the whole country and average their answers (that's Monte Carlo). A different poll gives a slightly different answer, because the estimate is itself random.",
+  "recall": "Remember the surprise tax: $D(p\\|q)\\ge0$, zero only when $q=p$. And a poll’s answer wobbles; Monte Carlo estimates are random variables."
+ },
+ "explore": {
+  "component": "klmc",
+  "intro": "$p=\\mathcal N(0,1)$ fixed (green); you shape $q$ (red).",
+  "tasks": [
+   "Move $q$ until $D(p\\|q)$ is as small as possible. What are $\\mu_q,\\sigma_q$ then?",
+   "Set $T=5$ and press *Draw new samples* ten times. Then $T=500$."
+  ],
+  "takeaway": "$D(p\\|q)=\\sum_xp(x)\\log\\frac{p(x)}{q(x)}\\ge0$, equal to 0 iff $p=q$. Monte Carlo: $\\hat g=\\frac1T\\sum_tg(x^t)$ with $x^t\\sim P$ independent; $\\hat g$ is random."
+ },
+ "build": {
+  "type": "order",
+  "prompt": "Order a Monte Carlo estimate of $\\mathbb E_{x\\sim P}[g(x)]$.",
+  "items": [
+   "Express the quantity as $\\mathbb E_{x\\sim P}[g(x)]=\\sum_xg(x)P(x)$",
+   "Generate $T$ independent samples $x^1,\\dots,x^T$ from $P$",
+   "Average: $\\hat g=\\frac1T\\sum_{t=1}^Tg(x^t)$"
+  ],
+  "explanation": "Slide 35: three bullets. The estimator $\\hat g$ depends on the random samples, so it is a random variable.",
+  "source": {
+   "file": "W2",
+   "page": 36
+  }
+ },
+ "questions": [
+  {
+   "id": "w2.l7.q1",
+   "type": "mcq",
+   "prompt": "Which is a property of the KL divergence $D(p\\|q)$?",
+   "options": [
+    "$D(p\\|q)\\le0$",
+    "$D(p\\|q)\\ge0$ with equality iff $p=q$",
+    "$D(p\\|q)=D(q\\|p)$ always",
+    "$D(p\\|q)=1$ if $p\\neq q$"
+   ],
+   "correct": 1,
+   "explanation": "The surprise tax is never negative; it vanishes only for a perfect model.",
+   "source": {
+    "file": "W2",
+    "page": 35
+   }
+  },
+  {
+   "id": "w2.l7.q2",
+   "type": "numeric",
+   "prompt": "$p=(0.5,0.5)$, $q=(0.25,0.75)$. Compute $D(p\\|q)=\\sum_xp(x)\\ln\\frac{p(x)}{q(x)}$ (natural log, 3 decimals).",
+   "value": 0.144,
+   "tol": 0.003,
+   "explanation": "$0.5\\ln2+0.5\\ln\\frac{2}{3}=0.3466-0.2027=0.1438\\approx0.144$.",
+   "source": {
+    "file": "W2",
+    "page": 35
+   }
+  },
+  {
+   "id": "w2.l7.q3",
+   "type": "mcq",
+   "prompt": "Monte Carlo estimate of $\\mathbb E_{x\\sim P}[g(x)]$:",
+   "options": [
+    "$\\frac1T\\sum_tg(x^t)$ with $x^t$ drawn independently from $P$",
+    "$\\max_tg(x^t)$",
+    "$g(\\bar x)$ with $\\bar x$ the mean",
+    "$\\sum_tx^t$"
+   ],
+   "correct": 0,
+   "explanation": "The poll: average the answers from $T$ people drawn from the population.",
+   "source": {
+    "file": "W2",
+    "page": 36
+   }
+  },
+  {
+   "id": "w2.l7.q4",
+   "type": "false",
+   "prompt": "Which statement is FALSE?",
+   "options": [
+    "$D(p\\|q)\\ge0$ for all $p,q$",
+    "$D(p\\|q)=0$ iff $p=q$",
+    "KL is the most commonly used divergence in deep generative models",
+    "The Monte Carlo estimate $\\hat g$ is a deterministic number"
+   ],
+   "correct": 3,
+   "explanation": "The slide asks “$\\hat g$ is a random variable. Why?” Because the samples are random, a new poll gives a new $\\hat g$.",
+   "source": {
+    "file": "W2",
+    "page": 36
+   }
+  },
+  {
+   "id": "w2.l7.q5",
+   "type": "mcq",
+   "prompt": "For 784 binary pixels there are $2^{784}\\approx10^{235}$ possible images. What follows even with $10^7$ training examples?",
+   "options": [
+    "Dense coverage of the space",
+    "Extremely sparse coverage, so the model must generalise",
+    "The model can memorise every image",
+    "KL becomes 0"
+   ],
+   "correct": 1,
+   "explanation": "A poll of $10^7$ out of $10^{235}$ possibilities: nearly the whole space is unseen.",
+   "source": {
+    "file": "W2",
+    "page": 32
+   }
+  },
+  {
+   "id": "w2.l7.q6",
+   "type": "bug",
+   "prompt": "*“KL divergence is a distance, so $D(p\\|q)=D(q\\|p)$.”* What is wrong?",
+   "options": [
+    "Nothing",
+    "KL is not symmetric in general: swapping $p$ and $q$ changes the value (the explorer shows two different numbers)",
+    "KL is always infinite",
+    "KL only compares uniform distributions"
+   ],
+   "correct": 1,
+   "explanation": "Surprise tax depends on who is being used to explain whom. (Asymmetry is standard background, not stated on the slides.)",
+   "source": {
+    "file": "W2",
+    "page": 35,
+    "extra": true
+   }
+  }
+ ]
+}

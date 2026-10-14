@@ -1,0 +1,147 @@
+{
+ "id": "w2.l4",
+ "title": "Autoencoders → MADE",
+ "blurb": "Why plain autoencoders aren’t generative, and the mask fix",
+ "source": [
+  {
+   "file": "W2",
+   "page": 15
+  },
+  {
+   "file": "W2",
+   "page": 16
+  },
+  {
+   "file": "W2",
+   "page": 17
+  }
+ ],
+ "hook": {
+  "title": "Black tape over the future",
+  "text": "Imagine a student predicting the next word of a sentence from a worksheet. If the worksheet accidentally shows the *answer*, they can copy it. A plain **autoencoder** is that student: given $x$, it reconstructs $x$, and can trivially cheat by copying the input. To turn it into an honest predictor, put **black tape** over everything an output isn't allowed to see: output $i$ may look only at inputs earlier in the ordering. That tape is the **mask** in MADE.",
+  "recall": "Remember the black tape: MADE’s masks hide the future (and the answer itself) from each output, so the network is a valid autoregressive model and still computes every conditional in a single pass."
+ },
+ "explore": {
+  "component": "made",
+  "intro": "Three variables, one hidden layer. Hidden units carry a number $m$; masks follow the slide's rule.",
+  "tasks": [
+   "Choose the slide's ordering $x_2,x_3,x_1$. Is the model valid? Switch to *fully connected*, where do outputs leak?",
+   "Click hidden units to change their numbers. Can you break validity while masks are on?"
+  ],
+  "takeaway": "Hidden → input connection kept if hidden number $\\ge$ input rank; output ← hidden kept if output rank $>$ hidden number (strict). Result: $\\hat x_i$ depends only on earlier variables."
+ },
+ "build": {
+  "type": "order",
+  "prompt": "Order the construction of MADE masks.",
+  "items": [
+   "Choose an ordering of the variables",
+   "Give each hidden unit a random integer in $[1,n-1]$",
+   "Connect a hidden unit to inputs whose rank is $\\le$ its number",
+   "Connect an output to hidden units with a number strictly smaller than its rank"
+  ],
+  "explanation": "Slide 17: each hidden unit depends on the first $i$ inputs of the ordering; connect to previous-layer units with a smaller or equal number (strictly smaller in the final layer).",
+  "source": {
+   "file": "W2",
+   "page": 17
+  }
+ },
+ "questions": [
+  {
+   "id": "w2.l4.q1",
+   "type": "mcq",
+   "prompt": "Why is a vanilla autoencoder **not** a generative model?",
+   "options": [
+    "It has no decoder",
+    "It doesn’t define a distribution over $x$ that we can sample from",
+    "It can’t be trained",
+    "It uses too many parameters"
+   ],
+   "correct": 1,
+   "explanation": "It maps $x\\to e(x)\\to d(e(x))\\approx x$ but there is nothing to sample new $x$ from.",
+   "source": {
+    "file": "W2",
+    "page": 15
+   }
+  },
+  {
+   "id": "w2.l4.q2",
+   "type": "mcq",
+   "prompt": "To make an autoencoder autoregressive (a valid Bayesian network / DAG), what must hold with ordering $x_1,x_2,x_3$?",
+   "options": [
+    "$\\hat x_1$ can depend on all inputs",
+    "$\\hat x_1$ cannot depend on any input and $\\hat x_2$ can only depend on $x_1$",
+    "$\\hat x_2$ can depend on $x_3$",
+    "All outputs depend on $x_3$"
+   ],
+   "correct": 1,
+   "explanation": "No peeking at the answer or the future: only strictly earlier variables.",
+   "source": {
+    "file": "W2",
+    "page": 16
+   }
+  },
+  {
+   "id": "w2.l4.q3",
+   "type": "numeric",
+   "prompt": "MADE on $n=4$ variables: each hidden unit gets a random integer in $[1,n-1]$. How many different values can it take?",
+   "value": 3,
+   "tol": 0.5,
+   "explanation": "$[1,3]$ has 3 integers.",
+   "source": {
+    "file": "W2",
+    "page": 17
+   }
+  },
+  {
+   "id": "w2.l4.q4",
+   "type": "mcq",
+   "prompt": "Ordering $x_2,x_3,x_1$ (ranks: $x_2{=}1$, $x_3{=}2$, $x_1{=}3$). A hidden unit has number $m=1$. Which outputs may it feed (output rank must be **strictly greater** than $m$)?",
+   "options": [
+    "$\\hat x_2$ only",
+    "$\\hat x_3$ and $\\hat x_1$",
+    "All three",
+    "None"
+   ],
+   "correct": 1,
+   "explanation": "Ranks of outputs: 1, 2, 3. Strictly greater than 1 gives $\\hat x_3$ and $\\hat x_1$. That unit sees only $x_2$ (rank ≤ 1).",
+   "source": {
+    "file": "W2",
+    "page": 17
+   }
+  },
+  {
+   "id": "w2.l4.q5",
+   "type": "false",
+   "prompt": "In MADE with ordering $x_2,x_3,x_1$, which statement is FALSE?",
+   "options": [
+    "The unit producing $p(x_2)$ cannot depend on any input",
+    "The unit for $p(x_3|x_2)$ depends only on $x_2$",
+    "One network produces all conditionals in a single pass",
+    "The unit for $p(x_2)$ may depend on $x_1$"
+   ],
+   "correct": 3,
+   "explanation": "$p(x_2)$ is first in the ordering, so it can depend on nothing.",
+   "source": {
+    "file": "W2",
+    "page": 17
+   }
+  },
+  {
+   "id": "w2.l4.q6",
+   "type": "bug",
+   "prompt": "*“I’ll keep the autoencoder fully connected and just train with log-likelihood; the autoregressive structure will emerge.”* What’s wrong?",
+   "options": [
+    "Nothing",
+    "Without masks, output $\\hat x_i$ can read $x_i$ (and later variables), so it doesn’t define a valid DAG; the constraint must be built into the architecture",
+    "Log-likelihood can’t be used with autoencoders",
+    "Fully connected layers can’t be trained"
+   ],
+   "correct": 1,
+   "explanation": "Tape must be on the paper before the exam, not discovered during it.",
+   "source": {
+    "file": "W2",
+    "page": 16
+   }
+  }
+ ]
+}

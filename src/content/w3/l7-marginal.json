@@ -1,0 +1,172 @@
+{
+ "id": "w3.l7",
+ "title": "Why the marginal likelihood is hard",
+ "blurb": "Partially observed data, mixtures of infinitely many Gaussians, naive Monte Carlo",
+ "source": [
+  {
+   "file": "W3",
+   "page": 41
+  },
+  {
+   "file": "W3",
+   "page": 42
+  },
+  {
+   "file": "W3",
+   "page": 43
+  },
+  {
+   "file": "W3",
+   "page": 45
+  },
+  {
+   "file": "W3",
+   "page": 46
+  },
+  {
+   "file": "W3",
+   "page": 47
+  }
+ ],
+ "hook": {
+  "title": "Counting every possible completion",
+  "text": "Half of a photo is torn off. What's the probability of seeing the intact half? You'd have to consider **every possible way the missing half could look**, weigh each by its plausibility, and add them all up. With 30 hidden binary features that's over a billion completions per training photo, per gradient step. Guessing completions at random is hopeless too: nearly all random completions look like static, with probability near zero, so you'd practically never hit the plausible ones.",
+  "recall": "Remember the torn photo: the marginal likelihood sums over *all* completions of the hidden part, which explodes in number, and random guessing almost never lands on a plausible one. We need a smart proposal $q(z)$."
+ },
+ "explore": {
+  "component": "marg",
+  "intro": "Two tabs: counting terms, and why uniform/prior-sampling Monte Carlo gives wild estimates.",
+  "tasks": [
+   "Count tab: set 30 features. How long at a billion terms per second?",
+   "MC tab: make the likelihood narrow (small $\\sigma_x$). Compare the min–max spread of the two estimators."
+  ],
+  "takeaway": "$p(x;\\theta)=\\sum_zp(x,z;\\theta)$ has $2^{30}$ terms for 30 binary latents; naive Monte Carlo fails because most $z$ have tiny $p(x,z)$. Sampling $z$ cleverly (from $q$) tames the variance."
+ },
+ "build": {
+  "type": "fill",
+  "prompt": "Fill in the marginal likelihood.",
+  "template": "$\\log p(x;\\theta)=\\log$ {0} $p(x,z;\\theta)$; with 30 binary latent features the sum has {1} terms.",
+  "blanks": [
+   {
+    "options": [
+     "Σ_z (sum over all z)",
+     "Π_z (product over z)",
+     "max_z"
+    ],
+    "correct": 0
+   },
+   {
+    "options": [
+     "2^30",
+     "30",
+     "2×30"
+    ],
+    "correct": 0
+   }
+  ],
+  "explanation": "Slide 46: “Suppose we have 30 binary latent features, $z\\in\\{0,1\\}^{30}$. Evaluating $\\sum_zp(x,z;\\theta)$ involves a sum with $2^{30}$ terms.”",
+  "source": {
+   "file": "W3",
+   "page": 47
+  }
+ },
+ "questions": [
+  {
+   "id": "w3.l7.q1",
+   "type": "numeric",
+   "prompt": "How many terms are in $\\sum_{z\\in\\{0,1\\}^{30}}p(x,z;\\theta)$?",
+   "value": 1073741824,
+   "tol": 1,
+   "explanation": "$2^{30}=1{,}073{,}741{,}824$.",
+   "source": {
+    "file": "W3",
+    "page": 47
+   }
+  },
+  {
+   "id": "w3.l7.q2",
+   "type": "mcq",
+   "prompt": "The VAE’s generative model is described as:",
+   "options": [
+    "A mixture of an infinite number of Gaussians",
+    "A single Gaussian",
+    "A mixture of exactly 2 Gaussians",
+    "An autoregressive model"
+   ],
+   "correct": 0,
+   "explanation": "$z\\sim\\mathcal N(0,I)$, $p(x|z)=\\mathcal N(\\mu_\\theta(z),\\Sigma_\\theta(z))$: one Gaussian for each possible $z$.",
+   "source": {
+    "file": "W3",
+    "page": 42
+   }
+  },
+  {
+   "id": "w3.l7.q3",
+   "type": "mcq",
+   "prompt": "In partially observed data, which variables are never observed?",
+   "options": [
+    "$X$ (e.g. pixel values)",
+    "$Z$ (e.g. cluster or class id)",
+    "Both",
+    "Neither"
+   ],
+   "correct": 1,
+   "explanation": "The torn-off half (latents) is never seen.",
+   "source": {
+    "file": "W3",
+    "page": 47
+   }
+  },
+  {
+   "id": "w3.l7.q4",
+   "type": "false",
+   "prompt": "Which statement about naive Monte Carlo for $p_\\theta(x)$ is FALSE?",
+   "options": [
+    "For most $z$, $p_\\theta(x,z)$ is very low",
+    "We would rarely hit the likely completions by uniform sampling",
+    "We need a clever way to select $z^{(j)}$ to reduce variance",
+    "It works well in practice for high-dimensional $z$"
+   ],
+   "correct": 3,
+   "explanation": "“Works in theory but not in practice.”",
+   "source": {
+    "file": "W3",
+    "page": 43
+   }
+  },
+  {
+   "id": "w3.l7.q5",
+   "type": "mcq",
+   "prompt": "What is the “no free lunch” of latent variable models compared with autoregressive ones?",
+   "options": [
+    "They can’t generate",
+    "They are much more difficult to learn because $p(x)$ is hard to evaluate and optimise",
+    "They have no parameters",
+    "They need labels"
+   ],
+   "correct": 1,
+   "explanation": "Slide 44: much more difficult to learn than fully observed autoregressive models.",
+   "source": {
+    "file": "W3",
+    "page": 44
+   }
+  },
+  {
+   "id": "w3.l7.q6",
+   "type": "bug",
+   "prompt": "*“I estimate $\\log p(x)$ by $\\log\\frac{p(x,z^{(1)})}{q(z^{(1)})}$ with one sample; this is unbiased since $\\mathbb E[\\log\\cdot]=\\log\\mathbb E[\\cdot]$.”* What’s wrong?",
+   "options": [
+    "Nothing",
+    "$\\mathbb E[\\log\\hat p]\\neq\\log\\mathbb E[\\hat p]$ (Jensen): the log of an unbiased estimate of $p(x)$ is a biased (downward) estimate of $\\log p(x)$",
+    "$q$ must be uniform",
+    "One sample is always exact"
+   ],
+   "correct": 1,
+   "explanation": "Slide 68 (optional) points out exactly this inequality.",
+   "source": {
+    "file": "W3",
+    "page": 68
+   }
+  }
+ ]
+}

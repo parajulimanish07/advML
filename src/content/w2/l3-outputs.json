@@ -1,0 +1,163 @@
+{
+ "id": "w2.l3",
+ "title": "Softmax, categorical & continuous outputs",
+ "blurb": "Softmax, 256-way pixels, RNADE mixtures",
+ "source": [
+  {
+   "file": "W2",
+   "page": 12
+  },
+  {
+   "file": "W2",
+   "page": 13
+  },
+  {
+   "file": "W2",
+   "page": 14
+  }
+ ],
+ "hook": {
+  "title": "The voting booth",
+  "text": "Your network doesn't directly produce probabilities. For a pixel with 256 possible brightness levels it produces 256 raw **enthusiasm scores** (logits). To turn scores into a fair vote share you exponentiate each (so all are positive) and divide by the total: **softmax**. For continuous data such as speech, there are infinitely many outcomes, so the network instead outputs the *recipe of a distribution*, the means and spreads of a few Gaussians to mix.",
+  "recall": "Remember the voting booth: scores → positive via exp → divide by total. For continuous data the net hands you the recipe (μ, σ) of a mixture, not a table."
+ },
+ "explore": {
+  "component": "softmaxmix",
+  "intro": "Two tabs: softmax over four classes, and an RNADE-style mixture density.",
+  "tasks": [
+   "Softmax: raise one logit. What happens to the others? Add 2 to *every* logit.",
+   "Mixture: move the three means apart. Is the output still a single hump?"
+  ],
+  "takeaway": "softmax$(a)_i=e^{a_i}/\\sum_je^{a_j}$ generalises the sigmoid. RNADE lets $\\hat x_i$ define $(\\mu_j,\\sigma_j)_{j=1}^K$ of a mixture of Gaussians (use $\\exp$ to keep $\\sigma>0$)."
+ },
+ "build": {
+  "type": "fill",
+  "prompt": "Choose the output distribution for each data type.",
+  "template": "Binary pixel → {0}.  A pixel with 256 intensity levels → {1}.  Real-valued speech sample → {2}.",
+  "blanks": [
+   {
+    "options": [
+     "Bernoulli (sigmoid)",
+     "Categorical (softmax)",
+     "Mixture of Gaussians (RNADE)"
+    ],
+    "correct": 0
+   },
+   {
+    "options": [
+     "Bernoulli (sigmoid)",
+     "Categorical (softmax)",
+     "Mixture of Gaussians (RNADE)"
+    ],
+    "correct": 1
+   },
+   {
+    "options": [
+     "Bernoulli (sigmoid)",
+     "Categorical (softmax)",
+     "Mixture of Gaussians (RNADE)"
+    ],
+    "correct": 2
+   }
+  ],
+  "explanation": "Slides 11–13: binary → logistic/Bernoulli; $X_i\\in\\{1..K\\}$ → categorical via softmax; $X_i\\in\\mathbb R$ → a continuous distribution such as a mixture of Gaussians.",
+  "source": {
+   "file": "W2",
+   "page": 12
+  }
+ },
+ "questions": [
+  {
+   "id": "w2.l3.q1",
+   "type": "mcq",
+   "prompt": "Which function turns a vector of logits into a categorical distribution?",
+   "options": [
+    "sigmoid",
+    "softmax",
+    "tanh",
+    "ReLU"
+   ],
+   "correct": 1,
+   "explanation": "softmax: exponentiate then normalise. The voting booth.",
+   "source": {
+    "file": "W2",
+    "page": 12
+   }
+  },
+  {
+   "id": "w2.l3.q2",
+   "type": "numeric",
+   "prompt": "Logits $a=(0,\\,0,\\,\\ln2)$. What is the softmax probability of the third class?",
+   "value": 0.5,
+   "tol": 0.005,
+   "explanation": "$e^0=1$, $e^0=1$, $e^{\\ln2}=2$, total 4, so $2/4=0.5$.",
+   "source": {
+    "file": "W2",
+    "page": 12
+   }
+  },
+  {
+   "id": "w2.l3.q3",
+   "type": "mcq",
+   "prompt": "In RNADE why is $\\exp(\\cdot)$ applied to the network output that defines $\\sigma$?",
+   "options": [
+    "To make the output a probability",
+    "To ensure non-negativity of the standard deviations",
+    "To make the mixture uniform",
+    "To tie weights"
+   ],
+   "correct": 1,
+   "explanation": "A standard deviation must be positive; $\\exp$ of any real number is positive.",
+   "source": {
+    "file": "W2",
+    "page": 14
+   }
+  },
+  {
+   "id": "w2.l3.q4",
+   "type": "false",
+   "prompt": "Which statement is FALSE?",
+   "options": [
+    "Softmax outputs sum to 1",
+    "Softmax generalises the sigmoid",
+    "RNADE models each continuous $x_i$ with a mixture of $K$ Gaussians",
+    "For a continuous pixel, RNADE outputs a mixture of $K$ Bernoulli distributions"
+   ],
+   "correct": 3,
+   "explanation": "Bernoulli is for binary data. RNADE’s components are Gaussians.",
+   "source": {
+    "file": "W2",
+    "page": 14
+   }
+  },
+  {
+   "id": "w2.l3.q5",
+   "type": "numeric",
+   "prompt": "A single pixel has 256 possible intensity values. How many logits does its softmax output layer need?",
+   "value": 256,
+   "tol": 0.5,
+   "explanation": "One score per possible value: $K=256$.",
+   "source": {
+    "file": "W2",
+    "page": 12
+   }
+  },
+  {
+   "id": "w2.l3.q6",
+   "type": "bug",
+   "prompt": "*“If I add 10 to every logit, the largest class becomes even more probable.”* Why is this wrong?",
+   "options": [
+    "It is right",
+    "softmax is shift-invariant: $e^{a_i+10}/\\sum_je^{a_j+10}=e^{a_i}/\\sum_je^{a_j}$, so the probabilities don’t change",
+    "The largest class becomes less probable",
+    "The probabilities no longer sum to 1"
+   ],
+   "correct": 1,
+   "explanation": "Only *differences* between enthusiasm scores matter in the voting booth, not their absolute level.",
+   "source": {
+    "file": "W2",
+    "page": 12
+   }
+  }
+ ]
+}

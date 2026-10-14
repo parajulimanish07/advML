@@ -1,0 +1,19 @@
+{
+ "id": "w3",
+ "title": "Latent Lagoon",
+ "week": "Week 3",
+ "subtitle": "Latent variable models, autoencoders, VAEs, ELBO and variational inference",
+ "emoji": "🌊",
+ "color": "#4de1c1",
+ "status": "ready",
+ "levels": [
+  "l1-latent-mixture",
+  "l2-pca-ae",
+  "l3-sampling",
+  "l4-reparam",
+  "l5-elbo",
+  "l6-vae-action",
+  "l7-marginal",
+  "l8-vi"
+ ]
+}

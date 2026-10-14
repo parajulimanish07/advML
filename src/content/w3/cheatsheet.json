@@ -1,0 +1,108 @@
+{
+ "title": "Week 3 Cheat Sheet: Latent Variables, VAE, ELBO",
+ "items": [
+  {
+   "label": "Latent variable model",
+   "note": "$x$ observed, $z$ hidden; generate $z\\to x$, infer $x\\to z$ via the posterior. Easy sampling, hard likelihood.",
+   "source": {
+    "file": "W3",
+    "page": 39
+   },
+   "latex": "p(x)=\\sum_zp(z)p(x|z)"
+  },
+  {
+   "label": "Mixture of Gaussians",
+   "note": "Shallow LVM; $p(z|x)$ clusters unlabeled data.",
+   "source": {
+    "file": "W3",
+    "page": 8
+   },
+   "latex": "z\\sim\\mathrm{Cat},\\ p(x|z{=}k)=\\mathcal N(\\mu_k,\\Sigma_k)"
+  },
+  {
+   "label": "PCA / linear AE",
+   "note": "Directions of max variance; linear AE with MSE ≈ PCA (latents not necessarily orthogonal).",
+   "source": {
+    "file": "W3",
+    "page": 16
+   }
+  },
+  {
+   "label": "Why VAE",
+   "note": "Regular AE codes: odd shape, off-centre, not continuous. VAE: Gaussian codes pulled toward $\\mathcal N(0,I)$.",
+   "source": {
+    "file": "W3",
+    "page": 23
+   }
+  },
+  {
+   "label": "Reparameterisation",
+   "note": "Randomness outside; $\\log\\sigma^2$ output keeps $\\sigma>0$.",
+   "source": {
+    "file": "W3",
+    "page": 27
+   },
+   "latex": "z=\\mu+\\sigma\\odot\\epsilon=\\mu+e^{\\log(\\sigma^2)/2}\\epsilon,\\ \\epsilon\\sim\\mathcal N(0,I)"
+  },
+  {
+   "label": "ELBO (Jensen)",
+   "note": "Lower bound for any $q$; tight iff $q=p(z|x;\\theta)$.",
+   "source": {
+    "file": "W3",
+    "page": 48
+   },
+   "latex": "\\log p(x)\\ge\\mathbb E_q[\\log p(z,x)-\\log q]=\\mathcal L"
+  },
+  {
+   "label": "ELBO as autoencoder",
+   "note": "Reconstruction minus KL to the prior.",
+   "source": {
+    "file": "W3",
+    "page": 33
+   },
+   "latex": "\\mathcal L=\\mathbb E_q[\\log p(x|z)]-D_{KL}(q_\\phi(z|x)\\|p(z))"
+  },
+  {
+   "label": "Gap",
+   "note": "Slack = KL to the true posterior.",
+   "source": {
+    "file": "W3",
+    "page": 70
+   },
+   "latex": "\\log p(x)=\\mathrm{ELBO}+D_{KL}(q\\|p(z|x))"
+  },
+  {
+   "label": "VAE loss",
+   "note": "Reconstruction (MSE for Gaussian, BCE for Bernoulli) + KL to $\\mathcal N(0,1)$.",
+   "source": {
+    "file": "W3",
+    "page": 29
+   },
+   "latex": "\\mathcal L=\\alpha\\|x-x'\\|^2-\\tfrac12\\sum(1+\\log\\sigma^2-\\mu^2-\\sigma^2)"
+  },
+  {
+   "label": "Marginal likelihood",
+   "note": "Sum over all $z$: $2^{30}$ terms for 30 binary latents; naive Monte Carlo fails.",
+   "source": {
+    "file": "W3",
+    "page": 47
+   }
+  },
+  {
+   "label": "Amortised inference",
+   "note": "One network $x\\mapsto\\phi$; train $\\theta,\\phi$ jointly by SGD with reparameterisation.",
+   "source": {
+    "file": "W3",
+    "page": 65
+   }
+  },
+  {
+   "label": "Autoencoder variants",
+   "note": "Dropout; denoising (noisy input); sparse ($L_1$ penalty on code).",
+   "source": {
+    "file": "W3",
+    "page": 21
+   }
+  }
+ ]
+}

@@ -1,0 +1,155 @@
+{
+ "id": "w2.l2",
+ "title": "NADE: neural conditionals & weight tying",
+ "blurb": "Replace logistic regression with a one-hidden-layer network",
+ "source": [
+  {
+   "file": "W2",
+   "page": 9
+  },
+  {
+   "file": "W2",
+   "page": 10
+  },
+  {
+   "file": "W2",
+   "page": 16
+  }
+ ],
+ "hook": {
+  "title": "Private rulebooks vs a shared notebook",
+  "text": "In FVSBN every pixel has its **own private rulebook**: pixel 500 needs 500 numbers, pixel 501 needs 501 new ones. NADE says: let each rulebook be a tiny neural net, and let them **share one notebook** (the weight matrix $W$ and bias $c$). The notebook grows by a column per pixel, but pixels reuse what's already written, so you need far fewer numbers and can reuse earlier calculations.",
+  "recall": "Remember the shared notebook: tying the weights across pixels cuts parameters and speeds computation; only the little output layer ($\\alpha_i,b_i$) stays pixel-specific."
+ },
+ "explore": {
+  "component": "paramcount",
+  "intro": "Compare how parameter counts grow. FVSBN is from the slide; the NADE count is my extra bookkeeping for hidden size $d$.",
+  "tasks": [
+   "Set $n=784$. How many parameters does FVSBN need?",
+   "Increase $d$. At what $n$ does tied-NADE become cheaper than FVSBN for $d=500$?"
+  ],
+  "takeaway": "FVSBN ≈ $n^2/2$ parameters. NADE uses a hidden layer $h_i=\\sigma(W_{<i}x_{<i}+c)$ with **tied** $W$, $c$: growth is linear in $n$ for fixed $d$."
+ },
+ "build": {
+  "type": "fill",
+  "prompt": "Complete NADE's equations (slide 8–9).",
+  "template": "$h_i=\\sigma$( {0} ),  $\\hat x_i=\\sigma$( {1} )",
+  "blanks": [
+   {
+    "options": [
+     "W_{<i} x_{<i} + c  (tied weights, earlier pixels only)",
+     "W x_i + c  (the current pixel)",
+     "W x + c  (all pixels incl. later ones)"
+    ],
+    "correct": 0
+   },
+   {
+    "options": [
+     "α_i h_i + b_i  (pixel-specific output layer)",
+     "W h_i  (no bias)",
+     "h_i x_i"
+    ],
+    "correct": 0
+   }
+  ],
+  "explanation": "NADE: $h_i=\\sigma(W_{<i}x_{<i}+c)$ and $\\hat x_i=p(x_i|x_{<i})=\\sigma(\\alpha_ih_i+b_i)$. The hidden layer only sees earlier pixels, so the DAG structure is preserved.",
+  "source": {
+   "file": "W2",
+   "page": 10
+  }
+ },
+ "questions": [
+  {
+   "id": "w2.l2.q1",
+   "type": "mcq",
+   "prompt": "How does NADE differ from FVSBN?",
+   "options": [
+    "It uses a one-hidden-layer neural network instead of logistic regression for each conditional",
+    "It removes the chain rule",
+    "It samples all pixels in parallel",
+    "It only works for continuous data"
+   ],
+   "correct": 0,
+   "explanation": "NADE keeps the same autoregressive chain rule; each conditional becomes a small neural net.",
+   "source": {
+    "file": "W2",
+    "page": 9
+   }
+  },
+  {
+   "id": "w2.l2.q2",
+   "type": "mcq",
+   "prompt": "What is the benefit of **tying weights** in NADE?",
+   "options": [
+    "It reduces the number of parameters and speeds up computation",
+    "It makes the model non-autoregressive",
+    "It lets pixels see later pixels",
+    "It guarantees better samples"
+   ],
+   "correct": 0,
+   "explanation": "The shared notebook: one $W$ (and $c$) reused for all pixels.",
+   "source": {
+    "file": "W2",
+    "page": 10
+   }
+  },
+  {
+   "id": "w2.l2.q3",
+   "type": "numeric",
+   "prompt": "In FVSBN, how many parameters does the conditional for pixel $i=100$ have (bias + weights on earlier pixels)?",
+   "value": 100,
+   "tol": 0.5,
+   "explanation": "$\\alpha_0^i$ plus $i-1=99$ weights $=100$, which is why the total is $1+2+\\dots+n$.",
+   "source": {
+    "file": "W2",
+    "page": 7
+   }
+  },
+  {
+   "id": "w2.l2.q4",
+   "type": "numeric",
+   "prompt": "FVSBN on a 784-pixel binary image: total parameters $1+2+\\dots+784$?",
+   "value": 307720,
+   "tol": 1,
+   "explanation": "$784\\cdot785/2=307{,}720\\approx n^2/2$.",
+   "source": {
+    "file": "W2",
+    "page": 7
+   }
+  },
+  {
+   "id": "w2.l2.q5",
+   "type": "false",
+   "prompt": "Which statement about NADE is FALSE?",
+   "options": [
+    "$h_i=\\sigma(W_{<i}x_{<i}+c)$",
+    "$\\hat x_i=\\sigma(\\alpha_ih_i+b_i)$",
+    "NADE produces all conditionals in one forward pass",
+    "Weight tying reduces the parameter count"
+   ],
+   "correct": 2,
+   "explanation": "The slide on MADE points out that NADE requires **n passes**, while MADE gets all parameters in one pass: a motivation for masking.",
+   "source": {
+    "file": "W2",
+    "page": 16
+   }
+  },
+  {
+   "id": "w2.l2.q6",
+   "type": "bug",
+   "prompt": "*“Tying the weights means every pixel has exactly the same conditional distribution.”* What’s the mistake?",
+   "options": [
+    "Nothing",
+    "Only $W$ and $c$ are shared. Pixel $i$ uses its own earlier pixels $x_{<i}$ and its own output weights $\\alpha_i,b_i$, so the conditionals differ",
+    "Tied weights make the conditionals independent of $x$",
+    "Tied weights break the chain rule"
+   ],
+   "correct": 1,
+   "explanation": "Shared notebook, but each pixel reads a different page range and writes with its own pen.",
+   "source": {
+    "file": "W2",
+    "page": 10
+   }
+  }
+ ]
+}

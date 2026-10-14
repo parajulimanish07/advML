@@ -1,0 +1,158 @@
+{
+ "id": "w3.l6",
+ "title": "The VAE loss & architecture",
+ "blurb": "Loss terms, BCE vs MSE, encoder/decoder networks",
+ "source": [
+  {
+   "file": "W3",
+   "page": 28
+  },
+  {
+   "file": "W3",
+   "page": 29
+  },
+  {
+   "file": "W3",
+   "page": 30
+  },
+  {
+   "file": "W3",
+   "page": 35
+  },
+  {
+   "file": "W3",
+   "page": 36
+  },
+  {
+   "file": "W3",
+   "page": 37
+  },
+  {
+   "file": "W3",
+   "page": 38
+  }
+ ],
+ "hook": {
+  "title": "Alice, Bob and the space mission",
+  "text": "Alice, in space, must send images to Bob on Earth. She compresses each image into a short **message** $\\hat z$ (stochastically) and Bob decodes it. The scheme works if Bob's reconstruction is good, but there's a twist: if all messages are forced to follow a **standard shape** $p(z)$, then Bob — who knows that shape — can *invent plausible messages himself* and decode them into brand-new images, as if Alice had sent them.",
+  "recall": "Remember Alice and Bob: the reconstruction term makes messages decodable; the KL term forces them to a known standard shape so Bob can invent valid messages."
+ },
+ "explore": {
+  "component": "vaestep",
+  "intro": "A toy 1-D VAE you can step through. The four boxes mirror the slide's procedure.",
+  "tasks": [
+   "Step through 1→4 and watch each number appear. Which slider changes only $L_2$?",
+   "Try to drive both $L_1$ and $L_2$ to zero. What stops you?"
+  ],
+  "takeaway": "Loss $\\mathcal L=\\alpha\\mathcal L_1+\\mathcal L_2$ with $\\mathcal L_1=\\|x-Dec(Enc(x))\\|^2$ and $\\mathcal L_2=D_{KL}[\\mathcal N(\\mu,\\sigma)\\|\\mathcal N(0,1)]=-\\tfrac12\\sum(1+\\log\\sigma^2-\\mu^2-\\sigma^2)$."
+ },
+ "build": {
+  "type": "order",
+  "prompt": "Order the VAE training step on one data point $x_n$ (slide 37).",
+  "items": [
+   "Apply the encoder to $x_n$ to get $\\mu_\\phi(x_n)$ and $\\ln\\sigma^2_\\phi(x_n)$",
+   "Reparameterise: $z=\\mu_\\phi(x_n)+\\sigma_\\phi(x_n)\\odot\\epsilon$",
+   "Apply the decoder to $z$ to get the probabilities $\\theta(z)$",
+   "Compute the ELBO from $x_n$, $z$, $\\mu$ and $\\ln\\sigma^2$"
+  ],
+  "explanation": "The four numbered steps of “VAE in Action! – continue”.",
+  "source": {
+   "file": "W3",
+   "page": 38
+  }
+ },
+ "questions": [
+  {
+   "id": "w3.l6.q1",
+   "type": "mcq",
+   "prompt": "In the Alice–Bob story, why force messages to follow $p(z)$?",
+   "options": [
+    "To make them longer",
+    "So Bob can generate realistic messages $\\hat z\\sim p(z)$ himself and decode them into images",
+    "So Alice can skip compression",
+    "To make reconstruction perfect"
+   ],
+   "correct": 1,
+   "explanation": "The KL term is what makes sampling from the prior legitimate.",
+   "source": {
+    "file": "W3",
+    "page": 35
+   }
+  },
+  {
+   "id": "w3.l6.q2",
+   "type": "numeric",
+   "prompt": "1-D latent with $\\mu=1$ and $\\log\\sigma^2=0$ (so $\\sigma^2=1$). Compute $\\mathcal L_2=-\\tfrac12(1+\\log\\sigma^2-\\mu^2-\\sigma^2)$.",
+   "value": 0.5,
+   "tol": 0.005,
+   "explanation": "$-\\tfrac12(1+0-1-1)=0.5$. The mean sits one unit from the prior mean 0.",
+   "source": {
+    "file": "W3",
+    "page": 29
+   }
+  },
+  {
+   "id": "w3.l6.q3",
+   "type": "mcq",
+   "prompt": "Which reconstruction loss for which output assumption?",
+   "options": [
+    "Multivariate Bernoulli → cross-entropy; Normal → MSE",
+    "Bernoulli → MSE; Normal → cross-entropy",
+    "Both always use cross-entropy",
+    "Both always use MSE"
+   ],
+   "correct": 0,
+   "explanation": "Slide 28: assume Bernoulli use cross-entropy; assume Normal use MSE.",
+   "source": {
+    "file": "W3",
+    "page": 28
+   }
+  },
+  {
+   "id": "w3.l6.q4",
+   "type": "numeric",
+   "prompt": "Binary cross-entropy term from the slide: $-0.8\\ln(0.9)$ (3 decimals).",
+   "value": 0.084,
+   "tol": 0.002,
+   "explanation": "$-0.8\\times(-0.10536)=0.0843$ (the slide shows 0.0842884). Compare $-0.8\\ln0.7=0.2853$: a worse prediction costs more.",
+   "source": {
+    "file": "W3",
+    "page": 30
+   }
+  },
+  {
+   "id": "w3.l6.q5",
+   "type": "false",
+   "prompt": "Which statement is FALSE?",
+   "options": [
+    "$\\mathcal L=\\alpha\\mathcal L_1+\\mathcal L_2$",
+    "$\\mathcal L_1$ is the reconstruction (squared error) loss",
+    "$\\mathcal L_2$ is a KL term that keeps the latent space continuous and standard-normal",
+    "Cross-entropy $H(p,q)$ is symmetric in $p$ and $q$"
+   ],
+   "correct": 3,
+   "explanation": "The cross-entropy slide is titled “not symmetric”: $H(p,q)=-\\sum p\\log q$.",
+   "source": {
+    "file": "W3",
+    "page": 30
+   }
+  },
+  {
+   "id": "w3.l6.q6",
+   "type": "bug",
+   "prompt": "The decoder ends in a softmax giving $D\\times L$ categorical probabilities. A student trains with plain MSE on pixel values. What is the inconsistency?",
+   "options": [
+    "None, MSE is always right",
+    "With a Categorical $p_\\theta(x|z)$ the reconstruction term is the categorical log-likelihood ($\\ln\\text{Categorical}(x|\\theta(z))$), not MSE",
+    "MSE needs the softmax removed and the KL kept; no inconsistency",
+    "Softmax can’t be used in VAEs"
+   ],
+   "correct": 1,
+   "explanation": "Slide 36: $p_\\theta(x|z)=\\text{Categorical}(x|\\theta(z))$ gives the $\\ln\\text{Categorical}$ term in the ELBO.",
+   "source": {
+    "file": "W3",
+    "page": 36
+   }
+  }
+ ]
+}

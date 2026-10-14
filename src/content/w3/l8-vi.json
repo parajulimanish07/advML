@@ -1,0 +1,171 @@
+{
+ "id": "w3.l8",
+ "title": "Variational inference & amortisation",
+ "blurb": "Choosing $q_\\phi$, joint learning of $\\theta,\\phi$, amortised inference",
+ "source": [
+  {
+   "file": "W3",
+   "page": 50
+  },
+  {
+   "file": "W3",
+   "page": 51
+  },
+  {
+   "file": "W3",
+   "page": 52
+  },
+  {
+   "file": "W3",
+   "page": 53
+  },
+  {
+   "file": "W3",
+   "page": 58
+  },
+  {
+   "file": "W3",
+   "page": 59
+  },
+  {
+   "file": "W3",
+   "page": 65
+  },
+  {
+   "file": "W3",
+   "page": 66
+  },
+  {
+   "file": "W3",
+   "page": 67
+  }
+ ],
+ "hook": {
+  "title": "Tailor-made vs the size chart",
+  "text": "The true posterior is a shape you can't write down. **Variational inference** says: pick a shape you *can* work with (say a Gaussian) and tune its dials until it hugs the true shape as closely as possible. Doing that tuning from scratch for each of a million data points is like hiring a tailor for each customer. **Amortised inference** builds a **size chart**: one network $f_\\lambda$ that reads $x$ and instantly outputs good dial settings $\\phi$, even for a customer it has never seen.",
+  "recall": "Remember the tailor vs size chart: VI picks $\\phi$ to make $q(z;\\phi)$ close to the posterior; amortisation learns one function $x\\mapsto\\phi$ instead of optimising a new $\\phi^i$ per data point."
+ },
+ "explore": {
+  "component": "vi",
+  "intro": "Two tabs: fit $q$ to a bumpy posterior, then see why amortising helps.",
+  "tasks": [
+   "Start with $\\phi_1=-4$, $\\phi_2=0.75$ (the “bad” green-style fit). Then try a mean near 2. Compare the ELBOs.",
+   "Amortised tab: move the new $x$. Did we run an optimisation for it?"
+  ],
+  "takeaway": "Better $q$ ⇒ smaller $D_{KL}(q\\|p(z|x))$ ⇒ ELBO closer to $\\log p(x)$. Amortised inference learns $f_\\lambda:x\\mapsto\\phi$ (written $q_\\phi(z|x)$) and trains $\\theta,\\phi$ jointly by SGD."
+ },
+ "build": {
+  "type": "order",
+  "prompt": "Order learning with amortised inference (slide 67).",
+  "items": [
+   "Initialise $\\theta^{(0)},\\phi^{(0)}$",
+   "Randomly sample a data point $x^i$ from $D$",
+   "Compute $\\nabla_\\theta\\mathcal L(x^i;\\theta,\\phi)$ and $\\nabla_\\phi\\mathcal L(x^i;\\theta,\\phi)$ (reparameterisation)",
+   "Update $\\theta,\\phi$ in the gradient direction"
+  ],
+  "explanation": "Exactly the bullets on the “Learning with Amortized Inference” slide.",
+  "source": {
+   "file": "W3",
+   "page": 67
+  }
+ },
+ "questions": [
+  {
+   "id": "w3.l8.q1",
+   "type": "mcq",
+   "prompt": "What does variational inference do?",
+   "options": [
+    "Picks $\\phi$ so that $q(z;\\phi)$ is close to the posterior $p(z|x;\\theta)$",
+    "Computes the posterior exactly",
+    "Removes the latent variables",
+    "Trains only the decoder"
+   ],
+   "correct": 0,
+   "explanation": "Tune the tractable family until it hugs the intractable posterior.",
+   "source": {
+    "file": "W3",
+    "page": 51
+   }
+  },
+  {
+   "id": "w3.l8.q2",
+   "type": "numeric",
+   "prompt": "$\\log p(x)=-7$. For a variational choice $\\phi_2$, $D_{KL}(q_{\\phi_2}\\|p(z|x))=2.5$. What is its ELBO?",
+   "value": -9.5,
+   "tol": 0.01,
+   "explanation": "ELBO $=\\log p(x)-D_{KL}=-7-2.5=-9.5$, a valid but loose bound.",
+   "source": {
+    "file": "W3",
+    "page": 57
+   }
+  },
+  {
+   "id": "w3.l8.q3",
+   "type": "mcq",
+   "prompt": "Amortised inference means:",
+   "options": [
+    "Learning a single parametric function $f_\\lambda$ mapping each $x$ to its variational parameters $\\phi$",
+    "Optimising a separate $\\phi^i$ for each data point at test time",
+    "Dropping the encoder",
+    "Using only one latent variable"
+   ],
+   "correct": 0,
+   "explanation": "The size chart: “like doing regression on $x^i\\mapsto\\phi^i_*$”.",
+   "source": {
+    "file": "W3",
+    "page": 65
+   }
+  },
+  {
+   "id": "w3.l8.q4",
+   "type": "false",
+   "prompt": "Which statement is FALSE?",
+   "options": [
+    "The ELBO holds for any $q$",
+    "The better $q$ approximates the posterior, the closer the ELBO is to $\\log p(x;\\theta)$",
+    "$\\theta$ and $\\phi$ are optimised jointly",
+    "Amortised inference needs a fresh optimisation of $\\phi$ for every new test point"
+   ],
+   "correct": 3,
+   "explanation": "That’s the non-amortised alternative the slide calls expensive and not scalable.",
+   "source": {
+    "file": "W3",
+    "page": 65
+   }
+  },
+  {
+   "id": "w3.l8.q5",
+   "type": "mcq",
+   "prompt": "Torn-photo example: is $q$ with $\\phi_i=0.5$ for every missing pixel a good approximation of $p(x_{top}|x_{bottom})$?",
+   "options": [
+    "Yes",
+    "No: it ignores the evidence in the visible bottom half",
+    "Yes, because pixels are binary",
+    "Only for the digit 9"
+   ],
+   "correct": 1,
+   "explanation": "A good $q$ sets $\\phi_i\\approx1$ for the pixels that form the top of a “9”.",
+   "source": {
+    "file": "W3",
+    "page": 52
+   }
+  },
+  {
+   "id": "w3.l8.q6",
+   "type": "bug",
+   "prompt": "*“Because $q_\\phi(z|x)$ is a neural network, it must equal the true posterior exactly.”* What’s wrong?",
+   "options": [
+    "Nothing",
+    "It’s still a restricted tractable family (e.g. a Gaussian); the better it matches, the closer the bound, but equality only holds when $q=p(z|x)$",
+    "Networks always produce exact posteriors",
+    "The posterior doesn’t exist"
+   ],
+   "correct": 1,
+   "explanation": "A size chart gets most customers close, not every customer perfect.",
+   "source": {
+    "file": "W3",
+    "page": 58
+   }
+  }
+ ]
+}

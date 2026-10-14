@@ -1,0 +1,109 @@
+{
+ "title": "Week 2 Cheat Sheet: Autoregressive Models",
+ "items": [
+  {
+   "label": "Chain rule",
+   "note": "Any joint factorises over an ordering; autoregressive models parameterise each conditional.",
+   "source": {
+    "file": "W2",
+    "page": 6
+   },
+   "latex": "p(x_1..x_n)=\\prod_{i}p(x_i|x_{<i})"
+  },
+  {
+   "label": "FVSBN",
+   "note": "Logistic regression per pixel; evaluate by product, sample sequentially; ≈ $n^2/2$ parameters (1+2+…+n).",
+   "source": {
+    "file": "W2",
+    "page": 7
+   },
+   "latex": "\\hat x_i=\\sigma(\\alpha^i_0+\\sum_{j<i}\\alpha^i_jx_j)"
+  },
+  {
+   "label": "NADE",
+   "note": "One hidden layer with tied weights: fewer parameters, faster.",
+   "source": {
+    "file": "W2",
+    "page": 10
+   },
+   "latex": "h_i=\\sigma(W_{<i}x_{<i}+c),\\ \\hat x_i=\\sigma(\\alpha_ih_i+b_i)"
+  },
+  {
+   "label": "Softmax / RNADE",
+   "note": "Categorical outputs via softmax; continuous via mixture of Gaussians (σ via exp).",
+   "source": {
+    "file": "W2",
+    "page": 12
+   },
+   "latex": "\\mathrm{softmax}(a)_i=\\frac{e^{a_i}}{\\sum_je^{a_j}}"
+  },
+  {
+   "label": "MADE",
+   "note": "Masked autoencoder: all conditionals in one pass; hidden numbers in [1,n−1]; strict < in the last layer.",
+   "source": {
+    "file": "W2",
+    "page": 17
+   }
+  },
+  {
+   "label": "RNN",
+   "note": "Constant parameters in n; sequential training/generation; vanishing/exploding gradients.",
+   "source": {
+    "file": "W2",
+    "page": 18
+   },
+   "latex": "h_{t+1}=\\tanh(W_{hh}h_t+W_{xh}x_{t+1})"
+  },
+  {
+   "label": "Attention / Transformer",
+   "note": "Query vs keys → softmax → weighted sum. Masked self-attention keeps it autoregressive and parallel to train.",
+   "source": {
+    "file": "W2",
+    "page": 22
+   }
+  },
+  {
+   "label": "PixelRNN / PixelCNN / WaveNet",
+   "note": "Raster-scan pixels; masked convs (parallel, fast); dilated convs for audio.",
+   "source": {
+    "file": "W2",
+    "page": 27
+   }
+  },
+  {
+   "label": "KL divergence",
+   "note": "Non-negative; zero iff equal; most common divergence in deep generative models.",
+   "source": {
+    "file": "W2",
+    "page": 35
+   },
+   "latex": "D(p\\|q)=\\sum_xp(x)\\log\\frac{p(x)}{q(x)}\\ge0"
+  },
+  {
+   "label": "Monte Carlo",
+   "note": "Average g over T independent samples; the estimate is random.",
+   "source": {
+    "file": "W2",
+    "page": 36
+   },
+   "latex": "\\hat g=\\frac1T\\sum_tg(x^t)"
+  },
+  {
+   "label": "MLE for AR models",
+   "note": "Sum over images and pixels of log-conditionals; no closed form; gradient ascent.",
+   "source": {
+    "file": "W2",
+    "page": 38
+   },
+   "latex": "\\theta_{t+1}=\\theta_t+\\alpha_t\\nabla_\\theta\\ell(\\theta)"
+  },
+  {
+   "label": "Pros/cons",
+   "note": "Easy to sample (sequentially) and evaluate; no natural features/clustering. Higher likelihood ≠ better samples.",
+   "source": {
+    "file": "W2",
+    "page": 30
+   }
+  }
+ ]
+}

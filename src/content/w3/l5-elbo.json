@@ -1,0 +1,158 @@
+{
+ "id": "w3.l5",
+ "title": "The ELBO",
+ "blurb": "Jensen’s inequality, two decompositions, tightness",
+ "source": [
+  {
+   "file": "W3",
+   "page": 32
+  },
+  {
+   "file": "W3",
+   "page": 33
+  },
+  {
+   "file": "W3",
+   "page": 48
+  },
+  {
+   "file": "W3",
+   "page": 49
+  },
+  {
+   "file": "W3",
+   "page": 50
+  },
+  {
+   "file": "W3",
+   "page": 57
+  },
+  {
+   "file": "W3",
+   "page": 70
+  }
+ ],
+ "hook": {
+  "title": "The pessimistic auditor",
+  "text": "You can't count the money in the vault ($\\log p(x)$ is intractable). But an auditor can always certify *at least* some amount: the **evidence lower bound**. Any guess $q$ about how the vault is organised gives a valid certificate; a smarter guess raises the certified amount. The leftover gap between the true amount and the certificate is exactly how far off your guess $q$ is from the truth: $D_{KL}(q\\|p(z|x))$. A perfect guess closes the gap completely.",
+  "recall": "Remember the auditor: ELBO is a guaranteed lower bound for any $q$; the slack equals $D_{KL}(q\\|p(z|x))$, so it is tight exactly when $q$ is the true posterior."
+ },
+ "explore": {
+  "component": "elbo",
+  "intro": "A toy model with four latent values. You set $q(z)$; the page computes both ELBO decompositions and the gap.",
+  "tasks": [
+   "Press **q = prior**, then **q = true posterior**. Watch the gap.",
+   "Try q concentrated on $z=1$ only. Why is it already close?"
+  ],
+  "takeaway": "$\\log p(x)=\\text{ELBO}+D_{KL}(q\\|p(z|x))$; ELBO $=\\mathbb E_q[\\log p(x|z)]-D_{KL}(q\\|p(z))$; equality iff $q=p(z|x;\\theta)$."
+ },
+ "build": {
+  "type": "order",
+  "prompt": "Order the derivation of the ELBO.",
+  "items": [
+   "Start from $\\log p(x;\\theta)=\\log\\sum_zp(z,x;\\theta)$",
+   "Multiply and divide by $q(z)$: $\\log\\mathbb E_{q}\\!\\left[\\frac{p(z,x;\\theta)}{q(z)}\\right]$",
+   "Apply Jensen: $\\ge\\mathbb E_q[\\log p(z,x;\\theta)-\\log q(z)]=\\mathcal L$",
+   "Split $p(z,x)=p(x|z)p(z)$: $\\mathcal L=\\mathbb E_q[\\log p(x|z)]-D_{KL}(q\\|p(z))$"
+  ],
+  "explanation": "Slides 47–49 and 31–32: Jensen's inequality gives the bound for any $q$; splitting the joint gives the autoencoder form.",
+  "source": {
+   "file": "W3",
+   "page": 49
+  }
+ },
+ "questions": [
+  {
+   "id": "w3.l5.q1",
+   "type": "mcq",
+   "prompt": "The ELBO is a lower bound on $\\log p(x;\\theta)$ because of:",
+   "options": [
+    "Jensen’s inequality ($\\log\\mathbb E[f]\\ge\\mathbb E[\\log f]$)",
+    "The chain rule",
+    "Bayes’ theorem alone",
+    "The reparameterisation trick"
+   ],
+   "correct": 0,
+   "explanation": "The log is concave, so the log of an average is at least the average of the logs.",
+   "source": {
+    "file": "W3",
+    "page": 48
+   }
+  },
+  {
+   "id": "w3.l5.q2",
+   "type": "numeric",
+   "prompt": "$\\log p(x;\\theta)=-3.2$ and ELBO $=-3.9$. What is $D_{KL}(q\\|p(z|x))$?",
+   "value": 0.7,
+   "tol": 0.01,
+   "explanation": "$\\log p(x)=\\text{ELBO}+D_{KL}$ ⇒ $D_{KL}=-3.2-(-3.9)=0.7$.",
+   "source": {
+    "file": "W3",
+    "page": 70
+   }
+  },
+  {
+   "id": "w3.l5.q3",
+   "type": "numeric",
+   "prompt": "$\\mathbb E_q[\\log p(x|z)]=-2.0$ and $D_{KL}(q\\|p(z))=0.8$. What is the ELBO?",
+   "value": -2.8,
+   "tol": 0.01,
+   "explanation": "ELBO $=\\mathbb E_q[\\log p(x|z)]-D_{KL}(q\\|p(z))=-2.0-0.8=-2.8$.",
+   "source": {
+    "file": "W3",
+    "page": 33
+   }
+  },
+  {
+   "id": "w3.l5.q4",
+   "type": "false",
+   "prompt": "Which statement is FALSE?",
+   "options": [
+    "The ELBO holds for any distribution $q$",
+    "The bound is tight iff $q(z)=p(z|x;\\theta)$",
+    "Maximising the ELBO over $\\theta,\\phi$ pushes up the log-likelihood",
+    "$D_{KL}(q\\|p(z|x))$ can be negative"
+   ],
+   "correct": 3,
+   "explanation": "KL is $\\ge0$ (W2 slide 33). That’s precisely why the ELBO never exceeds $\\log p(x)$.",
+   "source": {
+    "file": "W3",
+    "page": 57
+   }
+  },
+  {
+   "id": "w3.l5.q5",
+   "type": "mcq",
+   "prompt": "In the autoencoder form, which term plays the role of the *reconstruction* objective?",
+   "options": [
+    "$\\mathbb E_{q_\\phi(z|x)}[\\log p(x|z;\\theta)]$",
+    "$D_{KL}(q_\\phi(z|x)\\|p(z))$",
+    "$\\log p(x)$",
+    "$H(q)$"
+   ],
+   "correct": 0,
+   "explanation": "First term: $\\hat x\\approx x_i$ (autoencoding loss). Second term pulls $q$ toward the prior.",
+   "source": {
+    "file": "W3",
+    "page": 34
+   }
+  },
+  {
+   "id": "w3.l5.q6",
+   "type": "bug",
+   "prompt": "*“By Jensen, $\\log\\mathbb E_q[f]\\le\\mathbb E_q[\\log f]$, so the ELBO is an **upper** bound on $\\log p(x)$.”* Where is the mistake?",
+   "options": [
+    "No mistake",
+    "For the concave log, $\\log\\mathbb E[f]\\ge\\mathbb E[\\log f]$: the inequality is reversed, so the ELBO is a **lower** bound",
+    "Jensen isn’t involved",
+    "The log is convex"
+   ],
+   "correct": 1,
+   "explanation": "The auditor certifies *at least*; an upper bound would be a different (and unsafe) certificate.",
+   "source": {
+    "file": "W3",
+    "page": 48
+   }
+  }
+ ]
+}

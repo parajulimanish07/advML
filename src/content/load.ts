@@ -17,7 +17,7 @@ export type LoadedWorld = {
 }
 
 export const WORLDS: LoadedWorld[] = order
-  .map((id) => {
+  .map((id): LoadedWorld | null => {
     const meta = get<WorldMeta>(id, 'world')
     if (!meta) return null
     const levels = meta.levels.map((n) => get<Level>(id, n)!).filter(Boolean)

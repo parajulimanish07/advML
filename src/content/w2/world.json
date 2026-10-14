@@ -1,0 +1,19 @@
+{
+ "id": "w2",
+ "title": "Autoregressive Alley",
+ "week": "Week 2",
+ "subtitle": "FVSBN, NADE, MADE, RNNs, attention, PixelCNN, KL and MLE",
+ "emoji": "🧩",
+ "color": "#7c9cff",
+ "status": "ready",
+ "levels": [
+  "l1-chain-rule",
+  "l2-nade",
+  "l3-outputs",
+  "l4-made",
+  "l5-rnn-attention",
+  "l6-pixelcnn",
+  "l7-kl-mc",
+  "l8-mle"
+ ]
+}

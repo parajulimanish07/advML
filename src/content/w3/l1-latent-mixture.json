@@ -1,0 +1,176 @@
+{
+ "id": "w3.l1",
+ "title": "Latent variables & mixtures",
+ "blurb": "Hidden factors, Gaussian mixtures as shallow LVMs, clustering via the posterior",
+ "source": [
+  {
+   "file": "W3",
+   "page": 5
+  },
+  {
+   "file": "W3",
+   "page": 6
+  },
+  {
+   "file": "W3",
+   "page": 7
+  },
+  {
+   "file": "W3",
+   "page": 8
+  },
+  {
+   "file": "W3",
+   "page": 9
+  }
+ ],
+ "hook": {
+  "title": "The chef’s secret recipe",
+  "text": "You taste dishes ($x$), but you never see the chef's **secret recipe card** ($z$): cuisine, spice level, cooking time. Those hidden choices explain all the variation you taste. A photo is the same: pixels vary because of gender, eye colour, hair colour, pose, but nobody wrote those factors down, they are **latent**. If you could guess the recipe card, predicting the dish would be easy (the “$p(x|z)$ is simpler than $p(x)$” idea). Guessing the card from the dish, $p(z|x)$, is the hard direction.",
+  "recall": "Remember the chef’s recipe card: $z$ is hidden, $x$ is what you taste. Generating goes card → dish ($p(x|z)$); clustering goes dish → card ($p(z|x)$)."
+ },
+ "explore": {
+  "component": "lvmmix",
+  "intro": "A mixture of three Gaussians: first pick a component $z$, then draw $x$ from it. Colours show the hidden $z$.",
+  "tasks": [
+   "Click inside a clump, then between two clumps. How does $p(z|x)$ change?",
+   "Raise the spread σ. What happens to the posterior in the overlap region?"
+  ],
+  "takeaway": "Mixture of Gaussians: $z\\sim\\text{Categorical}$, $p(x|z=k)=\\mathcal N(\\mu_k,\\Sigma_k)$. The posterior $p(z|x)$ identifies the component, clustering from unlabeled data."
+ },
+ "build": {
+  "type": "fill",
+  "prompt": "Complete the mixture-of-Gaussians description.",
+  "template": "$z\\sim$ {0};  $x\\mid z{=}k\\sim$ {1};  clustering uses {2}.",
+  "blanks": [
+   {
+    "options": [
+     "Categorical(1,…,K)",
+     "Gaussian",
+     "Bernoulli(0.5) only"
+    ],
+    "correct": 0
+   },
+   {
+    "options": [
+     "N(μ_k, Σ_k)",
+     "N(0, I) for every k",
+     "Categorical"
+    ],
+    "correct": 0
+   },
+   {
+    "options": [
+     "the posterior p(z | x)",
+     "the prior p(z) alone",
+     "p(x | z) alone"
+    ],
+    "correct": 0
+   }
+  ],
+  "explanation": "Slides 8–9: $z\\sim\\text{Categorical}(1..K)$, $p(x|z=k)=\\mathcal N(\\mu_k,\\Sigma_k)$, and “the posterior $p(z|x)$ identifies the mixture component.”",
+  "source": {
+   "file": "W3",
+   "page": 8
+  }
+ },
+ "questions": [
+  {
+   "id": "w3.l1.q1",
+   "type": "mcq",
+   "prompt": "In an image dataset, which of these are **latent** variables (not recorded in the data)?",
+   "options": [
+    "Pixel values",
+    "Factors such as eye colour, hair colour and pose",
+    "The image file name",
+    "The number of pixels"
+   ],
+   "correct": 1,
+   "explanation": "Only the pixels $x$ are observed; the factors of variation $z$ must be inferred (the chef’s recipe).",
+   "source": {
+    "file": "W3",
+    "page": 6
+   }
+  },
+  {
+   "id": "w3.l1.q2",
+   "type": "mcq",
+   "prompt": "Generative process of a mixture of Gaussians:",
+   "options": [
+    "Sample $x$, then assign $z$",
+    "Pick a component $z$ by sampling, then sample $x$ from that Gaussian",
+    "Sample $x$ uniformly, then add noise",
+    "Sample $z$ from the data"
+   ],
+   "correct": 1,
+   "explanation": "Card first (recipe), then dish.",
+   "source": {
+    "file": "W3",
+    "page": 8
+   }
+  },
+  {
+   "id": "w3.l1.q3",
+   "type": "numeric",
+   "prompt": "Prior weights $p(z{=}1)=0.3$, $p(z{=}2)=0.7$. At a point $x$ the component densities are $\\mathcal N_1(x)=0.2$ and $\\mathcal N_2(x)=0.1$. Find $p(z{=}1\\mid x)$ (3 decimals).",
+   "value": 0.462,
+   "tol": 0.003,
+   "explanation": "Bayes: $\\frac{0.3\\cdot0.2}{0.3\\cdot0.2+0.7\\cdot0.1}=\\frac{0.06}{0.13}\\approx0.462$. Even though component 1 explains $x$ better, the prior favours component 2.",
+   "source": {
+    "file": "W3",
+    "page": 9
+   }
+  },
+  {
+   "id": "w3.l1.q4",
+   "type": "false",
+   "prompt": "Which statement is FALSE?",
+   "options": [
+    "If $z$ is chosen properly, $p(x|z)$ could be much simpler than $p(x)$",
+    "In a deep LVM $p(x|z)=\\mathcal N(\\mu_\\theta(z),\\Sigma_\\theta(z))$ with neural networks $\\mu_\\theta,\\Sigma_\\theta$",
+    "The conditionals $p(z|x)$ for images are easy to specify by hand",
+    "Latent variables are never observed in the training data"
+   ],
+   "correct": 2,
+   "explanation": "Slide 6: the challenge is that it’s very difficult to specify these conditionals by hand: guessing the recipe card is hard.",
+   "source": {
+    "file": "W3",
+    "page": 6
+   }
+  },
+  {
+   "id": "w3.l1.q5",
+   "type": "bug",
+   "prompt": "*“A mixture of Gaussians is supervised learning, because it outputs cluster labels.”* What’s the flaw?",
+   "options": [
+    "Nothing",
+    "It is unsupervised: it learns from unlabeled data, and the labels $z$ are latent",
+    "It requires labelled digits",
+    "Supervised learning has no latent variables"
+   ],
+   "correct": 1,
+   "explanation": "No one gave the model recipe cards; it infers them.",
+   "source": {
+    "file": "W3",
+    "page": 9
+   }
+  },
+  {
+   "id": "w3.l1.q6",
+   "type": "mcq",
+   "prompt": "Why is the posterior $p(z|x)$ useful for a mixture model?",
+   "options": [
+    "It is the generative process",
+    "It tells which component most likely produced the data point (clustering)",
+    "It equals the prior",
+    "It is the likelihood of $z$"
+   ],
+   "correct": 1,
+   "explanation": "Dish → card: which recipe likely made this dish?",
+   "source": {
+    "file": "W3",
+    "page": 9
+   }
+  }
+ ]
+}

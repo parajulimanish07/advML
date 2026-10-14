@@ -1,0 +1,155 @@
+{
+ "id": "w2.l5",
+ "title": "RNNs, attention & Transformers",
+ "blurb": "Recurrent summary, its issues, attention, masked self-attention",
+ "source": [
+  {
+   "file": "W2",
+   "page": 18
+  },
+  {
+   "file": "W2",
+   "page": 20
+  },
+  {
+   "file": "W2",
+   "page": 21
+  },
+  {
+   "file": "W2",
+   "page": 22
+  },
+  {
+   "file": "W2",
+   "page": 23
+  }
+ ],
+ "hook": {
+  "title": "One sticky note vs the whole notebook",
+  "text": "To predict the next word of “My friend opened the …” an **RNN** reads one word at a time and keeps a **single sticky note** $h_t$ summarising everything so far, overwriting it each step. It works for any length, but the note must squeeze in the entire history and you can't read ahead in parallel. **Attention** gives you the whole notebook plus an index: ask a question (the query), score every earlier page (key), and read mostly the relevant ones.",
+  "recall": "Remember the sticky note vs the notebook: RNNs compress history into one hidden vector processed sequentially; attention looks back at everything in proportion to relevance and, with masking, stays autoregressive."
+ },
+ "explore": {
+  "component": "attention",
+  "intro": "Tokens: “My friend opened the door”. Keys are fixed directions; you control the query.",
+  "tasks": [
+   "Aim the query at “friend”. How are the weights distributed?",
+   "Switch to the self-attention matrix. Turn the mask on and off."
+  ],
+  "takeaway": "Query · keys → softmax → weighted sum. Masked self-attention lets position $i$ see only $\\le i$, keeping the autoregressive factorisation while allowing parallel computation."
+ },
+ "build": {
+  "type": "order",
+  "prompt": "Order the steps of an attention mechanism (slide 21).",
+  "items": [
+   "Compare the current hidden state (query) to all past hidden states (keys), e.g. by dot product",
+   "Build an attention distribution over the history with a softmax",
+   "Construct a summary of the history as a weighted sum",
+   "Use the summary and current hidden state to predict the next token"
+  ],
+  "explanation": "Exactly the four bullets of the attention slide.",
+  "source": {
+   "file": "W2",
+   "page": 22
+  }
+ },
+ "questions": [
+  {
+   "id": "w2.l5.q1",
+   "type": "mcq",
+   "prompt": "How does the number of parameters of an RNN depend on the sequence length $n$?",
+   "options": [
+    "It grows linearly in $n$",
+    "It grows quadratically in $n$",
+    "It is constant w.r.t. $n$ ($b_0, W_{hh}, W_{xh}, W_{hy}$)",
+    "It grows as $2^n$"
+   ],
+   "correct": 2,
+   "explanation": "The same weights are reused at every step: one sticky-note routine for any length.",
+   "source": {
+    "file": "W2",
+    "page": 18
+   }
+  },
+  {
+   "id": "w2.l5.q2",
+   "type": "false",
+   "prompt": "Which statement about RNNs is FALSE?",
+   "options": [
+    "They can be applied to sequences of arbitrary length",
+    "Likelihood evaluation is sequential, which makes training slow",
+    "Exploding/vanishing gradients occur when accessing information from many steps back",
+    "Generation can be parallelised across time steps"
+   ],
+   "correct": 3,
+   "explanation": "Generation is sequential in *any* autoregressive model: you need token $t$ before sampling $t+1$.",
+   "source": {
+    "file": "W2",
+    "page": 20
+   }
+  },
+  {
+   "id": "w2.l5.q3",
+   "type": "numeric",
+   "prompt": "Attention scores for three past tokens are $(\\ln3,\\,0,\\,0)$. What is the attention weight on the first token after softmax?",
+   "value": 0.6,
+   "tol": 0.005,
+   "explanation": "$e^{\\ln3}=3$, $e^0=1$, $e^0=1$, total 5, so $3/5=0.6$.",
+   "source": {
+    "file": "W2",
+    "page": 22
+   }
+  },
+  {
+   "id": "w2.l5.q4",
+   "type": "mcq",
+   "prompt": "Why do generative Transformers use **masked** self-attention?",
+   "options": [
+    "To save memory",
+    "To preserve the autoregressive structure (a token can’t attend to future tokens)",
+    "To make attention weights uniform",
+    "To remove the softmax"
+   ],
+   "correct": 1,
+   "explanation": "Black tape again: the future must be hidden to keep $p(x_t|x_{<t})$ valid.",
+   "source": {
+    "file": "W2",
+    "page": 23
+   }
+  },
+  {
+   "id": "w2.l5.q5",
+   "type": "mcq",
+   "prompt": "In attention, what is compared to the *keys* to build the attention distribution?",
+   "options": [
+    "The next word",
+    "The query (the current hidden state)",
+    "The loss",
+    "The training labels"
+   ],
+   "correct": 1,
+   "explanation": "Query vs keys by dot product, then softmax.",
+   "source": {
+    "file": "W2",
+    "page": 22
+   }
+  },
+  {
+   "id": "w2.l5.q6",
+   "type": "bug",
+   "prompt": "*“Transformers beat RNNs because they can generate all tokens in parallel at test time.”* What’s the error?",
+   "options": [
+    "None",
+    "Autoregressive generation is still sequential; the Transformer’s advantage is parallel *training/likelihood evaluation* (no recursion)",
+    "Transformers cannot be parallelised at all",
+    "RNNs are faster"
+   ],
+   "correct": 1,
+   "explanation": "Sticky-note vs notebook changes how history is read and trained, not the fact that you must write the next word before the one after.",
+   "source": {
+    "file": "W2",
+    "page": 23
+   }
+  }
+ ]
+}

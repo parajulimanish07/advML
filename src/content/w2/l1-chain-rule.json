@@ -1,0 +1,142 @@
+{
+ "id": "w2.l1",
+ "title": "Chain rule & FVSBN",
+ "blurb": "Autoregressive factorisation, sigmoid belief network",
+ "source": [
+  {
+   "file": "W2",
+   "page": 5
+  },
+  {
+   "file": "W2",
+   "page": 6
+  },
+  {
+   "file": "W2",
+   "page": 7
+  }
+ ],
+ "hook": {
+  "title": "Painting one stroke at a time",
+  "text": "You want a machine that paints digits. A 28×28 picture has 784 pixels, far too many to describe at once. So paint like a person does: start top-left, and choose each pixel *after looking at everything already painted*. The first stroke needs no context; the second considers the first; the 784th considers the previous 783. Multiply the probabilities of all those choices and you have the probability of the whole picture. That's the **chain rule**, and it's always legal.",
+  "recall": "Remember the painter: every pixel is chosen after looking at the earlier strokes. Probability of the picture = product of the stroke probabilities, and sampling must go stroke by stroke."
+ },
+ "explore": {
+  "component": "autoreg",
+  "intro": "A 3-pixel FVSBN: $\\hat x_i=\\sigma(\\alpha_0^i+\\sum_{j<i}\\alpha_j^ix_j)$. Toggle pixels and move weights.",
+  "tasks": [
+   "Choose $x=(0,1,1)$. Read off the three factors and check that their product equals the table entry.",
+   "Press **Sample** repeatedly. In which order are pixels decided?"
+  ],
+  "takeaway": "$p(x_1,x_2,x_3)=p(x_1)\\,p(x_2|x_1)\\,p(x_3|x_1,x_2)$. Evaluate by multiplying conditionals; sample by drawing one pixel at a time. The 8 probabilities always sum to 1."
+ },
+ "build": {
+  "type": "order",
+  "prompt": "Order the steps to **sample** an image from an autoregressive model (FVSBN).",
+  "items": [
+   "Sample $\\bar x_1\\sim p(x_1)$",
+   "Sample $\\bar x_2\\sim p(x_2\\mid x_1=\\bar x_1)$",
+   "Sample $\\bar x_3\\sim p(x_3\\mid x_1=\\bar x_1,x_2=\\bar x_2)$",
+   "Continue pixel by pixel until $x_n$"
+  ],
+  "explanation": "Slide 6 lists this exact sequence. Each pixel conditions on the samples already drawn, so generation cannot be parallelised.",
+  "source": {
+   "file": "W2",
+   "page": 7
+  }
+ },
+ "questions": [
+  {
+   "id": "w2.l1.q1",
+   "type": "numeric",
+   "prompt": "FVSBN: $p(x_1{=}1)=0.8$, $p(x_2{=}1\\mid x_1{=}0)=0.3$, $p(x_3{=}1\\mid x_1{=}0,x_2{=}1)=0.6$. Compute $p(x_1{=}0,x_2{=}1,x_3{=}1)$.",
+   "value": 0.036,
+   "tol": 0.001,
+   "explanation": "Multiply the three conditionals: $(1-0.8)\\times0.3\\times0.6=0.2\\times0.18=0.036$, as in the slide's $(1-\\hat x_1)\\hat x_2\\hat x_3$ example.",
+   "source": {
+    "file": "W2",
+    "page": 7
+   }
+  },
+  {
+   "id": "w2.l1.q2",
+   "type": "mcq",
+   "prompt": "Which factorisation of $p(x_1,x_2,x_3)$ is the autoregressive chain rule?",
+   "options": [
+    "$p(x_1)p(x_2)p(x_3)$",
+    "$p(x_1)p(x_2|x_1)p(x_3|x_1,x_2)$",
+    "$p(x_3|x_1,x_2)\\,p(x_1,x_2)\\,/\\,p(x_3)$",
+    "$p(x_1|x_2,x_3)p(x_2|x_3)p(x_3|x_1)$"
+   ],
+   "correct": 1,
+   "explanation": "Each variable conditions on **all earlier ones** in the chosen ordering, the painter looking at earlier strokes.",
+   "source": {
+    "file": "W2",
+    "page": 6
+   }
+  },
+  {
+   "id": "w2.l1.q3",
+   "type": "numeric",
+   "prompt": "How many parameters does an FVSBN over $n=10$ pixels have (sum of the sizes of all logistic regressions, including biases)? Slide: $1+2+3+\\dots+n$.",
+   "value": 55,
+   "tol": 0.5,
+   "explanation": "$1+2+\\dots+10=55=n(n+1)/2\\approx n^2/2$.",
+   "source": {
+    "file": "W2",
+    "page": 7
+   }
+  },
+  {
+   "id": "w2.l1.q4",
+   "type": "false",
+   "prompt": "Which statement about FVSBN is FALSE?",
+   "options": [
+    "Each conditional $p(x_i|x_{<i})$ is Bernoulli with a logistic-regression parameter",
+    "To evaluate $p(x)$ you multiply all the conditionals",
+    "You can sample all pixels in parallel because each conditional is independent of the others",
+    "The model has about $n^2/2$ parameters"
+   ],
+   "correct": 2,
+   "explanation": "Conditionals depend on earlier pixels, so the painter must decide pixel $i$ before pixel $i+1$. Sampling is sequential.",
+   "source": {
+    "file": "W2",
+    "page": 7
+   }
+  },
+  {
+   "id": "w2.l1.q5",
+   "type": "bug",
+   "prompt": "A student says: *“To sample from my autoregressive model I draw every pixel independently from its marginal $p(x_i)$.”* What’s wrong?",
+   "options": [
+    "Nothing, that’s how it works",
+    "The conditional $p(x_i\\mid x_{<i})$ must be used with the *already-sampled* earlier pixels. Marginals ignore the dependencies the chain rule encodes",
+    "Marginals are always zero",
+    "Pixels should be sampled right to left"
+   ],
+   "correct": 1,
+   "explanation": "The painter looks back at earlier strokes. Independent marginal sampling would give noise, not digits.",
+   "source": {
+    "file": "W2",
+    "page": 7
+   }
+  },
+  {
+   "id": "w2.l1.q6",
+   "type": "mcq",
+   "prompt": "Why are the conditionals $p(x_i\\mid x_{<i})$ parameterised by logistic regressions rather than stored as tables?",
+   "options": [
+    "Tables are less accurate",
+    "The conditionals are too complex to store in tabular form (the table size explodes)",
+    "Logistic regression is always exact",
+    "Tables can’t be multiplied"
+   ],
+   "correct": 1,
+   "explanation": "A table for $p(x_{784}|x_1..x_{783})$ would need $2^{783}$ rows; a logistic regression compresses it to 784 numbers.",
+   "source": {
+    "file": "W2",
+    "page": 6
+   }
+  }
+ ]
+}

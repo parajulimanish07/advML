@@ -1,0 +1,155 @@
+{
+ "id": "w3.l3",
+ "title": "From autoencoder to VAE: sampling",
+ "blurb": "Why plain encoders can’t be sampled, VAE latent space, mean + variance vectors",
+ "source": [
+  {
+   "file": "W3",
+   "page": 22
+  },
+  {
+   "file": "W3",
+   "page": 23
+  },
+  {
+   "file": "W3",
+   "page": 24
+  },
+  {
+   "file": "W3",
+   "page": 25
+  },
+  {
+   "file": "W3",
+   "page": 26
+  }
+ ],
+ "hook": {
+  "title": "Islands vs a continent",
+  "text": "A regular autoencoder's codes for training digits are like **scattered islands**: off-centre, oddly shaped, with open ocean between them. Pick a random coordinate and you'll probably land in water, and the decoder draws garbage. A VAE's extra penalty bulldozes the islands into one **continent centred at zero**, with fuzzy overlapping coasts, so almost any random coordinate from the standard normal lands on land that decodes to *something* digit-like.",
+  "recall": "Remember islands vs continent: the KL term centres the codes and makes the latent space continuous, so $z\\sim\\mathcal N(0,I)$ decodes to something meaningful."
+ },
+ "explore": {
+  "component": "latentsample",
+  "intro": "Grey dashed ring = where the prior $\\mathcal N(0,I)$ puts its mass. Coloured discs = regions that decode to real digits.",
+  "tasks": [
+   "At strength 0 (plain AE): what fraction of prior samples decode to something?",
+   "Raise the KL strength. What happens to the clusters’ position and size, and to the fraction?"
+  ],
+  "takeaway": "Challenges of a regular AE: odd-shaped distribution, not centred at (0,0), not necessarily continuous. A VAE encodes each $x$ as a *Gaussian* with mean and variance and pulls it towards $\\mathcal N(0,I)$."
+ },
+ "build": {
+  "type": "order",
+  "prompt": "Order the steps to generate a **new** digit from a trained VAE.",
+  "items": [
+   "Sample $z\\sim\\mathcal N(0,I)$ from the prior",
+   "Feed $z$ to the decoder $p_\\theta(x|z)$",
+   "Read the decoder’s output distribution (or its mean)",
+   "Return that as the generated image"
+  ],
+  "explanation": "Ancestral sampling $z\\sim p(z)$, $x\\sim p(x|z;\\theta)$ (slide 38). The encoder isn’t needed to generate.",
+  "source": {
+   "file": "W3",
+   "page": 39
+  }
+ },
+ "questions": [
+  {
+   "id": "w3.l3.q1",
+   "type": "mcq",
+   "prompt": "Which of these is **not** listed as a challenge of sampling from a regular autoencoder?",
+   "options": [
+    "Oddly shaped distribution that’s hard to sample in a balanced way",
+    "Not centred at (0, 0)",
+    "Not necessarily continuous",
+    "The decoder has too many layers"
+   ],
+   "correct": 3,
+   "explanation": "Slide 23 lists exactly the first three.",
+   "source": {
+    "file": "W3",
+    "page": 23
+   }
+  },
+  {
+   "id": "w3.l3.q2",
+   "type": "mcq",
+   "prompt": "A VAE assumes a diagonal covariance for $q_\\phi(z|x)$. Consequence?",
+   "options": [
+    "No interaction between latent features; only a mean vector and a variance vector are needed",
+    "It needs a full covariance matrix",
+    "The latent must be 1-D",
+    "$\\sigma$ must be 1"
+   ],
+   "correct": 0,
+   "explanation": "Slide 25: diagonal covariance ⇒ no covariance matrix, just $\\mu$ and $\\sigma^2$ vectors.",
+   "source": {
+    "file": "W3",
+    "page": 25
+   }
+  },
+  {
+   "id": "w3.l3.q3",
+   "type": "numeric",
+   "prompt": "VAE sampling: $\\mu=1.5$, $\\sigma=0.5$, $\\epsilon=-2$. Compute $z=\\mu+\\sigma\\epsilon$.",
+   "value": 0.5,
+   "tol": 0.01,
+   "explanation": "$1.5+0.5\\cdot(-2)=0.5$.",
+   "source": {
+    "file": "W3",
+    "page": 26
+   }
+  },
+  {
+   "id": "w3.l3.q4",
+   "type": "mcq",
+   "prompt": "The slide says the noise $\\epsilon$ is there because the VAE must ensure what?",
+   "options": [
+    "Larger images",
+    "That points in a neighbourhood encode the same image, so decoding any of them gives that image (a continuous latent space)",
+    "That the decoder is linear",
+    "That training is faster"
+   ],
+   "correct": 1,
+   "explanation": "Fuzzy coasts: nearby codes decode alike, so there are no holes.",
+   "source": {
+    "file": "W3",
+    "page": 26
+   }
+  },
+  {
+   "id": "w3.l3.q5",
+   "type": "false",
+   "prompt": "Which statement is FALSE?",
+   "options": [
+    "$z=\\mu+\\sigma\\odot\\epsilon$ with $\\epsilon\\sim\\mathcal N(0,I)$",
+    "$\\mu$ and $\\sigma$ are parameter vectors included in training and backprop",
+    "The VAE assumes a diagonal covariance",
+    "$\\epsilon$ is a trainable parameter learned by backprop"
+   ],
+   "correct": 3,
+   "explanation": "$\\epsilon$ is fresh noise on each forward pass; the encoder’s $\\mu,\\sigma$ are what is learned.",
+   "source": {
+    "file": "W3",
+    "page": 26
+   }
+  },
+  {
+   "id": "w3.l3.q6",
+   "type": "bug",
+   "prompt": "*“To generate a brand-new digit with a VAE, encode a test digit and decode the code.”* What’s wrong?",
+   "options": [
+    "Nothing",
+    "That reconstructs the input; new digits come from decoding $z\\sim\\mathcal N(0,I)$ sampled from the prior",
+    "The decoder can’t decode codes",
+    "Test digits can’t be encoded"
+   ],
+   "correct": 1,
+   "explanation": "That would be a ferry trip back to the same island.",
+   "source": {
+    "file": "W3",
+    "page": 25
+   }
+  }
+ ]
+}
