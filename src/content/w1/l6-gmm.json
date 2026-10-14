@@ -1,0 +1,150 @@
+{
+ "id": "w1.l6",
+ "title": "Graphical models & Gaussian mixtures",
+ "blurb": "PGMs, latent variables, GMM, EM",
+ "source": [
+  {
+   "file": "W1",
+   "page": 24
+  },
+  {
+   "file": "W1",
+   "page": 25
+  },
+  {
+   "file": "W1",
+   "page": 26
+  },
+  {
+   "file": "W1",
+   "page": 28
+  },
+  {
+   "file": "W1",
+   "page": 29
+  }
+ ],
+ "hook": {
+  "title": "The mystery cat scale",
+  "text": "A vet records the weights of 200 cats, but nobody wrote down which are male and which are female. The histogram has *two humps*. Gender $z$ is a hidden (latent) variable that *influences* the weight $x$ you can see. So the overall distribution is a **mixture**: pick a gender, then draw a weight from that gender's Gaussian. To fit it without labels you play a two-beat game: **guess** who is probably male/female (E), then **re-measure** each group's average and spread (M). Repeat.",
+  "recall": "Remember the cat scale: $z$ (gender) is hidden, $x$ (weight) is seen. EM alternates guessing the hidden labels (E) and refitting each group (M)."
+ },
+ "explore": {
+  "component": "gmm",
+  "intro": "90 cat weights. The two Gaussians start badly placed.",
+  "tasks": [
+   "Press **E-step**: the colours show $p(z\\mid x)$ for each cat. Then **M-step**. Repeat a few times.",
+   "Press **Run 10 EM iterations**. Does the log-likelihood ever go down?"
+  ],
+  "takeaway": "E: compute $p(z\\mid x)$ for every point. M: update $\\{\\omega_k,\\mu_k,\\sigma_k^2\\}$ using those soft assignments. The log-likelihood rises each round."
+ },
+ "build": {
+  "type": "order",
+  "prompt": "Order one EM-trained Gaussian-mixture procedure (slide 26).",
+  "items": [
+   "Initialise $\\{\\omega_k,\\mu_k,\\sigma_k^2\\}_{k=1}^K$",
+   "E-step: compute the expected probabilities $p(z)$ that each point belongs to each Gaussian",
+   "M-step: update $\\{\\omega_k,\\mu_k,\\sigma_k^2\\}$ using those probabilities",
+   "Repeat E and M"
+  ],
+  "explanation": "The slide lists (i) compute the expected probabilities p(z), then (ii) update the Gaussian parameters. Initialisation and repetition are the standard wrapper.",
+  "source": {
+   "file": "W1",
+   "page": 29
+  }
+ },
+ "questions": [
+  {
+   "id": "w1.l6.q1",
+   "type": "mcq",
+   "prompt": "In the cat-weight model, which variable is observed and which is latent?",
+   "options": [
+    "$x$ (weight) observed, $z$ (gender) latent",
+    "$z$ observed, $x$ latent",
+    "Both are observed",
+    "Both are latent"
+   ],
+   "correct": 0,
+   "explanation": "You see the scale reading $x$; gender $z$ is never recorded.",
+   "source": {
+    "file": "W1",
+    "page": 25
+   }
+  },
+  {
+   "id": "w1.l6.q2",
+   "type": "numeric",
+   "prompt": "Cat mixture: $\\omega=p(z{=}1)=0.4$ (male), male mean 5.0, female mean 3.5. What is $\\mathbb E[x]$, the overall mean weight?",
+   "value": 4.1,
+   "tol": 0.01,
+   "explanation": "$\\mathbb E[x]=(1-\\omega)\\mu(0)+\\omega\\mu(1)=0.6\\cdot3.5+0.4\\cdot5.0=4.1$ (mean of a mixture = weighted average of component means).",
+   "source": {
+    "file": "W1",
+    "page": 26
+   }
+  },
+  {
+   "id": "w1.l6.q3",
+   "type": "mcq",
+   "prompt": "What does EM do in its **E-step** for a Gaussian mixture?",
+   "options": [
+    "Updates the means $\\mu_k$",
+    "Computes the expected probabilities $p(z)$ that points belong to each Gaussian",
+    "Samples a new dataset",
+    "Maximises the log-likelihood by gradient ascent"
+   ],
+   "correct": 1,
+   "explanation": "E = guess who’s male and female (softly). M then uses the guesses to refit.",
+   "source": {
+    "file": "W1",
+    "page": 29
+   }
+  },
+  {
+   "id": "w1.l6.q4",
+   "type": "false",
+   "prompt": "Which statement about Gaussian mixture models is FALSE?",
+   "options": [
+    "They can be trained with EM or gradient-based optimisation",
+    "The log-likelihood has the form $\\log\\sum_k\\omega_k\\mathcal N(x;\\mu_k,\\sigma_k^2)$",
+    "In EM, first the parameters are updated, then the probabilities $p(z)$ are computed",
+    "The mixture weights satisfy $\\sum_k\\omega_k=1$ (Categorical)"
+   ],
+   "correct": 2,
+   "explanation": "The order is the reverse: E-step (compute $p(z)$) first, then M-step (update parameters), because you need the guesses to refit the groups.",
+   "source": {
+    "file": "W1",
+    "page": 29
+   }
+  },
+  {
+   "id": "w1.l6.q5",
+   "type": "bug",
+   "prompt": "*“Since $p(x,z)=p(z)p(x|z)$, the weight distribution is just $p(z)p(x|z)$ for the observed gender $z$.”* What’s wrong?",
+   "options": [
+    "Nothing",
+    "Gender is **not observed**; $p(x)$ must sum over all $z$: $p(x)=\\sum_z p(z)p(x|z)$",
+    "$p(z)$ should be multiplied by $\\log p(x)$",
+    "The Gaussian should be Bernoulli"
+   ],
+   "correct": 1,
+   "explanation": "With gender hidden you must account for both humps: marginalise out $z$, which gives the mixture $\\sum_k\\omega_k\\mathcal N$.",
+   "source": {
+    "file": "W1",
+    "page": 26
+   }
+  },
+  {
+   "id": "w1.l6.q6",
+   "type": "numeric",
+   "prompt": "A two-component mixture with $\\omega=(0.5,0.5)$. At a point $x$, component densities are 0.4 and 0.2. What is $p(x)=\\sum_k\\omega_k\\mathcal N(x;\\mu_k,\\sigma_k^2)$?",
+   "value": 0.3,
+   "tol": 0.005,
+   "explanation": "$0.5\\cdot0.4+0.5\\cdot0.2=0.3$.",
+   "source": {
+    "file": "W1",
+    "page": 28
+   }
+  }
+ ]
+}

@@ -1,0 +1,557 @@
+=== PAGE 1 ===
+                                t
+Advanced Machine Learning - COMP8221
+Deep Generative Models - 1
+
+                             raf
+Dr. Qiongkai Xu, qiongkai.xu@mq.edu.au, School of Computing
+
+=== PAGE 2 ===
+Recommended textbook
+
+                    t
+                 raf    1 / 32
+
+=== PAGE 3 ===
+Outline
+
+                               t
+                            raf
+ Probabilities and Distributions
+
+ Probabilistic Graphical Models
+
+ Continuous Optimization
+
+                                   2 / 32
+
+=== PAGE 4 ===
+   t
+raf
+ Probabilities and
+ Distributions
+
+=== PAGE 5 ===
+Random variables
+
+                             t
+  • Random variables x: its outcome/value might be changed/uncertain,
+    randomness
+
+                          raf
+  • Sample space Ω: random variable x’s potential values
+  • E.g., flip a coin (Ω = {Positive, Negative}), tomorrow’s temperature
+    Ω = R, stock market price Ω = R, pixels in an image if taken a picture
+    Ω = {0, 1, 2, 3, . . . , 255}
+  • Observations (e.g.) D = {x1 = 234, x2 = 12, . . .}: the detail values of
+    random variables in a sequence of observations
+  • Question: What are the chances of all the potential values? What if some
+    values are more likely than other values?
+
+                                                                               3 / 32
+
+=== PAGE 6 ===
+Probability distribution
+
+                               t
+                            raf
+   • E.g. Pixels values, some pixels values are more likely than other pixel values
+   • We use a probability distribution p(x) to represent the likelihood value
+   • x ∼ p(x) denotes we sample an x from the probability distribution p(x).
+   • Requirements of p(x):
+       • If x is discrete-valued, 0 ≤ p(x) ≤ 1; if x is continuous-valued, p(x) ≥ 0.
+       • The probabilities are sum to 1.
+                                           P                   R
+                                             x∈Ω p(x) = 1 or x∈Ω p(x)dx = 1,
+
+   • Question: pixel values, p(x = 0) + p(x = 1) + . . . + p(x = 255) =?
+
+                                                                                       4 / 32
+
+=== PAGE 7 ===
+Discrete probabilities
+
+                              t
+   • The joint discrete probability is define as (nij is the number of events with
+
+                           raf
+     x = xi , y = yj )
+
+                                                                        n42
+                                                 P(x = x4 , y = y2 ) = P             (1)
+                                                                         i,j nij
+
+                                                                                      5 / 32
+
+=== PAGE 8 ===
+Continuous probabilities
+
+                               t
+                            raf
+   • Probability density function (pdf): A function f (x) is a pdf if: (1), f (x) ≥ 0;
+        R
+     (2) f (x)dx = 1.
+                       Rb
+   • P(a ≤ X ≤ b) = a f (x)dx
+   • Cumulative distribution function (cdf): FX (x) = P(X ≤ x)
+
+                                                                                         6 / 32
+
+=== PAGE 9 ===
+Contrasting discrete and continuous probabilities
+
+                        t
+                     raf                            7 / 32
+
+=== PAGE 10 ===
+Sum rule, product rule
+
+                               t
+                        ( P
+                                 p(x, y), if y is discrete;
+   • Sum rule: p(x) =      R y∈Y
+                            Y
+                              p(x, y)dy, if y is continuous.
+
+                            raf
+                                                               R
+     From joint distribution to marginal distribution: p(xi ) = p(x1 , . . . , xD )dx\i
+   • Product rule: p(x, y) = p(y|x)p(x) = p(x|y)p(y)
+     From joint distribution to conditional distribution.
+   • p(y|x): conditional probability, given x, what is the probability of y
+   • E.g., if x = cat, y = pixels, p(y|x) the probability of pixels for a cat, p(y)
+     the probability of pixels for all the animals, persons, buildings, etc.
+   • Independence: p(x, y) = p(x)p(y). I.e., p(y|x) = p(y), p(x|y) = p(x)
+   • Question, x: pixels; y: weather. What is p(x|y)? what is p(y|x)?
+
+                                                                                          8 / 32
+
+=== PAGE 11 ===
+Modelling
+
+                               t
+                            raf
+  • A common assumption for a dataset D is identically and independently
+    distributed (i.i.d.):
+      • all xn ∈ D follow the same distribution, i.e., p(xn )
+      • all xn are independent from others, i.e., p(x1 , . . . , xN ) = N
+                                                                       Q
+                                                                         n=1 p(xn ).
+  • Question: Flipping a coin
+      • identically: ?
+      • independently: ?
+
+                                                                                       9 / 32
+
+=== PAGE 12 ===
+Bayes’ Theorem
+
+                             t
+  • Assume we have prior knowledge p(x) about unknown random variable x
+
+                          raf
+    and relationship p(y|x) between x and observed random variable y, the
+    Bayes’ Theorem is written as:
+
+                                            p(y|x)p(x)
+                                 p(x|y) =                                       (2)
+                                               p(y)
+
+    where p(x|y) is the posterior, p(y|x) is the likelihood, p(x) is the prior, and
+    p(y) is the evidence.
+
+                                                                                      10 / 32
+
+=== PAGE 13 ===
+Mean
+
+                                 t
+  • The mean of a random variable X with x ∈ RD is an average and is defined
+    as:
+
+                              raf
+                                              
+                                     EX1 [x1 ]
+                                        ..         D
+                         EX [x] =             ∈R                        (3)
+                                              
+                                         .
+                                            EXD [xD ]
+    where
+                    (    R
+                             x p(x )dx ,       if X is a continuous random variable;
+     EXd [xd ] :=       P X d d d
+                         xi ∈X xi p(xd = xi ),   if X is a discrete random variable;
+                                                                                   (4)
+  • Question: flipping a coin, head = 1, tail = 0, p(head = 1) = 0.5, what is
+    the mean value? What if p(head = 1) = 0.7?
+                                                                                       11 / 32
+
+=== PAGE 14 ===
+Covariance
+
+                              t
+  • Univariate covariance of two univariate random variable X , Y ∈ R is
+    calculated as:
+
+                           raf
+     CovX ,Y [x, y ] := EX ,Y [(x − EX [x])(y − EY [y ])] = EX ,Y [xy ] − EX [x]EY [y ]
+                                                                                    (5)
+
+  • Multivariate covariance of two multivariate random variables
+    X ∈ RD , Y ∈ RE is:
+
+             CovX ,Y [x, y] := EX ,Y [xy⊤ ] − EX [x]EY [y]⊤ = CovY ,X [y, x]⊤      (6)
+
+  • Variance of x ∈ RD is: VX [x] = CovX [x, x].
+  • Question: what if x, y are independent?
+                                                                                      12 / 32
+
+=== PAGE 15 ===
+Sums and Transformations of Random Variables
+
+                            t
+  • Consider two random variables x, y ∈ RD , then
+
+                         raf
+                         E[x + y] =E[x] + E[y]
+                         E[x − y] =E[x] − E[y]
+                         V[x + y] =V[x] + V[y] + 2Cov[x, y]
+                        V[x − y] =V[x] + V[y] − 2Cov[x, y]
+                       E[Ax + b] =AE[x] + b
+                       V[Ax + b] =V[Ax] = AV[x]A⊤             (7)
+
+                                                                13 / 32
+
+=== PAGE 16 ===
+Parameters of distributions
+
+                                t
+   • How to parameterize a distribution? Use parameter θ, denoting the
+     distribution p(x; θ).
+   • There are many formats of distributions: Gaussian (normal) distribution,
+
+                             raf
+     Bernoulli distribution, categorical distribution.
+   • E.g., Bernoulli distribution for binary data x = {0, 1},
+                                                  (
+                                                       θ,   x = 1;
+                      p(x; θ) = θx (1 − θ)1−x =                               (8)
+                                                     1 − θ, x = 0.
+   • Categorical distribution for categorical data x = 1, 2, 3, . . . , K ,
+                                                
+                                                
+                                                  θ1 , x = 1;
+                                    YK          
+                                                 θ , x = 2;
+                                                     2
+                         p(x; θ) =      θkx=k =                               (9)
+                                    k=1
+                                                
+                                                  . . .  ...
+                                                
+                                                   θK x = K .
+                                                
+                                                                                14 / 32
+
+=== PAGE 17 ===
+Gaussian distribution
+
+                              t
+   • The pdf of univariate Gaussian distribution (i.e. x ∈ N (x; θ = {µ, σ 2 })) is:
+
+                           raf
+                                                         (x − µ)2
+                                                                 
+                                  2         1
+                   p(x; θ = {µ, σ }) = √         exp −                          (10)
+                                           2πσ 2            2σ 2
+
+   • The pdf of multivariate Gaussian distribution (i.e. x ∈ N (x; θ = {µ, Σ})) is:
+                                                                        
+                                − D2   − 12        1         ⊤ −1
+       p(x; θ = {µ, Σ}) = (2π) |Σ| exp − (x − µ) Σ (x − µ)                   (11)
+                                                   2
+
+     where x ∈ RD .
+   • When µ = 0 , Σ = I, it is called the standard normal distribution.
+
+                                                                                   15 / 32
+
+=== PAGE 18 ===
+Visualisation of Gaussian distributions
+
+                        t
+                     raf                  16 / 32
+
+=== PAGE 19 ===
+Sums and Linear Transformations
+
+                              t
+                           raf
+  • For x ∈ N (x; µx , Σx ), y ∈ N (y; µy , Σy ), a, b ∈ R, we have
+
+                         x + y ∼ N (µx + µy , Σx + Σy )
+                       ax + by ∼ N (aµx + bµy , a2 Σx + b 2 Σy )
+
+  • For x ∈ N (x; µx , Σx ), x ∈ RD×1 , A ∈ RM×D , we have
+
+                                Ax ∼ N (Aµx , AΣx A⊤ )                (12)
+
+                                                                         17 / 32
+
+=== PAGE 20 ===
+Sampling from Multivariate Gaussian distributions
+
+                             t
+                          raf
+   • We assume we can generate samples from a multivariate standard normal as
+     x ∼ N (00, I).
+   • Use the linear transformation property, if y = Lx + µ, where LL⊤ = Σ, then
+     y ∼ N (µ, Σ)
+   • The red part refers to the Cholesky decomposition LL⊤ = Σ, where L is the
+     lower-triangular matrix.
+
+                                                                              18 / 32
+
+=== PAGE 21 ===
+Learning
+
+                              t
+  • Given observations D = {x1 , x2 , . . . , xN }, how to estimate parameters θ?
+
+                           raf
+  • This is called learning or training.
+  • In the probabilistic setting, the simplest strategy is to maximize the
+    log-likelihood
+                                                      N
+                                                      X
+                   ∗
+                  θ = arg max log p(D; θ)= arg max           log p(xn ; θ)      (13)
+                           θ                     θ     n=1
+
+    The second = is based on the i.i.d. assumption, i.e.,
+    p(D; θ) = Nn=1 p(xn ; θ)
+              Q
+
+                                                                                    19 / 32
+
+=== PAGE 22 ===
+Generalization
+
+                             t
+   • We have true distribution about observed data (A.), and a fitted model (B.).
+   • The model assigns probabilities to data, however, it also assigns some
+     probabilities to unseen data.
+
+                          raf
+   • Generalization: a model generalizes to regions where no or little data was
+     observed.
+   • Generalization capability is the key factor is assessing model performance.
+     (test data performance.)
+
+                                                                                20 / 32
+
+=== PAGE 23 ===
+   t
+raf
+ Probabilistic
+ Graphical Models
+
+=== PAGE 24 ===
+Probabilistic Graphical Models (PGMs)
+
+                             t
+  • PGMs: a graph express the conditional dependence structure between
+    random variables
+  • E.g., a grey node denotes an observable variable, a white node is a latent
+
+                          raf
+    variable, and arrows denote conditional dependencies
+
+           Figure 2: Example graphical model showing the dependencies
+
+  • The joint distribution can be written as:
+                         p(A, B, C ) = P(C |A, B)P(A)P(B)                   (14)
+                                                                                 21 / 32
+
+=== PAGE 25 ===
+Gaussian Mixture Models
+
+                             t
+  • Mixture model is a simple and very effective model
+
+                          raf
+  • E.g., random variable x - the weight of cats; however, there are female cats
+    and male cats;
+  • True distribution of female cats is Gaussian; true distribution of male cates
+    is Gaussian.
+  • Question: what is the overall distribution over the weight of cats?
+  • Analysis: x is observable, the gender of cats is unknown, denoted as z.
+    z ∈ {1 = male, 0 = female}; the gender z influences the weight of the cat x
+
+                                                                                    22 / 32
+
+=== PAGE 26 ===
+Gaussian Mixture Models
+
+                              t
+  • The joint distribution of weight x and gender of cat z can be decomposed as:
+
+                           raf
+                                  p(x, z) = p(z)p(x|z)                          (15)
+
+  • x is real-valued: Gaussian distribution; z is binary: Bernoulli distribution:
+
+              p(x, z) =N (x; µ(z), σ 2 (z))Bernoulli(z|ω)
+                      =(1 − ω)N (x; µ(0), σ 2 (0)) + ωN (x; µ(1), σ 2 (1))      (16)
+
+    where the dependence between x and z is written through the mean µ(z)
+    and the variance σ 2 (z).
+
+                                                                                    23 / 32
+
+=== PAGE 27 ===
+Visualization of Gaussian Mixture Models
+
+                       t
+                    raf                    24 / 32
+
+=== PAGE 28 ===
+General form of Gaussian Mixture Models
+
+                             t
+  • We may have k different Gaussian distributions
+  • The general form is:
+
+                          raf
+                           X
+                 p(x; θ) =    N (x; µ(z), σ 2 (z))Categorical(z; ω)
+                               z
+                              K
+                              X
+                          =         ωk N (x; µ(k), σ 2 (k))                       (17)
+                              k=1
+  • We can write the log-likelihood term as:
+                                   K
+                                   X
+              log p(x; θ) = log          ωk N (x; µ(k), σ 2 (k))
+                                   k=1
+                                   XK
+                                         exp log ωk + log N (x; µ(k), σ 2 (k))
+                                                                              
+                         = log                                                    (18)
+                                   k=1
+                                                                                     25 / 32
+
+=== PAGE 29 ===
+Training Gaussian Mixture Models
+
+                              t
+                           raf
+  • Parameters to be trained: {ωk , µk , σk2 }Kk=1
+  • Since we know the log-likelihood function, we can pick optimization method
+    to train the parameters.
+       • Expectation-Maximization: (i), first calculate the expected probabilities
+         for points belong to specific Gaussian distribution p(z); (ii), update the
+         parameters of Gaussian distributions {ωk , µk , σk2 }K
+                                                              k=1 .
+       • Gradient-based optimization methods.
+
+                                                                                      26 / 32
+
+=== PAGE 30 ===
+   t
+raf
+ Continuous
+ Optimization
+
+=== PAGE 31 ===
+Visualization understanding of the gradient
+
+                               t
+                            raf
+ Figure 3: Example objective function. Negative gradients are indicated by arrows, and
+ the global minimum is indicated by the dashed blue line.
+                                                                                     27 / 32
+
+=== PAGE 32 ===
+Optimization using gradient descent
+
+                                t
+   • Solving for the minimum of a real-valued function
+                                           min f (x)                                (19)
+                                             x
+
+                             raf
+     where f (·) is differentiable.
+   • Procedures of gradient descent:
+                                                            
+                                                     ∂
+                                 x1 =x0 − γ0            f (x)
+                                                     ∂x        x=x0
+                                      ..
+                                       .
+                                                            
+                                                     ∂
+                               xi+1 =xi − γi            f (x)                       (20)
+                                                     ∂x        x=xi
+
+   • For suitable step-size γi , the sequence f (x0 ) ≥ f (x1 ) ≥ f (x2 ) ≥ . . .
+     converges to a local minimum.
+                                                                                       28 / 32
+
+=== PAGE 33 ===
+Example: Gradient descent
+
+                                   t
+  • Consider a quadratic function
+
+                                raf
+             "        #!         "         #⊤ "           #"         #       "       #⊤ "          #
+                 x1          1        x1           2 1          x1               5            x1
+         f                 =                                             −                             (21)
+                 x2          2        x2           1 20         x2               3            x2
+                            "         #!       "        #⊤ "             #       "       #⊤
+                                 x1                x1          2 1                   5
+    with gradient ∇f                       =                                 −
+                                 x2                x2          1 20                  3
+  • Starting at the initial location x0 = [−3, −1]⊤ , iteratively apply the updating
+    equations to obtain a sequence of estimates that converge to the minimum
+    value.
+
+                                                                                                          29 / 32
+
+=== PAGE 34 ===
+Visualization of the example
+
+                               t
+ heatmap).                  raf
+ Figure 4: Gradient descent on a two-dimensional quadratic surface (shown as a
+
+                                                                                 30 / 32
+
+=== PAGE 35 ===
+Conclusion
+
+                               t
+ In this class, we have learned:
+
+                            raf
+   • random variables, common distributions
+   • properties of random variables and distributions
+   • Bayes’ Theorem
+   • mean, variance of random variables
+   • Gaussian distributions
+   • probabilistic graphical models, Gaussian mixture models
+   • Continuous optimization
+
+                                                               31 / 32
+
+=== PAGE 36 ===
+raf
+Thank you!
+
+             32 / 32
+
+=== PAGE 37 ===

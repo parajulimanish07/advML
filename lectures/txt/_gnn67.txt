@@ -1,0 +1,798 @@
+######## GraphNN-w6
+=== PAGE 1 ===
+COMP8221 Advanced Machine Learning
+Graph Convolutional Network
+Dr. Qiongkai Xu, School of Computing, qiongkai.xu@mq.edu.au
+=== PAGE 2 ===
+Outline
+•   Graph Convolutional Networks
+•   Permutation Invariant / Equivalent
+•   General Graph NN framework
+•   GraphSAGE
+•   Graph Attention Networks
+                                         2
+=== PAGE 3 ===
+Recap: Graph Structured Data
+• Image
+• Text/Speech
+                               3
+=== PAGE 4 ===
+Recap: Graph Structured Data
+Networks are far more complex.
+• Arbitrary size and complex topological structure.
+• No fixed node ordering or reference point.
+• Often dynamic and have multimodal features
+                                                      4
+=== PAGE 5 ===
+Today: Deep Graph Encoders
+Deep Graph Encoders:
+      Deep learning methods based on graph neural networks (GNNs)
+                         Multiple layers of
+            𝐸𝑛𝑐(𝑣) = non-linear transformations
+                     based on graph structure
+                                                                    5
+=== PAGE 6 ===
+Graph Setup
+Assume we have a graph:
+• 𝐺 = (𝑉, 𝐸)
+• 𝑉 is the vertex set
+• 𝐸 is the edge set (undirected edge & directed edge)
+• 𝑨 is the Adjacency matrix
+• 𝑿 ∈ 𝑅|𝑉|×𝑚 is a matrix of node features
+• 𝑣 represents a node in 𝑉
+• 𝑁(𝑣) is the set of neighbors of 𝑣
+• Examples of node features:
+Social networks: User profile, User image, …
+Biological networks: Gene expression profile, Gene functional information, …
+                                                                               6
+=== PAGE 7 ===
+A Naïve Approach
+• Join adjacency matrix and features
+• Feed them into a neural network
+• Issues?
+                                       7
+=== PAGE 8 ===
+  A Naïve Approach
+Graph does not
+have a canonical
+order of the nodes!
+Consider this
+example:
+Same graph with
+different ordering
+The naïve approach
+would have different
+inputs for the same
+graph
+                       8
+=== PAGE 9 ===
+Permutation Invariance
+• Graph and node representations should be the same for different order plan.
+• That is, we learn a function 𝑓 that maps a Graph 𝐺 to a vector 𝑅𝑑 for
+embedding that
+                              𝑓 𝑨1 , 𝑿1 = 𝑓 𝑨2 , 𝑿2
+                                                                                9
+=== PAGE 10 ===
+Permutation Invariance
+• For a graph with |𝑉| nodes, there are |𝑉|! different order plans.
+• If 𝑓 𝑨𝑖 , 𝑿𝑖 = 𝑓 𝑨𝑗 , 𝑿𝑗 for any order plan 𝑖 and 𝑗, we formally say that 𝑓 is a
+permutation invariant function.
+                                                                                     10
+=== PAGE 11 ===
+Permutation Equivariance
+• Consider we learn a function 𝑓 that maps nodes in 𝐺 to a matrix 𝑅|𝑉|×𝑑 .
+                                                                             11
+=== PAGE 12 ===
+Permutation Equivariance
+• Consider we learn a function 𝑓 that maps nodes in 𝐺 to a matrix 𝑅|𝑉|×𝑑 .
+• If the output vector of a node at the same position in the graph remains
+unchanged for any order plan, we say 𝑓 is permutation equivariant.
+In summary,
+• Permutation Invariant: Map a graph to a vector, if we permute the input, output
+stays the same
+• Permutation Equivariant: Map a graph to a matrix, if we permute the input,
+output permutes accordingly.
+                                                                             12
+=== PAGE 13 ===
+Graph Neural Networks
+• Graph neural networks consist of multiple permutation equivariant / invariant
+functions.
+                                                                                  13
+=== PAGE 14 ===
+Why naïve approach fails.
+• Are classical neural network architectures permutation invariant / equivariant?
+                                                                               14
+=== PAGE 15 ===
+Graph Convolutional Networks
+• Design graph neural networks that are permutation invariant / equivariant.
+• Key idea: Generate node embeddings based on local network neighborhood.
+• Intuition: Nodes aggregate information from their neighbours using neural
+networks
+                                                                        15
+=== PAGE 16 ===
+Graph Convolutional Networks
+•   Model can be of arbitrary length
+•   Nodes have embeddings at each layer
+•   Layer-0 embedding of node 𝑣 is its input feature
+•   Layer-𝑘 embedding gets information from nodes that are 𝑘 hops away
+                                                                         16
+=== PAGE 17 ===
+Idea: Neighbourhood Aggregation
+What is in the box?
+Basic approach:
+• 1) Average information from neighbors
+• 2) apply a neural network.
+                                          17
+=== PAGE 18 ===
+Neighbourhood Aggregation
+                            18
+=== PAGE 19 ===
+Neighbourhood Aggregation
+For example,                                         A
+                               B
+                                                     C
+                                                              Initial 0-th layer embedding
+                                                              is its input feature 𝑋𝐵
+                                    ℎ𝐵0 = 𝑋𝐵
+   Non-linearity(e.g. ReLU)
+                                                    Self-transformation
+                                       0     0
+                                     ℎ𝐴  + ℎ𝐶
+                        ℎ1𝐵 = 𝜎(𝑊0 (           ) + 𝐵0 ℎ𝐵0 )
+                                         2
+                              Average of B’s neighbors’ previous layer embedding
+                                                                                       19
+=== PAGE 20 ===
+   GCN: Invariance and Equivariance
+  Given a node, the GCN that computes its embedding is permutation invariant
+  as average of neighbors’ previous layer embeddings is permutation invariant.
+              A                         A
+                                                             0     0
+                                                           ℎ𝐴  + ℎ 𝐶
+                      B                       ℎ1𝐵 = 𝜎(𝑊0 (           ) + 𝐵0 ℎ𝐵0 )
+                                                               2
+     B            C                     C
+                                                                  The Same
+Target node   C
+                                       C
+                                                            0     0
+                                                          ℎ𝐶  + ℎ𝐵
+                      A                       ℎ𝐴1 = 𝜎(𝑊0 (          ) + 𝐵0 ℎ𝐴0 )
+     A            B                                           2
+                                       B
+     Two order plans, colors represent input feature for each node                  20
+=== PAGE 21 ===
+GCN: Invariance and Equivariance
+Considering all nodes in a graph, GCN computation is permutation
+equivariant.
+               We know from previous slides that, when considering single
+               individual node, GCN is permutation invariant as
+       A
+               output stays the same when we change the order plan.
+               ℎ1𝐵 in order plan1 = ℎ𝐴1 in order plan 2 (𝑟𝑒𝑑),
+B          C   ℎ𝐴1 in order plan1 = ℎ1𝐶 in order plan 2 (yellow),
+               ℎ1𝑐 in order plan1 = ℎ1𝐵 in order plan 2 (𝐵𝑙𝑢𝑒),
+       C                                    A                               A
+                            Order plan 1                    Order plan 2
+                            GCN output:     B               GCN output:     B
+A          B
+                                            C                               C
+                                Considering all nodes, when we change the order
+                                plan(permute the input), output permutes accordingly.   21
+=== PAGE 22 ===
+GCN: Invariance and Equivariance
+Considering all nodes in a graph, GCN computation is permutation
+equivariant.
+                                                                   22
+=== PAGE 23 ===
+GCN: Invariance and Equivariance
+Considering all nodes in a graph, GCN computation is permutation
+equivariant.
+Detailed reasoning:
+1. The rows of input node features and output embeddings are aligned
+2. We know computing the embedding of a given node with GCN is invariant.
+3. So, after permutation, the location of a given node in the input node feature
+matrix is changed, and the the output embedding of a given node stays the same
+(the colors of node feature and embedding are matched)
+This is permutation equivariant.
+                                                                              23
+=== PAGE 24 ===
+Training GCN
+Model parameters:
+                    24
+=== PAGE 25 ===
+Supervised Training
+Directly train the model for a supervised task (e.g., node classification)
+                                                                             25
+=== PAGE 26 ===
+Supervised Training
+Use cross entropy loss:
+                                            𝐶
+                          𝐶𝐸 𝑦, 𝑓 𝑥   = − ෍(𝑦𝑖 log 𝑓𝜃 (𝑥)𝑖 )
+                                           𝑖=1
+𝑦𝑖 , 𝑓𝜃 (𝑥)𝑖 are the actual and predicted values of the 𝑖-th class
+                                                            (binary classification
+                                                            safe/toxic)
+                                                                                     26
+=== PAGE 27 ===
+Unsupervised Training
+One possible idea:
+                 “Similar” nodes have similar embeddings
+Again, use cross entropy loss
+                        𝐿 = ෍ 𝐶𝐸(𝑦𝑢,𝑣 , 𝐷𝐸𝐶(𝑧𝑢 , 𝑧𝑣 ))
+                                𝑧𝑢 ,𝑧𝑣
+where 𝑦𝑢,𝑣 = 1 when node 𝑢 and 𝑣 are similar
+𝑧𝑢 , 𝑧𝑣 are the node embeddings
+𝐷𝐸𝐶(∙ , ∙) is the dot product
+                                                           27
+=== PAGE 28 ===
+GNN Model Overview
+                     28
+=== PAGE 29 ===
+GNN Model Overview
+                     29
+=== PAGE 30 ===
+GNN Model Overview
+                     30
+=== PAGE 31 ===
+Generalize to unseen nodes
+The same aggregation parameters are shared for all nodes
+We can train on protein interaction graph from model organism A and generate
+embeddings on newly collected data about organism B
+                                                                               31
+=== PAGE 32 ===
+General GNN Framework
+                        32
+=== PAGE 33 ===
+GCN fits the general framework
+GNN layer = Message + Aggregation
+Different instantiations under this perspective, such as GCN, GraphSAGE,
+GAT, …
+For example, GCN:
+In GCN the input graph is assumed to have self-edges that the node itself included
+in the summation.
+                                                                              33
+=== PAGE 34 ===
+GraphSAGE Layer
+                  34
+=== PAGE 35 ===
+Stage1 Choices
+                 35
+=== PAGE 36 ===
+Graph Attention Networks
+For graph attention networks, we have
+How it differs to GCN/GraphSAGE?
+                          1
+In GCN/GraphSAGE, 𝛼𝑣𝑢 =        is the weight.
+                        |𝑁 𝑣 |
+Which means
+          All neighbors 𝑢 ∈ 𝑁(𝑣) are equally important to node 𝑣
+                                                                   36
+=== PAGE 37 ===
+Graph Attention Networks
+However, not all node’s neighbors are equally important
+Attention is inspired by cognitive attention.
+The attention 𝛼𝑣𝑢 should focuse on the important parts of the input data and
+fades out the rest.
+Idea: the NN should devote more computing power on that small but important
+part of the data. Which part of the data is more important depends on the context
+and is learned through training.
+                                                                               37
+=== PAGE 38 ===
+Learning 𝛼𝑣𝑢
+Let 𝛼𝑣𝑢 be computed as a byproduct of an attention mechanism 𝑎:
+Attention mechanism 𝒂
+• Compute attention coefficients 𝑒𝑣𝑢 across pairs of nodes 𝑢, 𝑣 based on their
+messages:
+• 𝑒𝑣𝑢 indicates the importance of 𝑢’s message to node 𝑣.
+                                                                                 38
+=== PAGE 39 ===
+Learning 𝛼𝑣𝑢
+Attention mechanism
+• Normalize 𝑒𝑣𝑢 into the final attention weight 𝛼𝑣𝑢
+• We use softmax function so that σ𝑢∈𝑁(𝑣) 𝛼𝑣𝑢 = 1:
+• Finally, we compute aggregation based on the final attention weight:
+                                                                         39
+=== PAGE 40 ===
+What is 𝑎
+Attention mechanism
+                                       ?
+The approach is agnostic to the choice of 𝑎
+E.g., use a simple single-layer neural network
+Parameters of 𝑎 are trained jointly:
+Learn the parameters together with weight matrices (i.e., other parameter of the
+neural net 𝐖 (𝑙) ) in an end-to-end fashion.
+                                                                               40
+=== PAGE 41 ===
+Multi-head attention
+Can stabilize the learning process of attention mechanism.
+                                                             41
+=== PAGE 42 ===
+Benefits of attention mechanism
+Key benefit: Allows for (implicitly) specifying different importance values to
+different neighbors
+Computationally efficient:
+• Computation of attentional coefficients can be parallelized across all edges of the graph
+• Aggregation may be parallelized across all nodes
+Storage efficient:
+• Sparse matrix operations
+• Fixed number of parameters, irrespective of graph size
+Localized:
+• Only attends over local network neighborhoods
+Inductive capability:
+• It is a shared edge-wise mechanism
+• It does not depend on the global graph structure
+                                                                                              42
+=== PAGE 43 ===
+Things to think about
+How do GNNs compare to Convolutional Neural Nets?
+Any issues with this current general framework?
+                                                    43
+=== PAGE 44 ===
+######## COMP8221_Week_7
+=== PAGE 1 ===
+COMP8221 Advanced Machine Learning
+GNN framework, augmentation and training
+Zitai Qiu, School of Computing, zitai.qiu@mq.edu.au
+=== PAGE 2 ===
+Outline
+• Modern deep learning tricks
+• Layer connectivity:
+    Number of layers
+    Skip connections
+• Graph Manipulation
+• Different task level
+• Loss Function & Evaluation Metrics
+• Data Split
+                                       2
+=== PAGE 3 ===
+Recap: Graph Setup
+Assume we have a graph:
+• 𝐺 = (𝑉, 𝐸)
+• 𝑉 is the vertex set
+• 𝐸 is the edge set (undirected edge & directed edge)
+• 𝑨 is the Adjacency matrix
+• 𝑿 ∈ 𝑅 |𝑉|×𝑚 is a matrix of node features
+• 𝑣 represents a node in 𝑉
+• 𝑁(𝑣) is the set of neighbors of 𝑣
+• Examples of node features:
+Social networks: User profile, User image, …
+Biological networks: Gene expression profile, Gene functional information, …
+                                                                               3
+=== PAGE 4 ===
+Recap: General GNN Framework
+GNN layer = Message + Aggregation
+Different instantiations under this perspective, such as GCN, GraphSAGE,
+GAT, …
+                                                                           4
+=== PAGE 5 ===
+GNN layer in Practice
+• In practice, these classic GNN layers are a
+great starting point
+• We can often get better performance by
+considering a general GNN layer design
+• Concretely, we can include modern deep
+learning modules that proved to be useful in
+many domains
+                                                5
+=== PAGE 6 ===
+GNN layer in Practice
+• Many modern deep learning modules can be incorporated into a GNN layer
+• Batch Normalization:
+   Stabilize neural network training
+• Dropout:
+   Prevent overfitting
+• Attention/Gating:
+   Control the importance of a message
+                                                                           6
+=== PAGE 7 ===
+Batch Normalization
+• Goal: Stabilize neural networks training
+• Idea: Given a batch of inputs (node embeddings)
+    Re-center the node embeddings into zero mean
+    Re-scale the variance into unit variance
+                                                    7
+=== PAGE 8 ===
+Dropout
+• Goal: Regularize a neural net to prevent overfitting.
+• Idea:
+    During training: with some probability 𝑝, randomly set neurons to zero (turn off)
+    During testing: Use all the neurons for computation
+                                                                                        8
+=== PAGE 9 ===
+Dropout for GNNs
+• In GNN, Dropout is applied to the linear layer in the message function
+                                                 (𝑙)       (𝑙−1)
+• A simple message function with linear layer: 𝑚𝑢 = 𝑊 (𝑙) ℎ𝑢
+                                                                           9
+=== PAGE 10 ===
+Activation: Non-linearity
+• ReLU:
+   Most commonly used
+• Sigmoid:
+               1
+    𝜎 𝑥𝑖 =
+             1+𝑒 −𝑥𝑖
+    Used only when you want to restrict the range
+    of your embeddings
+• tanh, Parametric ReLU, …,
+                                                    10
+=== PAGE 11 ===
+GNN Layer in Practice
+• Summary: Modern deep learning modules can be included into a GNN layer
+for better performance
+Designing novel GNN layers is still an active research frontier!
+You can explore diverse GNN designs or try out your own ideas in practical
+workshops using python and very helpful packages
+                                                                             11
+=== PAGE 12 ===
+Stacking GNN Layers
+• How to construct a Graph Neural Network?
+   The standard way: Stack GNN layers sequentially
+   Input: Initial raw node feature 𝑥𝑣
+                              (𝐿)
+    Output: Node embeddings ℎ𝑣 after 𝐿 GNN layers
+                                                     12
+=== PAGE 13 ===
+The Over-smoothing Problem
+• The issue of stacking many GNN layers
+   GNN suffers from the over-smoothing problem
+• The over-smoothing problem:
+    All the node embeddings converge to the same value
+   This is bad because we want to use node embeddings to differentiate nodes
+• Why does the over-smoothing problem happen?
+                                                                          13
+=== PAGE 14 ===
+Receptive Field of a GNN
+• Receptive field:
+    The set of nodes that determine the embedding of a node of interest
+• In a 𝐾-layer GNN, each node has a receptive field of 𝐾-hop neighborhood.
+                                                                             14
+=== PAGE 15 ===
+Receptive Field of a GNN
+• Receptive field overlap for two nodes
+   The shared neighbours quickly grows when we increase the number of
+GNN layers
+                                                                        15
+=== PAGE 16 ===
+Receptive Field & Over-smoothing
+• We can explain over-smoothing via the notion of the receptive field
+     We know the embedding of a node is determined by its receptive field.
+     If two nodes have highly-overlapped receptive fields, then their embeddings
+are highly similar
+Logic:
+• Stack many GNN layers → nodes will have highly overlapped receptive fields
+→ node embeddings will be highly similar → suffer from the over-smoothing
+problem
+Next: how do we overcome over-smoothing problem?
+                                                                               16
+=== PAGE 17 ===
+Layer Connectivity
+• Be cautious when adding GNN layers
+    Unlike neural networks in other domains (CNN for image classification),
+adding more GNN layers do not always help.
+• Do not set GNN layer 𝐿 to be unnecessarily large!
+• Question: How to enhance the expressive power of a GNN, if the number of
+GNN layers is small (Shallow GNNs)?
+                                                                              17
+=== PAGE 18 ===
+ Expressive power for Shallow GNNs
+• How to make a shallow GNN more expressive?
+• Solution 1: Increase the expressive power within each GNN layer
+     In our previous examples, each transformation or aggregation function only
+include one linear layer
+     We can make aggregation / transformation become a deep neural network
+          (𝑙)    (𝑙)
+         𝑊1     𝑊2
+                          (𝑙)
+                        𝑊3
+ (𝑙−1)                           (𝑙)
+ℎ𝑣                              𝑚𝑣
+                                                                              18
+=== PAGE 19 ===
+Expressive power for Shallow GNNs
+• How to make a shallow GNN more expressive?
+• Solution 2: Add layers that do not pass messages
+     A GNN does not necessarily only contain GNN layers
+     E.g., we can add MLP layers (applied to each node) before and after GNN
+layers, as pre-process layers and post-process layers
+                                                                               19
+=== PAGE 20 ===
+Layer Connectivity
+• What if my problem still requires many GNN layers?
+• Solution3: Add skip connections in GNNs
+    Node embeddings in earlier layers can sometimes better differentiate nodes
+    We can increase the impact of earlier layers on the final node embeddings,
+by adding shortcuts in GNN
+                                                                             20
+=== PAGE 21 ===
+Skip Connections
+• Intuition: Skip connections create a mixture of models
+    𝑁 skip connections → 2𝑁 possible paths
+    We automatically get a mixture of shallow GNNs and deep GNNs
+                                                                   21
+=== PAGE 22 ===
+    Example: GCN with Skip Connection
+• A standard GCN layer:
+                         (𝑙−1)
+     (𝑙)                ℎ
+•   ℎ𝑣 = 𝜎(σ𝑢∈𝑁(𝑣) 𝑊 (𝑙) 𝑢 )
+                        |𝑁 𝑣 |
+                           This is our 𝑭(𝒙)
+• One GCN layer with skip connection:
+                          𝑙−1
+     (𝑙)              ℎ              (𝑙−1)
+•   ℎ𝑣 = 𝜎(σ𝑢∈𝑁 𝑣 𝑊 𝑙 𝑢          + ℎ𝑣        )
+                      𝑁 𝑣
+                   𝑭 𝒙           +      𝒙
+                                     (𝑙)
+• If we skip two layers, what is ℎ𝑣 ?
+                                                 22
+=== PAGE 23 ===
+Graph Manipulation
+• So far, we assume:
+   Raw input graph = computational graph
+• In practice, it’s unlikely that the input graph happens to be the optimal
+computation graph for embeddings:
+    The input graph lacks features → ?
+    The graph is too sparse → ?
+    The graph is too dense → ?
+    The graph is too large → ?
+                                                                              23
+=== PAGE 24 ===
+Graph Manipulation
+• So far, we assume:
+   Raw input graph = computational graph
+• In practice, it’s unlikely that the input graph happens to be the optimal
+computation graph for embeddings:
+    The input graph lacks features → need augmented features
+    The graph is too sparse → inefficient message passing
+    The graph is too dense → message passing is too costly
+    The graph is too large → cannot fit the computational graph into a GPU
+                                                                              24
+=== PAGE 25 ===
+Graph Manipulation
+• How can we resolve the problems?
+   The input graph lacks features → Feature augmentation
+   The graph is too sparse → Add virtual nodes / edges
+   The graph is too dense → Sample neighbors when doing message passing
+   The graph is too large → Sample subgraphs to compute embeddings
+                                                                      25
+=== PAGE 26 ===
+Feature Augmentation
+• Input graph does not have node features.
+• This is common when we only have the adj. matrix.
+• Standard approach:
+    1) Assign constant values to nodes
+    2) Assign unique IDs to nodes
+       These IDs are converted into one-hot vectors
+                                                      26
+=== PAGE 27 ===
+Feature Augmentation
+                       27
+=== PAGE 28 ===
+Add Virtual Nodes / Edges
+• Motivation: The graph is too sparse.
+• Common approach:
+   1) Connect 2-hop neighbors via virtual edges
+• Example:
+     Author-to-papers (they authored)
+     2-hop virtual edges make an author-author
+collaboration graph
+                                                  28
+=== PAGE 29 ===
+Add Virtual Nodes / Edges
+• Motivation: The graph is too sparse.
+• Common approach:
+   2) Add virtual nodes
+   The virtual node will connect to all the nodes in the graph
+Suppose in a sparse graph, two nodes have shortest path
+distance of 10. After adding the virtual node, all the nodes
+will have a distance of 2.
+Benefits: Greatly improves message passing in sparse graphs
+                                                                 29
+=== PAGE 30 ===
+Node neighbourhood sampling
+•   For dense/large graphs, high-degree nodes
+•   Idea: Randomly determine a node’s neighborhood for message passing
+•   For example, we can randomly choose 2 neighbors to pass messages
+•   Each time, different nodes may be sampled for training
+• Get embeddings similar to the case where all the neighbors are used.
+• Benefits: Greatly reduce computational cost
+                                                                         30
+=== PAGE 31 ===
+GNN Training Pipeline
+                        Different tasks requires
+                        different prediction heads
+                                                     31
+=== PAGE 32 ===
+Different tasks
+                  32
+=== PAGE 33 ===
+Node-level
+We can directly make prediction using node embeddings
+                                                                𝐿
+• After GNN computation, we have 𝑑-dim node embeddings: ℎ𝑣 ∈ 𝑅 𝑑 , ∀ 𝑣 ∈ 𝐺
+• For 𝑘-class (𝑘-way) classification, we have two different approaches:
+   1. For simple and small graphs prediction, during GNN training, we can make
+   𝑑 = 𝑘 → apply softmax → probability distribution over 𝑘 classes
+                                𝐿            (𝐿)
+    2. Let 𝑦ෝ𝑣 = 𝑃𝑟𝑒𝑑𝑖𝑐𝑡ℎ𝑒𝑎𝑑 ℎ𝑣     = 𝑊 ℎ𝑒𝑎𝑑 ℎ𝑣 , where 𝑊 ℎ𝑒𝑎𝑑 ∈ 𝑅 𝑘×𝑑 that maps
+                            𝐿
+    node embedding from ℎ𝑣 ∈ 𝑅 𝑑 to 𝑦ෝ𝑣 ∈ 𝑅 𝑘 → apply softmax →
+    probability distribution over 𝑘 classes
+                                                                               33
+=== PAGE 34 ===
+Edge-level
+We can make prediction using pairs of node embeddings
+Suppose we want to make 𝑘-way prediction
+                                             𝐿   𝐿
+                         𝑦ෞ
+                          𝑣𝑢 = 𝑃𝑟𝑒𝑑𝑖𝑐𝑡ℎ𝑒𝑎𝑑 ℎ𝑣 , ℎ𝑢
+                          𝐿   𝐿
+Options for 𝑃𝑟𝑒𝑑𝑖𝑐𝑡ℎ𝑒𝑎𝑑 ℎ𝑣 , ℎ𝑢   :
+    1. Concatenation + Linear
+                                                        34
+=== PAGE 35 ===
+Edge-level
+                          𝐿   𝐿
+Options for 𝑃𝑟𝑒𝑑𝑖𝑐𝑡ℎ𝑒𝑎𝑑 ℎ𝑣 , ℎ𝑢       :
+    1. Concatenation + Linear:
+                          𝐿       𝐿
+     𝑣𝑢 = Linear(Concat(ℎ𝑣 , ℎ𝑢 ))
+    𝑦ෞ
+    Here Linear(⋅) will map 2𝑑-dimensional embeddings to 𝑘-dim embeddings
+                                                                            35
+=== PAGE 36 ===
+Edge-level
+Options for 𝑃𝑟𝑒𝑑𝑖𝑐𝑡ℎ𝑒𝑎𝑑 ℎ𝑣𝐿 , ℎ𝑢𝐿 :
+    2. Dot product:
+                  𝐿 𝑇   𝐿
+          𝑣𝑢 = (ℎ𝑣 ) ℎ𝑢
+         𝑦ෞ
+    a. This approach only applies to 1-way prediction (e.g., link prediction:
+    predict the existence of an edge)
+    b. Applying to k-way prediction:
+         Similar to multi-head attention: 𝑾(1) , 𝑾(2) , … , 𝑾(𝑘) trainable
+                                  (1)
+                                 𝑦ො𝑣𝑢 = (ℎ𝑣𝐿 )𝑇 𝑾(1) ℎ𝑢𝐿
+                                             …
+                                  (𝑘)
+                                 𝑦ො𝑣𝑢 = (ℎ𝑣𝐿 )𝑇 𝑾(𝑘) ℎ𝑢𝐿
+                                            (1)     (𝑘)
+                            𝑦ෞ           ො𝑣𝑢 , … , 𝑦ො𝑣𝑢 ) ∈ 𝑅𝑘
+                             𝑣𝑢 = 𝐶𝑜𝑛𝑐𝑎𝑡(𝑦
+                                                                                36
+=== PAGE 37 ===
+Graph-level
+We can make predictions using all the node embeddings in our graph.
+Suppose we want to make k-way prediction:
+                                          𝐿
+                     𝑦ෞ𝐺 = 𝑃𝑟𝑒𝑑𝑖𝑐𝑡ℎ𝑒𝑎𝑑 ( ℎ𝑣 ∈ 𝑅 𝑑 , ∀ 𝑣 ∈ 𝐺 )
+𝑃𝑟𝑒𝑑𝑖𝑐𝑡ℎ𝑒𝑎𝑑 here is similar to the aggregation part in GNN
+layer
+                                                                      37
+=== PAGE 38 ===
+Graph-level
+Simple Options:
+    1. Global mean pooling
+                                       𝐿
+                       𝑦ෞ𝐺 = 𝑴𝒆𝒂𝒏 ( ℎ𝑣 ∈ 𝑅 𝑑 , ∀ 𝑣 ∈ 𝐺 )
+    2. Global max pooling
+                                      𝐿
+                        𝑦ෞ𝐺 = 𝑴𝒂𝒙 ( ℎ𝑣 ∈ 𝑅 𝑑 , ∀ 𝑣 ∈ 𝐺 )
+    3. Global sum pooling
+                                      𝐿
+                        𝑦ෞ𝐺 = 𝑺𝒖𝒎 ( ℎ𝑣 ∈ 𝑅 𝑑 , ∀ 𝑣 ∈ 𝐺 )
+Other options:
+    Hierarchical Pooling, Sort Pooling, Attention-based Pooling, …
+                                                                     38
+=== PAGE 39 ===
+GNN Traning Pipeline
+                       39
+=== PAGE 40 ===
+Classification Loss
+As discussed in previous lecture, Cross entropy (CE) is a very common loss
+function in classification
+𝐾-way prediction for 𝑖-th data point, each data point can be a node/edge/graph
+where
+What is the total loss over all N training examples?
+                                                                                 40
+=== PAGE 41 ===
+Regression Loss
+For regression tasks we often use Mean Squared Error (MSE) a.k.a. L2 loss
+𝐾-way regression for data point (𝑖):
+where
+Total loss over all N training examples?
+                                                                            41
+=== PAGE 42 ===
+Evaluation Metric: Classification
+• Multi-class classification:
+                                  1[arg max 𝑦ො 𝑖 =𝑦 (𝑖) ]
+    Simply report the accuracy:
+                                            𝑁
+• Binary Classification:
+                 TP+TN
+    Accuracy:
+                   N
+                  TP
+    Precision:
+                 TP+FP
+                TP
+    Recall:
+              TP+FN
+                2P∗R
+    F1-score:
+                 P+R
+                                                            42
+=== PAGE 43 ===
+Dataset Split
+Usually in deep learning, we will randomly split our dataset into training / validation
+/ test datasets.
+However, splitting a graph dataset is different. For node-level classification, each
+node is a data point. Here, data points are NOT independent
+                                                                                   43
+=== PAGE 44 ===
+Dataset Split
+Solution 1 (Transductive setting):
+The input graph can be observed in all the dataset splits. We will only split the
+(node) labels
+At training time, we compute embeddings using the entire graph, and train using
+node 1&2’s labels
+At validation time, we compute embeddings using the entire graph, and evaluate
+on node 3&4’s labels
+                                                                                    44
+=== PAGE 45 ===
+Dataset Split
+Solution 2 (Inductive setting):
+We break the edges between splits to get multiple graphs.
+At training time, we compute embeddings using
+the graph over node 1&2, and train using node
+1&2’s labels.
+At validation time, we compute embeddings using the graph over node 3&4, and
+evaluate on node 3&4’s labels.
+Suppose we have a dataset of 3 graphs
+Each split contains an independent graph.
+                                                                         45
+=== PAGE 46 ===
+Dataset Split
+Transductive setting:
+    training / validation / test sets are on the same graph
+    The dataset consists of one graph
+    The entire graph can be observed in all dataset splits, we only split the labels
+    Only applicable to node / edge prediction tasks
+Inductive setting:
+    training / validation / test sets are on different graphs
+    The dataset consists of multiple graphs
+    Each split can only observe the graph(s) within the split. A successful model
+should generalize to unseen graphs
+    Applicable to node / edge / graph tasks
+                                                                               46
+=== PAGE 47 ===
+Dataset Split: Graph Classification
+Only the inductive setting is well defined for graph classification.
+We have to test on unseen graphs
+Suppose we have a dataset of 5 graphs. Each split will contain independent
+graph(s).
+                                                                             47
+=== PAGE 48 ===
+Example Question
+Link Prediction:
+    Goal: Predict missing edges
+    Hint:
+         Link prediction is unsupervised/self-supervised
+         We need to create the labels and dataset splits on our own
+How do you design the training pipeline?
+                                                                      48
+=== PAGE 49 ===
+Example Question
+Hide some edges from the GNN and let the GNN predict if the edges exist.
+Supervision edges are used as supervision for edge predictions made by the
+model, will not be fed into GNN!
+Inductive setting
+                                                                             49
+=== PAGE 50 ===
+Example Question
+              Transductive setting
+                                     50
+=== PAGE 51 ===

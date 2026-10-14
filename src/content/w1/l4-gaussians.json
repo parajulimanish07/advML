@@ -1,0 +1,142 @@
+{
+ "id": "w1.l4",
+ "title": "Gaussians & Cholesky sampling",
+ "blurb": "Univariate/multivariate Gaussian, linear maps, sampling",
+ "source": [
+  {
+   "file": "W1",
+   "page": 17
+  },
+  {
+   "file": "W1",
+   "page": 19
+  },
+  {
+   "file": "W1",
+   "page": 20
+  }
+ ],
+ "hook": {
+  "title": "Kneading a ball of dough",
+  "text": "Take a perfectly round ball of dough: that is the **standard normal** $\\mathcal N(0,I)$, easy for a computer to make. To get *any* Gaussian you just knead it: stretch and shear it with a matrix $L$ (this controls the ellipse shape), then carry it to a new spot on the table with $\\mu$. The trick is finding the right kneading recipe $L$ for a target spread $\\Sigma$: that is what **Cholesky** does.",
+  "recall": "Remember the dough: start from the round ball $z\\sim\\mathcal N(0,I)$, knead with $L$ (where $LL^\\top=\\Sigma$), then shift by $\\mu$. You need $L$ (the recipe), not $\\Sigma$ itself."
+ },
+ "explore": {
+  "component": "gaussian2d",
+  "intro": "Step 1 shows the round dough; step 2 applies $y=Lz+\\mu$.",
+  "tasks": [
+   "Flip between the two steps. Which parameters change only the shape, and which only the position?",
+   "Set $\\rho=0$. What does $L$ look like? Then set $\\rho=0.9$."
+  ],
+  "takeaway": "$y=Lx+\\mu$ with $LL^\\top=\\Sigma$ gives $y\\sim\\mathcal N(\\mu,\\Sigma)$, a direct use of $Ax\\sim\\mathcal N(A\\mu_x,A\\Sigma_xA^\\top)$."
+ },
+ "build": {
+  "type": "order",
+  "prompt": "Order the steps to draw a sample from $\\mathcal N(\\mu,\\Sigma)$ using only a standard-normal sampler.",
+  "items": [
+   "Pick the mean $\\mu$ and covariance $\\Sigma$",
+   "Cholesky-factorise $\\Sigma=LL^\\top$ with $L$ lower-triangular",
+   "Draw $x\\sim\\mathcal N(0,I)$",
+   "Return $y=Lx+\\mu$"
+  ],
+  "explanation": "This is slide 18's recipe. The covariance of $Lx$ is $L\\,I\\,L^\\top=\\Sigma$, and $+\\mu$ moves the mean.",
+  "source": {
+   "file": "W1",
+   "page": 20
+  }
+ },
+ "questions": [
+  {
+   "id": "w1.l4.q1",
+   "type": "mcq",
+   "prompt": "To sample $y\\sim\\mathcal N(\\mu,\\Sigma)$ from $x\\sim\\mathcal N(0,I)$, the slides use:",
+   "options": [
+    "$y=\\Sigma x+\\mu$",
+    "$y=Lx+\\mu$ with $LL^\\top=\\Sigma$",
+    "$y=\\sqrt{\\mu}\\,x+\\Sigma$",
+    "$y=x/\\Sigma+\\mu$"
+   ],
+   "correct": 1,
+   "explanation": "$L$ is the kneading recipe whose “square” is $\\Sigma$. It’s the dough-shaping matrix, not the target spread itself.",
+   "source": {
+    "file": "W1",
+    "page": 20
+   }
+  },
+  {
+   "id": "w1.l4.q2",
+   "type": "numeric",
+   "prompt": "Independent $x\\sim\\mathcal N(1,4)$ and $y\\sim\\mathcal N(2,9)$ (second number = variance). What is the variance of $x+y$?",
+   "value": 13,
+   "tol": 0.01,
+   "explanation": "$x+y\\sim\\mathcal N(\\mu_x+\\mu_y,\\Sigma_x+\\Sigma_y)=\\mathcal N(3,13)$: the variances of independent Gaussians add.",
+   "source": {
+    "file": "W1",
+    "page": 19
+   }
+  },
+  {
+   "id": "w1.l4.q3",
+   "type": "mcq",
+   "prompt": "$\\Sigma=\\begin{pmatrix}4&0\\\\0&9\\end{pmatrix}$. What is its lower-triangular Cholesky factor $L$?",
+   "options": [
+    "$\\begin{pmatrix}4&0\\\\0&9\\end{pmatrix}$",
+    "$\\begin{pmatrix}2&0\\\\0&3\\end{pmatrix}$",
+    "$\\begin{pmatrix}16&0\\\\0&81\\end{pmatrix}$",
+    "$\\begin{pmatrix}2&3\\\\0&0\\end{pmatrix}$"
+   ],
+   "correct": 1,
+   "explanation": "For a diagonal $\\Sigma$, $L$ is the elementwise square root: you only stretch the round dough along the axes by 2 and 3. Check: $LL^\\top=\\mathrm{diag}(4,9)$.",
+   "source": {
+    "file": "W1",
+    "page": 20
+   }
+  },
+  {
+   "id": "w1.l4.q4",
+   "type": "false",
+   "prompt": "Which statement about Gaussians is FALSE?",
+   "options": [
+    "A linear map of a Gaussian is Gaussian: $Ax\\sim\\mathcal N(A\\mu,A\\Sigma A^\\top)$",
+    "The sum of two independent Gaussians is Gaussian with summed means and covariances",
+    "The Cholesky factor $L$ in $LL^\\top=\\Sigma$ is upper-triangular",
+    "The standard normal has $\\mu=\\mathbf 0$ and $\\Sigma=I$"
+   ],
+   "correct": 2,
+   "explanation": "The slide states $L$ is the **lower**-triangular matrix. The other three are verbatim from slides 15–19.",
+   "source": {
+    "file": "W1",
+    "page": 20
+   }
+  },
+  {
+   "id": "w1.l4.q5",
+   "type": "bug",
+   "prompt": "A student samples $\\mathcal N(\\mu,\\Sigma)$ with $y=\\Sigma x+\\mu$, $x\\sim\\mathcal N(0,I)$. What is wrong?",
+   "options": [
+    "Nothing, this is the standard method",
+    "The covariance of $y$ would be $\\Sigma\\Sigma^\\top$, not $\\Sigma$. You must use $L$ with $LL^\\top=\\Sigma$",
+    "$\\mu$ should be multiplied, not added",
+    "$x$ should be uniform"
+   ],
+   "correct": 1,
+   "explanation": "$\\mathbb V[\\Sigma x+\\mu]=\\Sigma I\\Sigma^\\top=\\Sigma^2\\neq\\Sigma$. Too-big kneading: you used the target spread as the recipe.",
+   "source": {
+    "file": "W1",
+    "page": 20
+   }
+  },
+  {
+   "id": "w1.l4.q6",
+   "type": "numeric",
+   "prompt": "Given $L=\\begin{pmatrix}2&0\\\\1&1\\end{pmatrix}$, compute the (1,2) entry of $\\Sigma=LL^\\top$.",
+   "value": 2,
+   "tol": 0.01,
+   "explanation": "$\\Sigma_{12}=\\text{row}_1(L)\\cdot\\text{row}_2(L)=2\\cdot1+0\\cdot1=2$. ($\\Sigma=\\begin{pmatrix}4&2\\\\2&2\\end{pmatrix}$.)",
+   "source": {
+    "file": "W1",
+    "page": 20
+   }
+  }
+ ]
+}

@@ -1,0 +1,127 @@
+{
+ "id": "w1.l5",
+ "title": "Learning: maximum likelihood & generalisation",
+ "blurb": "Log-likelihood, i.i.d., generalisation",
+ "source": [
+  {
+   "file": "W1",
+   "page": 11
+  },
+  {
+   "file": "W1",
+   "page": 21
+  },
+  {
+   "file": "W1",
+   "page": 22
+  }
+ ],
+ "hook": {
+  "title": "Tuning the radio dial",
+  "text": "Your data is a pile of signals; the parameter $\\theta$ is a radio dial. At each dial position the model assigns some probability to *every* observation. The best dial position is the one under which your data is **least surprising**. Since each observation is independent, the probabilities **multiply**, and multiplying hundreds of tiny numbers is a nightmare, so we take the log and the product becomes a **sum**. But beware: a dial tuned so tightly to *these* signals that it fails on *new* ones hasn't learnt anything.",
+  "recall": "Remember the radio dial: log turns the product of independent likelihoods into a sum without moving the best dial position. And a great fit to old data says nothing about unseen signals."
+ },
+ "explore": {
+  "component": "mle",
+  "intro": "Two tabs: the likelihood landscape, and fit-versus-generalise.",
+  "tasks": [
+   "Coin tab: observe 7 heads in 10 flips. Where does the curve peak? Add more flips with the same proportion: does the peak move? Does the curve get sharper?",
+   "Fit tab: slide the model width $h$ down to near zero. Watch train vs test log-likelihood."
+  ],
+  "takeaway": "MLE: $\\theta^*=\\arg\\max_\\theta\\sum_n\\log p(x_n;\\theta)$ under i.i.d. A model should be judged by test data, because training fit alone can be inflated."
+ },
+ "build": {
+  "type": "order",
+  "prompt": "Order the maximum-likelihood recipe.",
+  "items": [
+   "Collect data $D=\\{x_1,\\dots,x_N\\}$",
+   "Assume the $x_n$ are i.i.d. so $p(D;\\theta)=\\prod_n p(x_n;\\theta)$",
+   "Take logs: $\\sum_n\\log p(x_n;\\theta)$",
+   "Maximise over $\\theta$ to get $\\theta^*$",
+   "Check the fit on held-out data (generalisation)"
+  ],
+  "explanation": "Slide 19 states the objective and the i.i.d. step; slide 20 says generalisation (test-data performance) is the key factor.",
+  "source": {
+   "file": "W1",
+   "page": 21
+  }
+ },
+ "questions": [
+  {
+   "id": "w1.l5.q1",
+   "type": "mcq",
+   "prompt": "Why do we maximise $\\sum_n\\log p(x_n;\\theta)$ rather than $\\prod_n p(x_n;\\theta)$?",
+   "options": [
+    "The log changes which $\\theta$ is best",
+    "Under the i.i.d. assumption the product becomes a sum, which is easier to work with, and the maximiser stays the same",
+    "The product is always larger than the sum",
+    "The log makes probabilities bigger than 1"
+   ],
+   "correct": 1,
+   "explanation": "The dial position that makes the data least surprising doesn’t change when you take logs. Log is increasing. It just converts the product to a sum.",
+   "source": {
+    "file": "W1",
+    "page": 21
+   }
+  },
+  {
+   "id": "w1.l5.q2",
+   "type": "numeric",
+   "prompt": "10 coin flips gave 7 heads. The Bernoulli maximum-likelihood estimate of $\\theta=P(\\text{heads})$ is:",
+   "value": 0.7,
+   "tol": 0.005,
+   "explanation": "Maximising $k\\log\\theta+(n-k)\\log(1-\\theta)$ gives $\\theta^*=k/n=0.7$. (Closed-form Bernoulli MLE is standard textbook context, not stated on the slides; the explorer shows it visually.)",
+   "source": {
+    "file": "W1",
+    "page": 21,
+    "extra": true
+   }
+  },
+  {
+   "id": "w1.l5.q3",
+   "type": "false",
+   "prompt": "Which statement is FALSE?",
+   "options": [
+    "Learning means estimating $\\theta$ from observations $D$",
+    "A simple strategy is to maximise the log-likelihood",
+    "i.i.d. means $p(D;\\theta)=\\prod_n p(x_n;\\theta)$",
+    "A model that fits the training set perfectly always generalises best"
+   ],
+   "correct": 3,
+   "explanation": "A dial tuned to memorise old signals can assign almost no probability to new ones. The slides say generalisation capability, i.e. test-data performance, is the key factor.",
+   "source": {
+    "file": "W1",
+    "page": 22
+   }
+  },
+  {
+   "id": "w1.l5.q4",
+   "type": "numeric",
+   "prompt": "Three i.i.d. observations have $p(x_1)=0.5$, $p(x_2)=0.2$, $p(x_3)=0.1$ under some model. What is $p(x_1,x_2,x_3)$?",
+   "value": 0.01,
+   "tol": 0.0005,
+   "explanation": "i.i.d. ⇒ the joint is the product: $0.5\\times0.2\\times0.1=0.01$. (Its log is a sum of three logs.)",
+   "source": {
+    "file": "W1",
+    "page": 11
+   }
+  },
+  {
+   "id": "w1.l5.q5",
+   "type": "bug",
+   "prompt": "*“My model’s training log-likelihood is higher than my friend’s, so my model is better.”* What is the flaw?",
+   "options": [
+    "None: higher likelihood always means better",
+    "Training likelihood doesn’t measure generalisation. Compare on held-out/test data",
+    "Log-likelihood can only be compared on the test set of the other person",
+    "Higher likelihood means a worse model"
+   ],
+   "correct": 1,
+   "explanation": "A tight dial can ace the signals it memorised and fail on fresh ones, exactly what the Fit tab’s tiny-width model does.",
+   "source": {
+    "file": "W1",
+    "page": 22
+   }
+  }
+ ]
+}

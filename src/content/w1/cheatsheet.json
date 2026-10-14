@@ -1,0 +1,104 @@
+{
+ "title": "Week 1 Cheat Sheet: Probability & Optimisation",
+ "items": [
+  {
+   "label": "Distributions",
+   "note": "Discrete: $0\\le p(x)\\le1$, $\\sum p=1$. Continuous: $f\\ge0$, $\\int f=1$; $f$ can exceed 1, areas are probabilities.",
+   "source": {
+    "file": "W1",
+    "page": 6
+   },
+   "latex": "\\sum_{x\\in\\Omega}p(x)=1,\\ \\int f(x)dx=1"
+  },
+  {
+   "label": "Sum & product rule",
+   "note": "Marginalise by summing the joint; the joint factorises as conditional × marginal.",
+   "source": {
+    "file": "W1",
+    "page": 10
+   },
+   "latex": "p(x)=\\sum_y p(x,y),\\quad p(x,y)=p(y|x)p(x)"
+  },
+  {
+   "label": "Independence / i.i.d.",
+   "note": "Independent: joint = product. i.i.d.: identical marginals, independent draws.",
+   "source": {
+    "file": "W1",
+    "page": 11
+   },
+   "latex": "p(x_1..x_N)=\\prod_n p(x_n)"
+  },
+  {
+   "label": "Bayes' theorem",
+   "note": "Posterior = likelihood × prior ÷ evidence. Likelihood ≠ posterior (alarm story).",
+   "source": {
+    "file": "W1",
+    "page": 12
+   },
+   "latex": "p(x|y)=\\frac{p(y|x)p(x)}{p(y)}"
+  },
+  {
+   "label": "Variance of sums",
+   "note": "Covariance term vanishes for independent variables; differences add variances too.",
+   "source": {
+    "file": "W1",
+    "page": 15
+   },
+   "latex": "\\mathbb V[x\\pm y]=\\mathbb V[x]+\\mathbb V[y]\\pm2\\mathrm{Cov}[x,y]"
+  },
+  {
+   "label": "Affine maps",
+   "note": "Scaling changes mean and spread, shifting only the mean.",
+   "source": {
+    "file": "W1",
+    "page": 15
+   },
+   "latex": "\\mathbb E[Ax+b]=A\\mathbb E[x]+b,\\ \\mathbb V[Ax+b]=A\\mathbb V[x]A^\\top"
+  },
+  {
+   "label": "Gaussian",
+   "note": "Closed under linear maps and sums of independent Gaussians.",
+   "source": {
+    "file": "W1",
+    "page": 19
+   },
+   "latex": "Ax\\sim\\mathcal N(A\\mu,A\\Sigma A^\\top)"
+  },
+  {
+   "label": "Sampling a Gaussian",
+   "note": "Cholesky: $LL^{\\top}=\\Sigma$, $L$ lower-triangular. Use $L$, not $\\Sigma$.",
+   "source": {
+    "file": "W1",
+    "page": 20
+   },
+   "latex": "y=Lx+\\mu,\\ x\\sim\\mathcal N(0,I)"
+  },
+  {
+   "label": "Maximum likelihood",
+   "note": "Maximise the log-likelihood under i.i.d. Judge by generalisation on test data.",
+   "source": {
+    "file": "W1",
+    "page": 21
+   },
+   "latex": "\\theta^*=\\arg\\max_\\theta\\sum_n\\log p(x_n;\\theta)"
+  },
+  {
+   "label": "Gaussian mixture",
+   "note": "Latent $z$ hidden; marginal is a weighted sum. Train by EM: E = compute $p(z)$, M = update parameters.",
+   "source": {
+    "file": "W1",
+    "page": 28
+   },
+   "latex": "p(x)=\\sum_{k=1}^K\\omega_k\\mathcal N(x;\\mu_k,\\sigma_k^2)"
+  },
+  {
+   "label": "Gradient descent",
+   "note": "Step against the gradient. Suitable γ ⇒ monotone decrease to a local minimum; too large ⇒ may diverge.",
+   "source": {
+    "file": "W1",
+    "page": 32
+   },
+   "latex": "x_{i+1}=x_i-\\gamma_i\\nabla f(x_i)"
+  }
+ ]
+}

@@ -1,0 +1,619 @@
+COMP8221 Advanced Machine Learning
+Heterogeneous Graphs
+Zitai Qiu, School of Computing, zitai.qiu@mq.edu.au
+Outline
+• Heterogeneous Graphs
+   Relational GCNs
+   Design space for heterogeneous GNNs
+
+
+
+
+                                         2
+Motivation
+• 2 types of nodes:   • 2 types of edges:
+    Paper nodes           Like edge
+    Author nodes          Cite edge
+
+
+
+
+                                            3
+Motivation
+• A graph could have multiple types of nodes and edges!
+• 2 types of nodes + 2 types of edges
+• 8 possible relation types!
+
+
+
+
+                                                          4
+Relation types
+• Relation types: (node_start, edge, node_end)
+• We use relation type to describe an edge
+• Relation type better captures the interaction between nodes and edges
+
+
+
+
+                                                                          5
+Heterogeneous graph
+• A heterogeneous graph is defined as
+                               𝐺𝐺 = (𝑉𝑉, 𝐸𝐸, 𝜏𝜏, 𝜙𝜙)
+• 𝑉𝑉 is the vertex set
+• 𝐸𝐸 is the edge set
+
+• For each node 𝑣𝑣 ∈ 𝑉𝑉, node type is 𝜏𝜏(𝑣𝑣)
+• For each edge (𝑢𝑢, 𝑣𝑣) ∈ 𝐸𝐸, edge type is 𝜙𝜙(𝑢𝑢, 𝑣𝑣)
+
+• Relation type:
+                             𝑟𝑟 𝑢𝑢, 𝑣𝑣 = (𝜏𝜏 𝑢𝑢 , 𝜙𝜙 𝑢𝑢, 𝑣𝑣 , 𝜏𝜏(𝑣𝑣))
+
+
+
+                                                                        6
+Heterogeneous graph
+• Example: E-Commerce Graph   •   Example: Academic Graph
+• Node type                   •   Node type
+• Edge type                   •   Edge type
+                              •   Microsoft Academic Graph
+
+
+
+
+                                                             7
+Type vs Features
+• We can also treat types of nodes and edges as features
+• Example:
+   Add a one-hot indicator for nodes and edges
+   Append feature [1, 0] to each “author node”;
+   Append feature [0, 1] to each “paper node”
+   Similarly, we can assign edge features to edges with different types
+
+• Then, a heterogeneous graph reduces to a standard(homogeneous) graph.
+
+• **When do we need a heterogeneous graph?**
+
+
+                                                                          8
+Type vs Features
+• When do we need a heterogeneous graph?
+   Case 1: Different node/edge types have different shapes of features
+       A “author node” has 4-dim feature
+       A “paper node” has 5-dim feature
+
+    Case 2: We know different relation types represent different types of
+    interactions
+         (English, translate, French) and (English, translate, Chinese) require
+         different models
+
+
+
+                                                                                  9
+Type vs Features
+• Heterogeneous graph is a more expressive graph representation
+   Captures different types of interactions between entities
+
+• But it also comes with costs
+   More expensive (computation, storage)
+   More complex implementation
+
+
+
+
+                                                                  10
+Recap: Classical GNN -- GCN
+
+
+
+
+                              11
+Relational GCN
+• Extend GCN to handle heterogeneous graphs with multiple edge/relation types
+• We start with a directed graph with one relation
+     How do we run GCN and update the representation of the target node A
+on this graph?
+
+
+
+
+                                                                           12
+Relational GCN
+• Extend GCN to handle heterogeneous graphs with multiple edge/relation types
+• We start with a directed graph with one relation
+     How do we run GCN and update the representation of the target node A
+on this graph?
+
+
+
+
+                                                                           13
+Relational GCN
+                                                                                     Layer 0
+                                                                 Layer 1
+
+
+
+
+                                          Layer 2
+
+
+
+• Assume initial node features are denoted as ℎ𝐴𝐴0 , ℎ𝐵𝐵0 , ℎ𝐶𝐶0 , ℎ𝐷𝐷
+                                                                    0 0 0
+                                                                       , ℎ𝐸𝐸 , ℎ𝐹𝐹
+• Use 𝑊𝑊 𝑙𝑙 , 𝐵𝐵𝑙𝑙 as weights for each layer 𝑙𝑙
+• What is𝒉𝒉𝟏𝟏𝑨𝑨 , 𝒉𝒉𝟏𝟏𝑩𝑩 , 𝒉𝒉𝟏𝟏𝑪𝑪 , 𝒉𝒉𝟏𝟏𝑫𝑫 and 𝒉𝒉𝟐𝟐𝑨𝑨 ?
+
+
+                                                                                               14
+Relational GCN
+                                                                                   Layer 0
+                                                                         Layer 1
+
+
+
+
+                             Layer 2
+
+
+                           𝑊𝑊 1 ℎ𝐵𝐵0 + 𝑊𝑊 1 ℎ𝐶𝐶0 + 𝑊𝑊 1 ℎ𝐷𝐷
+                                                         0
+             𝒉𝒉𝟏𝟏𝑨𝑨 = 𝜎𝜎                                    + 𝐵𝐵1 ℎ𝐴𝐴0
+                                          3
+                           𝒉𝒉𝟏𝟏𝑩𝑩 = 𝜎𝜎 𝑊𝑊 1 ℎ𝐶𝐶0 + 𝐵𝐵1 ℎ𝐵𝐵0
+                                 𝑊𝑊 1 ℎ𝐹𝐹0 + 𝑊𝑊 1 ℎ𝐸𝐸0
+                   𝒉𝒉𝟏𝟏𝑪𝑪 = 𝜎𝜎                         + 𝐵𝐵1 ℎ𝐶𝐶0
+                                           2
+                             𝒉𝒉𝟏𝟏𝑫𝑫 = 𝜎𝜎 𝐵𝐵1 ℎ𝐷𝐷
+                                              0
+
+
+               𝟐𝟐
+                       𝑊𝑊 2 ℎ1𝐵𝐵 + 𝑊𝑊 2 ℎ1𝐶𝐶 + 𝑊𝑊 2 ℎ1𝐷𝐷
+             𝒉𝒉𝑨𝑨 = 𝜎𝜎                                   + 𝐵𝐵2 ℎ𝐴𝐴1
+                                       3                                                     15
+Relational GCN
+                                                                                         F
+
+
+                                                                                         E
+
+
+
+
+                                Layer 3                                                  F
+
+                                                 Layer 2                 Layer 1      Layer 0
+•  Assume initial node features are denoted as ℎ𝐴𝐴0 , ℎ𝐵𝐵0 , ℎ𝐶𝐶0 , ℎ𝐷𝐷
+                                                                     0 0 0
+                                                                        , ℎ𝐸𝐸 , ℎ𝐹𝐹
+•  Use 𝑊𝑊 𝑙𝑙 , 𝐵𝐵𝑙𝑙 as weights for each layer 𝑙𝑙
+• What is 𝒉𝒉𝟑𝟑𝑨𝑨 ?
+
+
+                                                                                                16
+Relational GCN
+• What if the graph has multiple relation types?
+
+
+
+
+                                                   17
+Relational GCN
+• What if the graph has multiple relation types?
+• Use different neural network weights for different relation types.
+
+
+
+
+                                                                       18
+Relational GCN
+• Can you draw the computing node for the target node A?
+
+
+
+
+                                                           19
+Relational GCN
+• Can you draw the computing node for the target node A?
+
+
+
+
+                                                           20
+Relational GCN
+• Relational GCN (RGCN):
+                        (𝑙𝑙+1)                        1           𝑙𝑙     𝑙𝑙      𝑙𝑙   𝑙𝑙
+                       ℎ𝑣𝑣     = 𝜎𝜎(� �                 𝑟𝑟   𝑊𝑊𝑟𝑟      ℎ𝑢𝑢 + 𝑊𝑊0 ℎ𝑣𝑣 )
+                                                    |𝑁𝑁𝑣𝑣  |
+                                    𝑟𝑟∈𝑅𝑅 𝑢𝑢∈𝑁𝑁𝑣𝑣𝑟𝑟
+
+
+
+
+                                       For each                Node feature of             Node feature of
+          For each
+                                    neighbor u in                layer 𝑙𝑙 for              layer 𝑙𝑙 for target
+          relation r
+                                    this relation r              neighbor u                          v
+
+
+
+                                              Number of neighbors
+                                                for this relation r
+
+                                                                                                                 21
+Relational GCN
+• Relational GCN (RGCN):
+                                           (𝑙𝑙+1)                        1           𝑙𝑙     𝑙𝑙     𝑙𝑙   𝑙𝑙
+                                          ℎ𝑣𝑣     = 𝜎𝜎(� �                 𝑟𝑟   𝑊𝑊𝑟𝑟      ℎ𝑢𝑢 + 𝑊𝑊0 ℎ𝑣𝑣 )
+                                                                       |𝑁𝑁𝑣𝑣  |
+                                                       𝑟𝑟∈𝑅𝑅 𝑢𝑢∈𝑁𝑁𝑣𝑣𝑟𝑟
+Consider this simple heterogenous graph with 2 types of relations.
+Assume initial node features are denoted as ℎ𝐴𝐴0 , ℎ𝐵𝐵0 , ℎ𝐶𝐶0 , ℎ𝐷𝐷
+                                                                  0 0 0
+                                                                     , ℎ𝐸𝐸 , ℎ𝐹𝐹
+                 E         What is ℎ𝐴𝐴1 ?
+                               𝑟𝑟2
+               𝑟𝑟1
+     B
+                      A         𝑟𝑟1
+         𝑟𝑟1                          D
+                     𝑟𝑟2
+    C
+                           F
+
+                                                                                                             22
+Relational GCN
+• Relational GCN (RGCN):
+                                           (𝑙𝑙+1)                        1           𝑙𝑙     𝑙𝑙     𝑙𝑙   𝑙𝑙
+                                          ℎ𝑣𝑣     = 𝜎𝜎(� �                 𝑟𝑟   𝑊𝑊𝑟𝑟      ℎ𝑢𝑢 + 𝑊𝑊0 ℎ𝑣𝑣 )
+                                                                       |𝑁𝑁𝑣𝑣  |
+                                                       𝑟𝑟∈𝑅𝑅 𝑢𝑢∈𝑁𝑁𝑣𝑣𝑟𝑟
+Consider this simple heterogenous graph with 2 types of relations.
+Assume initial node features are denoted as ℎ𝐴𝐴0 , ℎ𝐵𝐵0 , ℎ𝐶𝐶0 , ℎ𝐷𝐷
+                                                                  0 0 0
+                                                                     , ℎ𝐸𝐸 , ℎ𝐹𝐹
+                 E         What is ℎ𝐴𝐴1 ?
+                               𝑟𝑟2
+               𝑟𝑟1
+     B
+                      A                                    0 0          0 0         0 0          0 0         0 0
+                                𝑟𝑟1                     𝑊𝑊𝑟𝑟1 ℎ 𝐵𝐵 + 𝑊𝑊𝑟𝑟1 ℎ𝐶𝐶 + 𝑊𝑊𝑟𝑟1 ℎ 𝐷𝐷   𝑊𝑊𝑟𝑟2 ℎ𝐸𝐸 + 𝑊𝑊𝑟𝑟𝑟 ℎ𝐹𝐹
+         𝑟𝑟1                          D        1
+                                              ℎ𝐴𝐴 = 𝜎𝜎(                                     +                       + 𝑊𝑊00 ℎ𝐴𝐴0 )
+                     𝑟𝑟2                                                 3                              2
+    C
+                           F
+
+                                                                                                                               23
+Relational GCN: Scalability
+                                         (1)     (2)   (3)       (𝐿𝐿)
+• Each relation has 𝐿𝐿 matrices: 𝑊𝑊𝑟𝑟 , 𝑊𝑊𝑟𝑟 , 𝑊𝑊𝑟𝑟 , … , 𝑊𝑊𝑟𝑟
+                        (𝑙𝑙)
+•   The size of each 𝑊𝑊𝑟𝑟 is 𝑑𝑑 (𝑙𝑙+1) × 𝑑𝑑 𝑙𝑙 ,  𝑑𝑑 𝑙𝑙 is the hidden dimension in layer 𝑙𝑙
+
+• Rapid growth of the number of parameters w.r.t number of relations
+    Overfitting
+
+• Two methods to regularize the weights
+   1) Block Diagonal matrices
+   2) Basis/Dictionary learning
+
+
+                                                                                               24
+Block Diagonal Matrices
+• Use block diagonal matrices for weights matrices
+
+
+
+
+• For example, assume original 𝑊𝑊𝑟𝑟 is 6 × 4 and we use 2 blocks:
+
+
+
+
+                                                                    25
+Block Diagonal Matrices
+• For example, assume original 𝑊𝑊𝑟𝑟 is 6 × 4 and we use 2 blocks:
+
+
+
+
+                                                                  64
+• The number of parameters reduces from 6 × 4 = 24 to 2 × × = 12
+                                                                  22
+• So if we use 𝐵𝐵 blocks for 𝑊𝑊𝑟𝑟 , then num param reduces from 𝑑𝑑(𝑙𝑙+1) × 𝑑𝑑𝑙𝑙 to
+     𝒅𝒅(𝒍𝒍+𝟏𝟏)   𝒅𝒅𝒍𝒍
+𝑩𝑩 ×           ×
+        𝑩𝑩       𝑩𝑩
+• Any issues?
+                                                                                     26
+Block Diagonal Matrices
+The block diagonal matrices can't mix information between blocks. That is,
+features in one block can only be transformed via their corresponding submatrix
+and do not interact with features in other blocks.
+
+Example
+Suppose you have a node feature vector of size 6:
+                          𝑥𝑥 = [𝑥𝑥1 , 𝑥𝑥2 , 𝑥𝑥3 , 𝑥𝑥4 , 𝑥𝑥5 , 𝑥𝑥6 ]𝑇𝑇
+Now imagine using a block diagonal weight matrix with 2 blocks:
+                         𝑊𝑊1 0
+                    𝑊𝑊 =                where 𝑊𝑊1 , 𝑊𝑊2 ∈ 𝑅𝑅3×3
+                           0 𝑊𝑊2
+
+
+                                                                              27
+Block Diagonal Matrices
+Example
+Suppose you have a node feature vector of size 6:
+                                       𝑥𝑥 = [𝑥𝑥1 , 𝑥𝑥2 , 𝑥𝑥3 , 𝑥𝑥4 , 𝑥𝑥5 , 𝑥𝑥6 ]𝑇𝑇
+Now imagine using a block diagonal weight matrix with 2 blocks:
+                                       𝑊𝑊     0
+                                 𝑊𝑊 = 1              where 𝑊𝑊1 , 𝑊𝑊2 ∈ 𝑅𝑅3×3
+                                        0 𝑊𝑊2
+That means:
+𝑥𝑥1 , 𝑥𝑥2 , 𝑥𝑥3 will be transformed only via 𝑊𝑊1
+𝑥𝑥4 , 𝑥𝑥5 , 𝑥𝑥6 will be transformed only via 𝑊𝑊2
+There’s no way for 𝑥𝑥1 to influence 𝑥𝑥4 and vice versa.
+When aggregate messages from neighbouring nodes, features in dim 1–3 will only be
+influenced by other features in dim 1–3. Cross-dimensional interaction is limited.
+
+                                                                                      28
+Basis Learning
+• Key: Share weights across different relations
+• Represent the matrix of each relation as a linear combination of basis
+transformations:
+                                           𝐵𝐵
+                                  𝑊𝑊𝑟𝑟 = �      𝑎𝑎𝑟𝑟𝑏𝑏 � 𝑉𝑉𝑏𝑏
+                                           𝑏𝑏=1
+
+
+• {𝑽𝑽𝒃𝒃 }𝑩𝑩𝒃𝒃=𝟏𝟏 are the basis matrices and are shared across all relations
+• 𝒂𝒂𝒃𝒃𝒓𝒓 is the importance weights for relation 𝑟𝑟 and basis matrix 𝑉𝑉𝑏𝑏
+
+
+
+
+                                                                              29
+ Basis Learning: Example
+Imagine a heterogeneous graph with nodes of types Author and Paper, and two
+types of edges:
+• writes (from Author to Paper)
+• cites (from Paper to Paper)
+
+• For example, let’s set the number of bases to 𝐵𝐵 = 2
+• Then we have:
+                                                             (𝑙𝑙) (𝑙𝑙+1) ×𝑑𝑑 𝑙𝑙      (𝑙𝑙)   (𝑙𝑙+1) ×𝑑𝑑 𝑙𝑙
+    For layer 𝑙𝑙, shared basis matrices: 𝑉𝑉1 ∈ ℝ𝑑𝑑                              , 𝑉𝑉2 ∈ ℝ𝑑𝑑
+    Learnable coefficients for each relation:
+         Relation "writes": ​𝑎𝑎1𝑤𝑤𝑤𝑤𝑤𝑤𝑤𝑤𝑤𝑤𝑤𝑤 , 𝑎𝑎𝑤𝑤𝑤𝑤𝑤𝑤𝑤𝑤𝑤𝑤𝑤𝑤
+                                                    2
+
+         Relation "cites": 𝑎𝑎1𝑐𝑐𝑐𝑐𝑐𝑐𝑐𝑐𝑐𝑐 , 𝑎𝑎𝑐𝑐𝑐𝑐𝑐𝑐𝑐𝑐𝑐𝑐
+                                             2
+                                                       (𝑙𝑙)               (𝑙𝑙)                (𝑙𝑙)
+    The relation weight matrices: 𝑊𝑊𝑤𝑤𝑤𝑤𝑤𝑤𝑤𝑤𝑤𝑤𝑤𝑤 = 𝑎𝑎1𝑤𝑤𝑤𝑤𝑤𝑤𝑤𝑤𝑤𝑤𝑤𝑤 𝑉𝑉1 + 𝑎𝑎𝑤𝑤𝑤𝑤𝑤𝑤𝑤𝑤𝑤𝑤𝑤𝑤 2
+                                                                                          𝑉𝑉2
+                                                       (𝑙𝑙)                       (𝑙𝑙)                    (𝑙𝑙)
+                                                   𝑊𝑊𝑐𝑐𝑐𝑐𝑐𝑐𝑐𝑐𝑐𝑐 = 𝑎𝑎1𝑐𝑐𝑐𝑐𝑐𝑐𝑐𝑐𝑐𝑐 𝑉𝑉1          2
+                                                                                         + 𝑎𝑎𝑐𝑐𝑐𝑐𝑐𝑐𝑐𝑐𝑐𝑐 𝑉𝑉2
+                                                                                                                 30
+Basis Learning: Example
+• Typically, basis matrices are not shared across layers. Each layer usually has
+its own set of basis matrices.
+
+• Learnable Parameters:
+    Basis matrices and the coefficients are all learnable.
+    They will be updated during training via backpropagation, optimizing for the
+    specific graph prediction task (classification, link prediction, etc.).
+
+• The number of parameters for each layer changes from 𝑑𝑑 (𝑙𝑙+1) × 𝑑𝑑 𝑙𝑙 × |𝑅𝑅| to
+                 𝒅𝒅(𝒍𝒍+𝟏𝟏) × 𝒅𝒅𝒍𝒍 × 𝑩𝑩 + 𝑹𝑹 × 𝑩𝑩 = (𝒅𝒅 𝒍𝒍+𝟏𝟏 × 𝒅𝒅𝒍𝒍 + 𝑹𝑹 ) × 𝑩𝑩
+• What can you tell from the equation?
+
+
+                                                                                     31
+Basis Learning: Example
+• The number of parameters for each layer changes from 𝑑𝑑 (𝑙𝑙+1) × 𝑑𝑑 𝑙𝑙 × |𝑅𝑅| to
+                 𝑑𝑑 (𝑙𝑙+1) × 𝑑𝑑 𝑙𝑙 × 𝐵𝐵 + 𝑅𝑅 × 𝐵𝐵 = (𝑑𝑑 𝑙𝑙+1 × 𝑑𝑑 𝑙𝑙 + 𝑅𝑅 ) × 𝐵𝐵
+
+• What can you tell from the equation?
+
+     When 𝐵𝐵 ≪ |𝑅𝑅|, Basis learning significantly reduces the number of parameters.
+     When 𝐵𝐵 ≈ |𝑅𝑅|, the parameter savings diminish.
+
+
+
+
+                                                                                      32
+RGCN: Node Classification
+• Goal: Predict the label of a given node
+• RGCN uses the representation of the final layer:
+   If we predict the class of node A from K classes
+                                             (𝐿𝐿)                    (𝐿𝐿)
+     Take the final layer (prediction head): ℎ𝐴𝐴 ∈ ℝ𝐾𝐾 , each item in ℎ𝐴𝐴 represents
+the probability of that class
+
+
+
+
+                                                                                       33
+RGCN: Link Prediction
+• Recap:
+
+
+
+
+                        34
+RGCN: Link Prediction
+• Link prediction: Make prediction using pairs of node embeddings
+• Assume 𝑬𝑬, 𝒓𝒓𝟑𝟑 , 𝑨𝑨 is the training supervision edge.
+• All other edges are training message edges (solid lines).
+
+• Use RGCN to predict 𝐸𝐸, 𝑟𝑟3 , 𝐴𝐴
+
+                                           (𝐿𝐿)   (𝐿𝐿)
+    Take final layer of node E and A: ℎ𝐸𝐸 , ℎ𝐴𝐴 ∈ ℝ𝑑𝑑
+    Relation-specific function: 𝑓𝑓𝑟𝑟 : ℝ𝑑𝑑 × ℝ𝑑𝑑 → ℝ
+
+                        𝐿𝐿     𝐿𝐿     (𝐿𝐿) 𝑇𝑇   (𝐿𝐿)
+    For example, 𝑓𝑓3 (ℎ𝐸𝐸 , ℎ𝐴𝐴 ) = (ℎ𝐸𝐸 ) 𝑊𝑊3 ℎ𝐴𝐴
+
+                                                                    35
+RGCN: Link Prediction
+• Link prediction: Make prediction using pairs of node embeddings
+• Create negative edges by perturbing the supervision edge 𝐸𝐸, 𝑟𝑟3 , 𝐴𝐴  e.g.
+ 𝐸𝐸, 𝑟𝑟3 , 𝐵𝐵 .
+        Note the negative edges should NOT belong to training/supervision edge: e.g
+ 𝐸𝐸, 𝑟𝑟3 , 𝐶𝐶 is NOT a negative edge
+
+
+
+
+                                                                                      36
+ RGCN: Link Prediction
+• Link prediction: Make prediction using pairs of node embeddings
+• Training:
+    1. Use RGCN to score the training supervision edge 𝑬𝑬, 𝒓𝒓𝟑𝟑 , 𝑨𝑨
+    2. Create a negative edge 𝑬𝑬, 𝒓𝒓𝟑𝟑 , 𝑩𝑩
+    3. Use RGCN model to score negative edge
+    4. Optimize a standard cross entropy
+         Maximize the score of training supervision edge
+         Minimize the score of negative edge
+
+
+
+                       𝐿𝐿    𝐿𝐿                           𝐿𝐿    𝐿𝐿
+𝑙𝑙 = −𝑙𝑙𝑙𝑙𝑙𝑙𝜎𝜎 𝑓𝑓𝑟𝑟3 ℎ𝐸𝐸 , ℎ𝐴𝐴    − 𝑙𝑙𝑙𝑙𝑙𝑙 1 − 𝜎𝜎 𝑓𝑓𝑟𝑟3 ℎ𝐸𝐸 , ℎ𝐵𝐵    , 𝜎𝜎 … sigmoid function
+                                                                                               37
+RGCN: Link Prediction
+• Link prediction: Make prediction using pairs of node embeddings
+• Evaluation:
+• Let’s predict validation edge 𝐸𝐸, 𝑟𝑟3 , 𝐷𝐷
+    1. Calculate the score of 𝐸𝐸, 𝑟𝑟3 , 𝐷𝐷
+    2. Calculate the score of all the negative edges: {(𝐸𝐸, 𝑟𝑟3 , 𝑣𝑣)|𝑣𝑣 ∈ {𝐵𝐵, 𝐹𝐹}},
+    Since 𝐸𝐸, 𝑟𝑟3 , 𝐴𝐴 and 𝐸𝐸, 𝑟𝑟3 , 𝐶𝐶 belong to training message edges & training
+    supervision edges
+    3. Obtain the ranking 𝑅𝑅𝑅𝑅 of 𝐸𝐸, 𝑟𝑟3 , 𝐷𝐷
+    4. Calculate metrics:
+          Hits@𝒌𝒌: 1[𝑅𝑅𝑅𝑅 ≤ 𝑘𝑘]. Higher is better
+                                 1
+           Reciprocal Rank:          . Higher is better
+                                𝑅𝑅𝑅𝑅
+Intuition: the score of 𝐸𝐸, 𝑟𝑟3 , 𝐷𝐷 should be higher than all other negative edges that are
+NOT in the training message edges and training supervision edges,                           38
+RGCN: Link Prediction
+• Link prediction: Make prediction using pairs of node embeddings
+• Evaluation:
+    For example:
+         The ranking: 𝑓𝑓𝑟𝑟3 𝐸𝐸, 𝑟𝑟3 , 𝐷𝐷
+                       𝑓𝑓𝑟𝑟3 𝐸𝐸, 𝑟𝑟3 , 𝐵𝐵
+                       𝑓𝑓𝑟𝑟3 𝐸𝐸, 𝑟𝑟3 , 𝐹𝐹
+
+𝑅𝑅𝑅𝑅 of 𝐸𝐸, 𝑟𝑟3 , 𝐷𝐷 : 1
+      1. If k = 2 (top 2 predictions), Hits@𝒌𝒌: 1 𝑅𝑅𝑅𝑅 ≤ 2 → 1
+                           1    1
+    2. Reciprocal Rank:        = =1
+                          𝑅𝑅𝑅𝑅  1
+
+
+                                                                    39
+RGCN: Link Prediction
+• Link prediction: Make prediction using pairs of node embeddings
+• Evaluation:
+The goal is to see how well the model predicts the true edge 𝐸𝐸, 𝑟𝑟3 , 𝐷𝐷 by comparing
+its score against various negative edges.
+
+The evaluation metrics are standard for knowledge
+graph link prediction tasks:
+
+Hits@k: Measures if the true edge ranks within the top-k predictions.
+Reciprocal Rank: Evaluates the ranking quality by giving higher scores to
+top-ranked predictions.
+
+
+                                                                                         40
+Recap: GNN Framework
+
+
+
+
+                       41
+Message Computation
+• A node could receive multiple types of messages. Num of message type =
+Num of relation type
+
+• Idea: Create a different message function for each relation type
+                  (𝑙𝑙)                 𝑙𝑙−1       (𝒍𝒍)         𝒍𝒍      𝒍𝒍−𝟏𝟏
+                𝑚𝑚𝑢𝑢 = 𝑀𝑀𝑀𝑀𝑀𝑀 (𝑙𝑙)   ℎ𝑢𝑢      → 𝒎𝒎𝒖𝒖 = 𝑴𝑴𝑴𝑴𝑴𝑴𝒓𝒓     𝒉𝒉𝒖𝒖       ,
+
+
+
+
+    Example:
+                            (𝑙𝑙)      (𝑙𝑙) (𝑙𝑙−1)
+         A linear layer: 𝑚𝑚𝑢𝑢 = 𝑊𝑊𝑟𝑟 ℎ𝑢𝑢
+
+                                                                                   42
+Heterogeneous Aggregation
+• Observation: Each node could receive multiple types of messages from its
+neighbors, and multiple neighbors may belong to each message type.
+
+• Idea: We can define a 2-stage message passing:
+  (𝑙𝑙)                  𝑙𝑙                   (𝒍𝒍)        𝒍𝒍             𝒍𝒍       𝒍𝒍
+ ℎ𝑣𝑣 = 𝐴𝐴𝐴𝐴𝐴𝐴 𝑙𝑙     𝑚𝑚𝑢𝑢 , 𝑢𝑢 ∈ 𝑁𝑁 𝑣𝑣   → 𝒉𝒉𝒗𝒗 = 𝑨𝑨𝑨𝑨𝑨𝑨𝒂𝒂𝒂𝒂𝒂𝒂   𝑨𝑨𝑨𝑨𝑨𝑨𝒓𝒓    𝒎𝒎𝒖𝒖 , 𝒖𝒖 ∈ 𝑵𝑵𝒓𝒓 𝒗𝒗
+
+                                                                 Aggregate the messages that
+                                                                                                            (𝑙𝑙)
+                                                                 belongs to the relation type r with 𝐴𝐴𝐴𝐴𝐴𝐴𝑟𝑟
+                                                                                                     (𝑙𝑙)
+                                                       Aggregate across edge types with 𝐴𝐴𝐴𝐴𝐴𝐴𝑎𝑎𝑎𝑎𝑎𝑎
+
+
+                   (𝒍𝒍)                          𝒍𝒍
+    Example: 𝒉𝒉𝒗𝒗 = 𝑪𝑪𝑪𝑪𝑪𝑪𝑪𝑪𝑪𝑪𝑪𝑪 𝑺𝑺𝑺𝑺𝑺𝑺      𝒎𝒎𝒖𝒖 , 𝒖𝒖 ∈ 𝑵𝑵𝒓𝒓 𝒗𝒗
+                                                                                                            43
+Heterogeneous Graph Layers
+• Heterogeneous pre/post-process layers:
+• MLP layers with respect to each node type:
+     (𝑙𝑙)                𝑙𝑙
+    ℎ𝑣𝑣 = 𝑀𝑀𝑀𝑀𝑀𝑀𝑇𝑇(𝑣𝑣) ℎ𝑣𝑣
+    𝑇𝑇 𝑣𝑣 is the type of node 𝑣𝑣
+
+
+
+• Other successful GNN designs are also encouraged
+for heterogeneous GNNs: skip connections,
+batch/layer normalization, …
+
+
+
+                                                     44
+Heterogeneous Graph Manipulation
+Graph Structure Manipulation
+Recap:
+
+
+
+
+Neighbor and subgraph sampling are also common for heterogeneous graphs.
+2 Common options:
+    sampling within each relation type (ensure neighbors from each type are
+covered), or sample across the full graph
+                                                                              45
+Heterogeneous Prediction Heads
+Recap:
+
+
+
+
+                                 46
+Heterogeneous Prediction Heads
+
+
+
+
+                                 47
+

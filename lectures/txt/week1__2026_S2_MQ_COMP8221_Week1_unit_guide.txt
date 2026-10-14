@@ -1,0 +1,183 @@
+                              t
+Advanced Machine Learning - COMP8221
+Unit Guide
+
+
+
+
+                           raf
+Dr. Qiongkai Xu, qiongkai.xu@mq.edu.au, School of Computing
+raf
+Welcome to COMP8221!
+
+
+
+
+                       1/9
+Welcome to this unit!
+
+
+
+
+                             t
+                          raf
+ The teaching team:
+
+   • Convenor/Lecturer: Qiongkai Xu, qiongkai.xu@mq.edu.au (week 1 - week 6,
+     week 13)
+   • Lecturer: Zitai Qu, zitai.qu@mq.edu.au (week 7 - week 13)
+   • Tutor: Utsav Maskey, utsav.maskey@mq.edu.au
+   • Tutor: Alireza Yegane, alireza.yegane@mq.edu.au
+
+
+
+                                                                               2/9
+Unit Schedule
+
+
+
+
+                           t
+                        raf
+                           Table 1: Unit Schedule
+
+
+  Week                                  Topic
+   1-4   Deep generative models (Graphical models, VAE, Diffusion models, etc.)
+   5-8                           Graph neural networks
+  9-12                       Deep reinforcement learning
+   13                                  Revision
+
+
+
+                                                                              3/9
+Assessment Tasks
+
+
+
+
+                             t
+                          raf
+                          Table 2: Assessment Tasks
+
+              Name        Weighting       Type           Due
+           Assignment 1     30%          Project      20/09/2026
+           Assignment 2     30%          Project      01/11/2026
+               Exam         40%        Examination    Exam period
+
+  • Assignments to be submitted through iLearn.
+
+
+
+                                                                    4/9
+Delivery and Recources
+
+
+
+
+                             t
+  • Classes: each week has two hours of lectures and two hours of workshops.
+
+
+
+
+                          raf
+  • Recommended Texts: will be provided during the lecturing.
+  • Unit web page: will be hosted in iLearn. You will need to log in to iLearn
+    using you student one ID and password. Please post questions in the
+    discussion boards, the teaching team will monitor it.
+  • Methods of communication: via your university email or through
+    announcements in iLearn.
+  • Technology used: will make use of a range of modules that are available via
+    the Anaconda Python distribution.
+
+
+                                                                                  5/9
+Class time/venue
+
+
+
+
+                          t
+                       raf
+  • Lecturing: 1:00 PM - 3:00 PM, Monday, 14SCO T3 Lecture Theatre
+  • Choose one of the four Workshops (start from week 2):
+      • 3:00 PM - 5:00 PM, Monday, 04RPD G14 Computer Lab
+      • 5:00 PM - 7:00 PM, Monday, 04RPD G14 Computer Lab
+      • 9:00 AM - 11:00 AM, Tuesday, 04RPD G14 Computer Lab
+      • 11:00 AM - 1:00 PM, Tuesday, 04RPD G14 Computer Lab
+
+
+
+
+                                                                     6/9
+Requirement
+
+
+
+
+                            t
+  • Requirement to Pass this Unit To pass this unit, you must achieve a total
+    mark equal to or greater than 50%.
+  • Late Assessment Submission Penalty Unless a Special Consideration request
+
+
+
+
+                         raf
+    has been submitted and approved, a 5% penalty (of the total possible mark
+    of the task) will be applied for each day a written report or presentation
+    assessment is not submitted, up until the 7th day (including weekends).
+    After the 7th day, a grade of ‘0’ will be awarded even if the assessment is
+    submitted. The submission time for all uploaded assessments is 11:55 pm. A
+    1-hour grace period will be provided to students who experience a technical
+    concern.
+  • For any late submission of time-sensitive tasks, such as scheduled
+    tests/exams, performance assessments/presentations, and/or scheduled
+    practical assessments/labs, please apply for Special Consideration.         7/9
+Suggestions
+
+
+
+
+                             t
+ Contact Our Team:
+
+
+
+
+                          raf
+   • Questions to lectures: email lecturers during their weeks or ask them
+     after/during lectures
+   • Questions to workshops: email your TA or ask them after/during workshops
+   • General Questions: iLearn (General discussion Forum)
+   • Private Questions: email / iLearn (Privacy Message to Unit Contacts)
+
+ Dr Xu’s Office Hour: Wednesday 12-1 pm, in Room 357, 4RPD, by appointment.
+
+
+                                                                                8/9
+Suggestions
+
+
+
+
+                              t
+ To approach possibly one of the most theoretically & technically challenging
+ units in computing,
+
+
+
+
+                           raf
+   • Attend lectures and workshops.
+   • Try to understand the content as deeply as possible by
+       ■ deriving the theory
+       ■ programming the process
+       ■ evaluating & analysing the outcomes.
+       ■ ···
+   • Ask (good) questions.
+   • Be critical.
+
+                                                                                9/9
+

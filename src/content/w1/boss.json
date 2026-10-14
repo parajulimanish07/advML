@@ -1,0 +1,186 @@
+{
+ "title": "The Gaussian Golem",
+ "intro": "Everything from Week 1: distributions, Bayes, Gaussians, MLE, mixtures and gradient descent. It will hit you with multi-step problems like an exam would.",
+ "questions": [
+  {
+   "id": "w1.boss.q1",
+   "type": "numeric",
+   "prompt": "Part 1. What is $\\mathbb E[y]$?",
+   "value": 5,
+   "tol": 0.01,
+   "explanation": "$\\mathbb E[3x-1]=3\\cdot2-1=5$.",
+   "source": {
+    "file": "W1",
+    "page": 15
+   },
+   "scenario": "**Scenario A.** A sensor reading $x\\sim\\mathcal N(2,4)$ (mean 2, variance 4). A calibrated value is $y=3x-1$. A separate, independent noise term $z\\sim\\mathcal N(0,1)$ is added: $w=y+z$.",
+   "step": "Scenario A · part 1 of 3"
+  },
+  {
+   "id": "w1.boss.q2",
+   "type": "numeric",
+   "prompt": "Part 2. What is $\\mathbb V[y]$?",
+   "value": 36,
+   "tol": 0.01,
+   "explanation": "$\\mathbb V[3x-1]=3^2\\cdot4=36$. The $-1$ doesn’t change spread.",
+   "source": {
+    "file": "W1",
+    "page": 15
+   },
+   "scenario": "**Scenario A.** A sensor reading $x\\sim\\mathcal N(2,4)$ (mean 2, variance 4). A calibrated value is $y=3x-1$. A separate, independent noise term $z\\sim\\mathcal N(0,1)$ is added: $w=y+z$.",
+   "step": "Scenario A · part 2 of 3"
+  },
+  {
+   "id": "w1.boss.q3",
+   "type": "numeric",
+   "prompt": "Part 3. What is $\\mathbb V[w]$ where $w=y+z$ and $z$ is independent of $y$?",
+   "value": 37,
+   "tol": 0.01,
+   "explanation": "$\\mathbb V[y+z]=\\mathbb V[y]+\\mathbb V[z]+2\\mathrm{Cov}[y,z]=36+1+0=37$ (independent ⇒ Cov = 0).",
+   "source": {
+    "file": "W1",
+    "page": 15
+   },
+   "scenario": "**Scenario A.** A sensor reading $x\\sim\\mathcal N(2,4)$ (mean 2, variance 4). A calibrated value is $y=3x-1$. A separate, independent noise term $z\\sim\\mathcal N(0,1)$ is added: $w=y+z$.",
+   "step": "Scenario A · part 3 of 3"
+  },
+  {
+   "id": "w1.boss.q4",
+   "type": "numeric",
+   "prompt": "Part 1. Compute the **first** component of $\\nabla f(x_0)$.",
+   "value": -12,
+   "tol": 0.05,
+   "explanation": "$(Ax_0-b)_1=2(-3)+1(-1)-5=-12$.",
+   "source": {
+    "file": "W1",
+    "page": 33
+   },
+   "scenario": "**Scenario B (gradient descent).** Minimise $f(x)=\\tfrac12x^\\top Ax-b^\\top x$ with $A=\\begin{pmatrix}2&1\\\\1&20\\end{pmatrix}$, $b=(5,3)^\\top$, start $x_0=(-3,-1)^\\top$, so $\\nabla f(x)=Ax-b$. Use step size $\\gamma=0.05$.",
+   "step": "Scenario B · part 1 of 3"
+  },
+  {
+   "id": "w1.boss.q5",
+   "type": "numeric",
+   "prompt": "Part 2. Compute the **second** component of $\\nabla f(x_0)$.",
+   "value": -26,
+   "tol": 0.05,
+   "explanation": "$(Ax_0-b)_2=1(-3)+20(-1)-3=-26$.",
+   "source": {
+    "file": "W1",
+    "page": 33
+   },
+   "scenario": "**Scenario B (gradient descent).** Minimise $f(x)=\\tfrac12x^\\top Ax-b^\\top x$ with $A=\\begin{pmatrix}2&1\\\\1&20\\end{pmatrix}$, $b=(5,3)^\\top$, start $x_0=(-3,-1)^\\top$, so $\\nabla f(x)=Ax-b$. Use step size $\\gamma=0.05$.",
+   "step": "Scenario B · part 2 of 3"
+  },
+  {
+   "id": "w1.boss.q6",
+   "type": "numeric",
+   "prompt": "Part 3. What is the **first** component of $x_1=x_0-\\gamma\\nabla f(x_0)$?",
+   "value": -2.4,
+   "tol": 0.01,
+   "explanation": "$-3-0.05\\cdot(-12)=-3+0.6=-2.4$.",
+   "source": {
+    "file": "W1",
+    "page": 32
+   },
+   "scenario": "**Scenario B (gradient descent).** Minimise $f(x)=\\tfrac12x^\\top Ax-b^\\top x$ with $A=\\begin{pmatrix}2&1\\\\1&20\\end{pmatrix}$, $b=(5,3)^\\top$, start $x_0=(-3,-1)^\\top$, so $\\nabla f(x)=Ax-b$. Use step size $\\gamma=0.05$.",
+   "step": "Scenario B · part 3 of 3"
+  },
+  {
+   "id": "w1.boss.q7",
+   "type": "numeric",
+   "prompt": "Part 1. What is the evidence $p(\\text{flag})$ (3 decimals)?",
+   "value": 0.096,
+   "tol": 0.0015,
+   "explanation": "$p(\\text{flag})=0.9(0.02)+0.08(0.98)=0.018+0.0784=0.0964$.",
+   "source": {
+    "file": "W1",
+    "page": 12
+   },
+   "scenario": "**Scenario C (Bayes).** A fault occurs on 2% of days. A monitor flags 90% of real faults, but also flags 8% of fault-free days.",
+   "step": "Scenario C · part 1 of 2"
+  },
+  {
+   "id": "w1.boss.q8",
+   "type": "numeric",
+   "prompt": "Part 2. Given a flag, what is $p(\\text{fault}\\mid\\text{flag})$ (3 decimals)?",
+   "value": 0.187,
+   "tol": 0.004,
+   "explanation": "$0.018/0.0964\\approx0.187$. Most flags are false alarms because faults are rare.",
+   "source": {
+    "file": "W1",
+    "page": 12
+   },
+   "scenario": "**Scenario C (Bayes).** A fault occurs on 2% of days. A monitor flags 90% of real faults, but also flags 8% of fault-free days.",
+   "step": "Scenario C · part 2 of 2"
+  },
+  {
+   "id": "w1.boss.q9",
+   "type": "false",
+   "prompt": "Which statement is FALSE?",
+   "options": [
+    "A continuous density $f(x)$ can exceed 1 at some $x$",
+    "For discrete $x$, each $p(x)\\le1$ and $\\sum_xp(x)=1$",
+    "$V[x+y]=V[x]+V[y]$ whenever $x$ and $y$ are independent",
+    "If $x,y$ independent then $p(y|x)=p(x)$"
+   ],
+   "correct": 3,
+   "explanation": "Independence gives $p(y|x)=p(y)$, not $p(x)$.",
+   "source": {
+    "file": "W1",
+    "page": 10
+   }
+  },
+  {
+   "id": "w1.boss.q10",
+   "type": "bug",
+   "prompt": "*“To sample $\\mathcal N(\\mu,\\Sigma)$ I draw $x\\sim\\mathcal N(0,I)$ and return $\\Sigma x+\\mu$.”* The bug is:",
+   "options": [
+    "Nothing is wrong",
+    "The covariance would be $\\Sigma\\Sigma^\\top$; you need $L$ with $LL^\\top=\\Sigma$ (Cholesky)",
+    "$\\mu$ must be multiplied by $x$",
+    "$x$ must be uniform"
+   ],
+   "correct": 1,
+   "explanation": "$\\mathbb V[Lx+\\mu]=LL^\\top=\\Sigma$ only when $L$ is the Cholesky factor.",
+   "source": {
+    "file": "W1",
+    "page": 20
+   }
+  },
+  {
+   "id": "w1.boss.q11",
+   "type": "mcq",
+   "prompt": "In EM for a Gaussian mixture, which is the correct order within one iteration?",
+   "options": [
+    "Update $\\{\\omega_k,\\mu_k,\\sigma_k^2\\}$, then compute $p(z)$",
+    "Compute the expected probabilities $p(z)$, then update $\\{\\omega_k,\\mu_k,\\sigma_k^2\\}$",
+    "Sample $z$ uniformly, then freeze the parameters",
+    "Both steps are done simultaneously by gradient descent only"
+   ],
+   "correct": 1,
+   "explanation": "E (guess the hidden labels) then M (refit using the guesses).",
+   "source": {
+    "file": "W1",
+    "page": 29
+   }
+  },
+  {
+   "id": "w1.boss.q12",
+   "type": "mcq",
+   "prompt": "A student reports a higher *training* log-likelihood than a classmate and claims a better model. The correct response is:",
+   "options": [
+    "Agree: higher training likelihood always wins",
+    "Compare on held-out data: generalisation (test performance) is the key factor",
+    "Agree, because the log-likelihood is the test metric",
+    "Lower likelihood is better"
+   ],
+   "correct": 1,
+   "explanation": "Slide 20: generalisation capability, assessed on test data, is the key factor.",
+   "source": {
+    "file": "W1",
+    "page": 22
+   }
+  }
+ ]
+}

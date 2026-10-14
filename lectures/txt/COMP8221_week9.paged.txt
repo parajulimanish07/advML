@@ -1,0 +1,703 @@
+=== PAGE 1 ===
+COMP8221 Advanced Machine Learning
+Introduction to Deep Reinforcement Learning
+Dr Zitai Qiu, School of Computing, zitai.qiu@mq.edu.au
+
+=== PAGE 2 ===
+Recommended Textbook
+
+                http://incompleteideas.net/book/RLbook2020.pdf
+
+                                                                 2
+
+=== PAGE 3 ===
+Outline
+•   Markov Decision Processes
+•   Monte Carlo Return
+•   Value Functions
+•   Q-learning
+•   Overestimation Bias
+
+                                3
+
+=== PAGE 4 ===
+What can RL do?
+•   AlphaGo
+•   Robotics
+•   Autonomous driving
+•   Video games
+•   …
+
+                         4
+
+=== PAGE 5 ===
+Types of RL algorithms
+• Policy gradients:
+   REINFORCE
+• Value-based:
+   DQN
+• Actor-critic:
+   DDPG
+   Soft Actor Critic
+• Model-based RL:
+   Dyna
+
+                         5
+
+=== PAGE 6 ===
+Markov Decision Processes
+MDPs are a classical formalization of sequential decision making, and a
+mathematical idealized form of the reinforcement learning problem.
+
+OFFICE I FACULTY I DEPARTMENT                                             6
+
+=== PAGE 7 ===
+Markov Decision Processes
+Define Markov Decision Processes as 𝑆, 𝐴, 𝑟, 𝑝, 𝜌, 𝛾 :
+• 𝑆: continuous multi-dimensional state space / discrete state space
+• 𝐴: continuous multi-dimensional action space / discrete action space
+• 𝑟: bounded reward function 𝑟(𝑠, 𝑎) maps state action pairs (𝑠, 𝑎) into reward
+     received by the agent by taking the action 𝑎 while in state 𝑠
+• 𝑝: 𝑝 𝑠 ′ 𝑠, 𝑎 is the probability of transitioning into the next state 𝑠′ by taking
+     action 𝑎 in state 𝑠
+• 𝜌: initial state distribution
+• 𝛾: discount factor [0, 1]
+
+OFFICE I FACULTY I DEPARTMENT                                                          7
+
+=== PAGE 8 ===
+Markov Decision Processes
+Actions influence not just immediate rewards, but also subsequent states, and
+through future rewards.
+
+Examples of MDPs: what are the actions? What are the states? Rewards?
+
+OFFICE I FACULTY I DEPARTMENT                                                   8
+
+=== PAGE 9 ===
+Markov Decision Processes
+MDPs:
+                                𝑆: possible location of the mouse in the maze.
+                                𝐴 (discrete) : Up, Down, Left and Right
+                                𝑟 : -1 for each action, -2 for hitting the obstacles,
+                                      +10 for reaching the cheese
+                                𝑝: 𝑝 𝑠 ′ 𝑠, 𝑎 = 1 for all state s and next state s’ as it is a
+                                      deterministic environment
+                                𝜌: any start location of the mouse in the maze
+                                𝛾: 0.9
+
+OFFICE I FACULTY I DEPARTMENT                                                                    9
+
+=== PAGE 10 ===
+Markov Decision Processes: Policy
+• Let 𝜋 = 𝜋 𝑎 𝑠 , 𝑠 ∈ 𝑆, 𝑎 ∈ 𝐴 denote the policy. The policy maps from the state
+  space 𝑆 to a probability distribution over the action space 𝐴.
+
+                                      •   𝜋 𝑎0 𝑠 = 0.4
+                                      •   𝜋 𝑎1 𝑠 = 0.1      Probabilities
+                                      •   𝜋 𝑎2 𝑠 = 0.2      sum up to 1
+                                      •   𝜋 𝑎3 𝑠 = 0.3
+
+OFFICE I FACULTY I DEPARTMENT                                                 10
+
+=== PAGE 11 ===
+Markov Decision Processes
+Let 𝜏𝜋 = (𝑠0 , 𝑎0 , 𝑟0 , 𝑠1 , 𝑎1 , 𝑟1 , … ) as a sample trajectory/episode following policy 𝜋.
+
+To collect the trajectory, we can describe the process as follows:
+
+       1. at time 𝑡, the agent is currently in state 𝑠𝑡
+       2. takes action 𝑎𝑡 according to the policy 𝜋
+       3. receives reward 𝑟𝑡 = 𝑟 𝑠𝑡 , 𝑎𝑡
+       4. transit to the next state 𝑠𝑡+1 at time 𝑡 + 1 according to 𝑝(∙ |𝑠𝑡 , 𝑎𝑡 )
+
+OFFICE I FACULTY I DEPARTMENT                                                               11
+
+=== PAGE 12 ===
+Markov Decision Processes
+Take the maze as example
+
+OFFICE I FACULTY I DEPARTMENT   12
+
+=== PAGE 13 ===
+Monte Carlo Return
+Take 𝜏𝜋 = (𝑠0 , 𝑎0 , 𝑟0 , 𝑠1 , 𝑎1 , 𝑟1 , … ) as a sample trajectory/episode following policy 𝜋.
+
+The Return 𝑮𝒕 of the trajectory is defined as the total discounted
+rewards from time t:
+                        𝐺𝑡 = 𝑟𝑡 + 𝛾 ∙ 𝑟𝑡+1 + 𝛾 2 ∙ 𝑟𝑡+2 + ⋯
+
+OFFICE I FACULTY I DEPARTMENT                                                              13
+
+=== PAGE 14 ===
+Monte Carlo Return
+
+Assume 𝛾 = 0.9, calculate the return for this single trajectory.
+
+Why 𝛾?
+
+OFFICE I FACULTY I DEPARTMENT                                      14
+
+=== PAGE 15 ===
+Why discounting with 𝜸?
+•   Mathematically convenient to discount rewards
+•   Avoids infinite returns in cyclic Markov processes
+•   Weight more for immediate reward / more recent rewards
+•   …
+
+OFFICE I FACULTY I DEPARTMENT                                15
+
+=== PAGE 16 ===
+Why discounting with 𝜸?
+
+OFFICE I FACULTY I DEPARTMENT   16
+
+=== PAGE 17 ===
+Why discounting with 𝜸?
+
+     𝛾 = 0, 𝐺𝑙𝑒𝑓𝑡 = 1 + 0 ∗ 0 + 02 ∗ 1 + 03 ∗ 0 + … = 1
+           𝐺𝑟𝑖𝑔ℎ𝑡 = 0 + 0 ∗ 2 + 02 ∗ 0 + 03 ∗ 2 + … = 0
+     𝛾 = 0.9, 𝐺𝑙𝑒𝑓𝑡 = 1 + 0.9 ∗ 0 + 0.92 ∗ 1 + 0.93 ∗ 0 + … = 1 + 0.81 + ⋯
+              𝐺𝑟𝑖𝑔ℎ𝑡 = 0 + 0.9 ∗ 2 + 0.92 ∗ 0 + 0.93 ∗ 2 + … = 1.8 + 1.458 + …
+     𝛾 = 0.5, 𝐺𝑙𝑒𝑓𝑡 = 1 + 0.5 ∗ 0 + 0.52 ∗ 1 + 0.53 ∗ 0 + … = 1 + 0.25 + ⋯
+              𝐺𝑟𝑖𝑔ℎ𝑡 = 0 + 0.5 ∗ 2 + 0.52 ∗ 0 + 0.53 ∗ 2 + … = 1 + 0.25 + …
+OFFICE I FACULTY I DEPARTMENT                                                    17
+
+=== PAGE 18 ===
+Why discounting with 𝜸?
+
+         𝛾 = 0, 𝜋𝑙𝑒𝑓𝑡 is optimal.
+         𝛾 = 0.9, 𝜋𝑟𝑖𝑔ℎ𝑡 is optimal.
+         𝛾 = 0.5, either is optimal.
+
+OFFICE I FACULTY I DEPARTMENT          18
+
+=== PAGE 19 ===
+Value Functions
+State value function: expected discounted return for policy 𝜋 beginning in state 𝑠
+                                                   ∞
+
+                                𝑉𝜋 𝑠 = 𝐸𝑎𝑡 ~𝜋 [෍ 𝛾 𝑡 𝑟 𝑠𝑡 , 𝑎𝑡 |𝑠0 = 𝑠]
+                                                 𝑡=0                      accumulated rewards
+                                       = 𝐸𝑎𝑡 ~𝜋 𝐺0 𝑠0 = 𝑠
+
+Action value function: expected discounted return for policy starting in state 𝑠
+and initially taking action 𝑎 but then following policy 𝜋:
+                                             ∞
+
+                          𝑄𝜋 𝑠, 𝑎 = 𝐸𝑎𝑡~𝜋 [෍ 𝛾 𝑡 𝑟 𝑠𝑡 , 𝑎𝑡 |𝑠0 = 𝑠, 𝑎0 = 𝑎]
+                                             𝑡=0
+                                     = 𝐸𝑎𝑡~𝜋 [𝐺0 |𝑠0 = 𝑠, 𝑎0 = 𝑎]
+OFFICE I FACULTY I DEPARTMENT                                                          19
+
+=== PAGE 20 ===
+Value Functions
+Reward = +1 when reaching the goal; 0 otherwise.
+Action: Up, Down, Left, Right
+
+State-Value Function 𝑽𝝅 (𝒔)
+"How good is it to be in a particular state?"
+State s="middle cell”
+Suppose under policy 𝜋, it takes 2 steps to reach the goal (red path):
+                  𝑽𝝅 (s=“middle cell”) = 0 + 𝛾 ∙ 1 = 𝛾, 𝛾 ∈ [0, 1]
+In state s=“top left”, it takes 4 steps to reach the goal (blue path):
+           𝑽𝝅 (s=“top left”) = 0 + 𝛾 ∙ 0 + 𝛾 2 ∙ 0 + 𝛾 3 ∙ 1 = 𝛾 3 , 𝛾 ∈ [0, 1]
+These values reflect how close each state is to the goal on average under policy 𝝅
+OFFICE I FACULTY I DEPARTMENT                                               20
+
+=== PAGE 21 ===
+Value Functions
+Reward = +1 when reaching the goal; 0 otherwise.
+Action: Up, Down, Left, Right
+
+State-Action Value Function 𝑸𝝅 (s, a)
+"How good is it to take action a in state s?"
+State s="middle cell”, a = “Up”, and then follow policy 𝜋 (red path).
+It takes 4 steps to reach the goal, for example:
+     𝑄𝜋 (s=“middle cell”, a = “Up”) = 0 + 𝛾 ∙ 0 + 𝛾 2 ∙ 0 + 𝛾 3 ∙ 1 = 𝛾 3 , 𝛾 ∈ [0, 1]
+State s="middle cell”, a = “Down”, and then follow the same policy 𝜋 (blue path).
+            𝑄𝜋 (s=“middle cell”, a = “Down”) = 0 + 𝛾 ∙ 1 = 𝛾, 𝛾 ∈ [0, 1]
+This means ”Down" is a better action in that state than ”Up” under policy 𝜋.
+OFFICE I FACULTY I DEPARTMENT                                                       21
+
+=== PAGE 22 ===
+Value Functions
+State value function: 𝑉𝜋 𝑠 → How good is state 𝑠 following policy 𝜋
+
+Action value function: 𝑄𝜋 𝑠, 𝑎 → How good is taking action 𝑎 at state 𝑠 and then
+following policy 𝜋
+
+Hence, if 𝑄𝜋 𝑠, 𝑎1 > 𝑄𝜋 𝑠, 𝑎2 , 𝑎1 is a better action than 𝑎2 at state 𝑠.
+
+OFFICE I FACULTY I DEPARTMENT                                               22
+
+=== PAGE 23 ===
+Value Functions
+
+    Function                    Definition             Example Meaning
+
+                                                       "If I'm here, how much future
+    𝑉𝜋 (s)                      Value of a state
+                                                       reward can I expect?"
+
+                                                       "If I take this action here, how
+                                Value of action in a
+    𝑄𝜋 (s,a)                                           much future reward can I
+                                state
+                                                       expect?"
+
+OFFICE I FACULTY I DEPARTMENT                                                             23
+
+=== PAGE 24 ===
+Value Functions
+Let 𝜋∗ denote for optimal policies. The corresponding state value function, called
+the optimal state value function 𝑉 ∗ 𝑠 :
+
+                                   𝑉 ∗ 𝑠 = max 𝑉𝜋 𝑠 = 𝑉𝜋∗ 𝑠
+                                                𝜋
+
+The corresponding optimal action value function, denoted 𝑄∗ :
+
+                                𝑄∗ 𝑠, 𝑎 = max 𝑄𝜋 (𝑠, 𝑎) = 𝑄𝜋∗ (𝑠, 𝑎)
+                                            𝜋
+
+OFFICE I FACULTY I DEPARTMENT                                                   24
+
+=== PAGE 25 ===
+Value Functions
+We may have different policies
+For example,
+                                •   𝜋1 𝑎0 𝑠 = 0.4   •   𝜋2 𝑎0 𝑠 = 0.7
+                                •   𝜋1 𝑎1 𝑠 = 0.1   •   𝜋2 𝑎1 𝑠 = 0.1
+                                •   𝜋1 𝑎2 𝑠 = 0.2   •   𝜋2 𝑎2 𝑠 = 0.1
+                                •   𝜋1 𝑎3 𝑠 = 0.3   •   𝜋2 𝑎3 𝑠 = 0.1
+
+What is optimal policy 𝝅∗ ? It is the policy that maximizes the expected return
+(i.e., the total cumulative reward) from each state. That is,
+                         𝜋 ∗ = arg max 𝑉𝜋 𝑠 , for each state 𝑠
+                                        𝜋
+
+OFFICE I FACULTY I DEPARTMENT                                                     25
+
+=== PAGE 26 ===
+   Value Functions
+   Let 𝜋∗ denote for optimal policies. The corresponding state value function, called
+   the optimal state value function 𝑽∗ 𝒔 :
+                                                            Maximum accumulated
+    The optimal return you    𝑉 ∗ 𝑠 = max 𝑉𝜋 𝑠 = 𝑉𝜋∗ 𝑠      rewards/expected return
+    can get at state s                  𝜋                   state s can get
+
+   The corresponding optimal action value function, denoted 𝑄∗ :
+The optimal return you      ∗
+can get if taking action a 𝑄 𝑠, 𝑎 = max
+                                     𝜋
+                                        𝑄𝜋 (𝑠, 𝑎) = 𝑄𝜋∗ (𝑠, 𝑎)
+at state s                                            Maximum accumulated
+                                                      rewards/expected return can
+                                                      get by taking action a at
+                                                      state s and then following 𝜋 ∗
+   OFFICE I FACULTY I DEPARTMENT                                                  26
+
+=== PAGE 27 ===
+Value Functions
+There can be multiple optimal policies that achieve the same maximum expected
+Return → they all share the same optimal value functions 𝑉 ∗ 𝑠 & 𝑄∗ 𝑠, 𝑎 for all
+state 𝑠 and state-action pairs (𝑠, 𝑎)
+
+OFFICE I FACULTY I DEPARTMENT                                              27
+
+=== PAGE 28 ===
+Value Functions
+Give an equation for 𝑉 ∗ 𝑠 in terms of 𝑄∗ .
+
+Give an equation for 𝑄∗ 𝑠, 𝑎 in terms of 𝑉 ∗ .
+
+OFFICE I FACULTY I DEPARTMENT                    28
+
+=== PAGE 29 ===
+Value Functions
+Give an equation for 𝑉 ∗ 𝑠 in terms of 𝑄∗ .
+
+Give an equation for 𝑄∗ 𝑠, 𝑎 in terms of 𝑉 ∗ .
+                                                       The best over all actions
+ The optimal return you         𝑽∗ 𝒔 = max 𝑸∗ (𝒔, 𝒂)   a of “the optimal you
+                                         𝒂
+ can get at state s                                    can get taking action a
+                                                       at state s”
+
+The best possible outcome from state s, look at all the actions you can take from s,
+evaluate how good each action is (using 𝑸∗ (𝒔, 𝒂)), and then choose the action that
+gives you the highest value.
+OFFICE I FACULTY I DEPARTMENT                                                      29
+
+=== PAGE 30 ===
+   Value Functions
+                                   ∗                ∗
+                                                         Future rewards: The best possible
+  Give an equation for 𝑉 𝑠 in terms of 𝑄 .               rewards you can collect in the future
+                                                         after reaching the next state s′, scaled
+  Give an equation for 𝑄∗ 𝑠, 𝑎 in terms of 𝑉 ∗ .         by the discount factor γ. This discount
+                                                         factor tells you how much importance
+Immediate                                                you give to future rewards compared
+reward:             𝑸∗ 𝒔, 𝒂 = 𝑬𝒔′ 𝒓 𝒔, 𝒂 + 𝜸𝑽∗ 𝒔′        to immediate ones.
+What you
+                    If it’s a deterministic env, which means s’ is determined given s and a,
+get right
+                    then, no expectation is needed.
+after taking
+the action          That is, 𝑸∗ 𝒔, 𝒂 = 𝒓 𝒔, 𝒂 + 𝜸𝑽∗ 𝒔′
+
+                    𝒔′ refers to the next state
+   OFFICE I FACULTY I DEPARTMENT                                                               30
+
+=== PAGE 31 ===
+Q-learning
+                                if the optimal action value function 𝑄∗ is
+                                known, then in any given state 𝑠, the
+                                optimal action 𝑎∗ can be found:
+
+                                               𝑎∗ = arg max 𝑄∗ (𝑠, 𝑎)
+                                                         𝑎
+
+                                For example,
+                                                  𝑄∗ 𝑠, 𝑎0 = 1
+                                                  𝑄∗ 𝑠, 𝑎1 = 0.3
+                                                  𝑄∗ 𝑠, 𝑎2 = 0.6
+                                                  𝑄∗ 𝑠, 𝑎3 = 0.8
+                                What is 𝑎∗ ?
+OFFICE I FACULTY I DEPARTMENT                                                31
+
+=== PAGE 32 ===
+How do we get Q*?
+Tabular case:
+• Finite state space and finite action space
+• Q-table: store the Q values for each possible state and action in a lookup table
+
+Continuous case:
+• Parameterized Q network 𝑄𝜑 to approximate 𝑄∗
+
+OFFICE I FACULTY I DEPARTMENT                                                  32
+
+=== PAGE 33 ===
+Lookup Table for Q values
+
+OFFICE I FACULTY I DEPARTMENT   33
+
+=== PAGE 34 ===
+Q-learning: Q network
+Parameterized Q network 𝑄𝜑 to approximate 𝑄∗
+
+            state s
+                                                                    𝑄𝜑 (𝑠, 𝑎)
+           action a
+
+  Mean Square Bellman Error(MSBE):
+                𝐿 𝜑, 𝐷 = 𝐸 𝑠𝑡,𝑎𝑡,𝑟,𝑠𝑡+1,𝑑 ~𝐷 [(𝑄𝜑 𝑠𝑡 , 𝑎𝑡 − 𝑦)2 ]
+OFFICE I FACULTY I DEPARTMENT                                                   34
+
+=== PAGE 35 ===
+Q-learning: Bellman Equation
+Bellman Equation:
+                                   𝑉 ∗ 𝑠𝑡 = 𝐸 [𝑟𝑡 + 𝛾𝑉 ∗ (𝑠𝑡+1 )]
+
+Fundamental relationship between the value of a state 𝒔𝒕 and the value of the
+subsequent state 𝒔𝒕+𝟏 .
+
+V*(s=“goal”) = 0 (episode ends here, terminal state)
+
+V*(𝑠𝑡 =“middle right”) = 1 + 𝛾 ∙ 𝑉 ∗ (𝑠𝑡+1 =“goal”) = 1
+
+                          Reaching the goal
+OFFICE I FACULTY I DEPARTMENT                                            35
+
+=== PAGE 36 ===
+Q-learning: Bellman Equation
+Bellman Equation:
+                                𝑉 ∗ 𝑠𝑡 = 𝐸 [𝑟𝑡 + 𝛾𝑉 ∗ (𝑠𝑡+1 )]
+
+Fundamental relationship between the value of a state 𝒔𝒕 and the value of the
+subsequent state 𝒔𝒕+𝟏 .
+
+V*(𝑠𝑡 =“middle right”) = 1 + 𝛾 ∙ 𝑉 ∗ (𝑠𝑡+1 =“goal”) = 1
+
+V*(𝑠𝑡 =“middle”) = 0 + 𝛾 ∙ 𝑉 ∗ (𝑠𝑡+1 =“middle right”)
+                =0+𝛾∙1=𝛾
+
+OFFICE I FACULTY I DEPARTMENT                                            36
+
+=== PAGE 37 ===
+Q-learning: Bellman Equation
+Grid World Example: The cells of the grid correspond to the states of the env. At
+each cell, four actions are possible: up, down, left and right. Actions
+that would take the agent off the grid leave its location unchanged, but also result
+in a reward of -1, Other actions result in a reward of 0, except those that move the
+agent out of the special states A and B. From state A, all four actions yield a
+reward of +10 and take the agent to A’ . From state B, all actions yield a reward
+of +5 and take the agent to B’.
+
+Assume 𝛾 = 0.9, optimal policy
+is denoted in 𝜋∗ , optimal state
+value function is denoted by 𝑣∗
+Why 𝒗∗ 𝑨 = 𝟐𝟒. 𝟒?
+
+OFFICE I FACULTY I DEPARTMENT                                                          37
+
+=== PAGE 38 ===
+Q-learning: Bellman Equation
+Based on the bellman equation, we
+know that
+
+       𝑣∗ A = 10 + γ ∙ 𝑣∗ (𝐴′ )
+       𝑣∗ A′ = 0 + γ ∙ 𝑣∗ 𝐴1
+       𝑣∗ A1 = 0 + γ ∙ 𝑣∗ 𝐴2
+       𝑣∗ A2 = 0 + γ ∙ 𝑣∗ 𝐴3
+        𝑣∗ A3 = 0 + γ ∙ 𝑣∗ 𝐴
+
+       𝑣∗ A′ = 0 + γ ∙ (0 + γ ∙ 𝑣∗ 𝐴2 ) = 0 + γ ∙ 0 + γ ∙ 0 + 𝛾 ∙ 𝑣∗ 𝐴3
+       = 0 + γ ∙ 0 + γ ∙ 0 + 𝛾 ∙ 0 + 𝛾 ∙ 𝑣∗ 𝐴    = 0 + 𝛾 4 ∙ 𝑣∗ 𝐴
+𝑣∗ 𝐴 = 10 + γ ∙ 0 + 𝛾 4 ∙ 𝑣∗ 𝐴     ➔ (1 − 𝛾 5 ) ∙ 𝑣∗ A = 10, since 𝛾 = 0.9, 𝑣∗ 𝐴 ≈ 24.4
+OFFICE I FACULTY I DEPARTMENT                                                    38
+
+=== PAGE 39 ===
+Q-learning: Bellman Equation
+Bellman Equation:
+              𝑄∗ 𝑠𝑡 , 𝑎𝑡 = 𝐸𝑠𝑡+1 [𝑟 𝑠𝑡 , 𝑎𝑡 + 𝛾 max 𝑄∗ (𝑠𝑡+1 , 𝑎𝑡+1 )]
+                                                    𝑎𝑡+1
+
+fundamental relationship between the value of a state action pair 𝒔𝒕 , 𝒂𝒕 and
+the value of the subsequent state action pair (𝒔𝒕+𝟏 , 𝒂𝒕+𝟏 ).
+
+If it is a deterministic environment:
+                      𝑄∗ 𝑠𝑡 , 𝑎𝑡 = 𝑟 𝑠𝑡 , 𝑎𝑡 + 𝛾 max 𝑄∗ (𝑠𝑡+1 , 𝑎𝑡+1 )
+                                                 𝑎𝑡+1
+
+For tabular case, we use this relationship to update the values in the table and
+for continuous case, we want to train our Q network to satisfy the bellman equation.
+OFFICE I FACULTY I DEPARTMENT                                                  39
+
+=== PAGE 40 ===
+Lookup Table for Q values
+
+OFFICE I FACULTY I DEPARTMENT   40
+
+=== PAGE 41 ===
+Tabular Update
+For each Q value in the look-up table
+
+          𝑄 𝑠𝑡 , 𝑎𝑡 ← 𝑄 𝑠𝑡 , 𝑎𝑡 + 𝛼[𝑟 𝑠𝑡 , 𝑎𝑡 + 𝛾 max 𝑄 𝑠𝑡+1 , 𝑎𝑡+1 − 𝑄 𝑠𝑡 , 𝑎𝑡 ]
+                                                  𝑎𝑡+1
+
+In this way, the Q values directly approximate optimal Q values, no matter which
+policy is used to collect the state and action pairs.
+
+For correct convergence, the only requirement is that all pairs continue to be
+updated.
+
+OFFICE I FACULTY I DEPARTMENT                                                       41
+
+=== PAGE 42 ===
+Tabular Q-learning
+Randomly initialize 𝑄 𝑠𝑡 , 𝑎𝑡 for all state and action pairs
+Repeat (for each episode):
+   Initialize 𝑠𝑡
+   Repeat (for each step of episode):
+         Choose action 𝑎𝑡 at 𝑠𝑡 using policy derived from 𝑄 (𝒆. 𝒈. 𝝐-greedy)
+         Take action 𝑎𝑡 , observe reward 𝑟𝑡 , and next state 𝑠𝑡+1
+         Update
+              𝑄 𝑠𝑡 , 𝑎𝑡 ← 𝑄 𝑠𝑡 , 𝑎𝑡 + 𝛼[𝑟 𝑠𝑡 , 𝑎𝑡 + 𝛾 𝐦𝐚𝐱 𝑸 𝒔𝒕+𝟏 , 𝒂𝒕+𝟏 − 𝑄 𝑠𝑡 , 𝑎𝑡 ]
+                                                      𝒂𝒕+𝟏
+            𝑠𝑡 ← 𝑠𝑡+1
+      until 𝑠𝑡 is terminal
+
+OFFICE I FACULTY I DEPARTMENT                                                      42
+
+=== PAGE 43 ===
+SARSA
+Randomly initialize 𝑄 𝑠𝑡 , 𝑎𝑡 for all state and action pairs
+Repeat (for each episode):
+   Initialize 𝑠𝑡
+   Repeat (for each step of episode):
+         Choose action 𝑎𝑡 at 𝑠𝑡 using policy derived from 𝑄 (𝑒. 𝑔. 𝜖-greedy)
+         Take action 𝑎𝑡 , observe reward 𝑟𝑡 , and next state 𝑠𝑡+1
+         Choose action 𝑎𝑡+1 at 𝑠𝑡+1 using policy derived from 𝑄(𝑒. 𝑔. 𝜖-greedy)
+         Update
+              𝑄 𝑠𝑡 , 𝑎𝑡 ← 𝑄 𝑠𝑡 , 𝑎𝑡 + 𝛼[𝑟 𝑠𝑡 , 𝑎𝑡 + 𝜸 𝑸 𝒔𝒕+𝟏 , 𝒂𝒕+𝟏 − 𝑄 𝑠𝑡 , 𝑎𝑡 ]
+         𝑠𝑡 ← 𝑠𝑡+1 , 𝑎𝑡 ← 𝑎𝑡+1
+   until 𝑠𝑡 is terminal
+OFFICE I FACULTY I DEPARTMENT                                                       43
+
+=== PAGE 44 ===
+Q-learning VS SARSA
+
+OFFICE I FACULTY I DEPARTMENT   44
+
+=== PAGE 45 ===
+Q-learning VS SARSA
+
+OFFICE I FACULTY I DEPARTMENT   45
+
+=== PAGE 46 ===
+Q-learning: Q network
+Parameterized Q network 𝑄𝜑 to approximate 𝑄∗
+
+            state s
+                                               𝑄𝜑 (𝑠, 𝑎)
+           action a
+
+OFFICE I FACULTY I DEPARTMENT                              46
+
+=== PAGE 47 ===
+Q-learning: Training
+Bellman equation target 𝒚:
+                    𝑦 = 𝑟 + 𝛾(1 − 𝑑) max 𝑄𝜑 (𝑠𝑡+1 , 𝑎𝑡+1 )
+                                        𝑎𝑡+1
+where 𝑑 indicates whether 𝑠𝑡+1 is a terminal state or not. That is, when 𝑠𝑡+1 is a
+terminal state, the agent gets no additional rewards after the current state 𝑠𝑡 .
+
+Mean Square Bellman Error(MSBE):
+                  𝐿 𝜑, 𝐷 = 𝐸 𝑠𝑡 ,𝑎𝑡 ,𝑟,𝑠𝑡+1,𝑑 ~𝐷 [(𝑄𝜑 𝑠𝑡 , 𝑎𝑡 − 𝑦)2 ]
+where 𝐷 is the collected dataset and we can use gradient descent to train 𝜑:
+                             𝜑 ← 𝜑 − 𝛼 ∙ ∇𝜑 𝐿(𝜑, 𝐵)
+where 𝐵 is the mini-batch sampled from 𝐷
+
+OFFICE I FACULTY I DEPARTMENT                                                    47
+
+=== PAGE 48 ===
+Q-learning: Training
+Bellman equation target 𝑦:
+                     𝑦 = 𝑟 + 𝛾(1 − 𝑑) max 𝑄𝜑 (𝑠𝑡+1 , 𝑎𝑡+1 )
+                                                 𝑎𝑡+1
+To make the training more stable, target Q network 𝑸𝝋′ to maintain a fixed target
+over multiple updates:
+                                𝑦 = 𝑟 + 𝛾(1 − 𝑑) max 𝑄𝜑′ (𝑠𝑡+1 , 𝑎𝑡+1 )
+                                                  𝑎𝑡+1
+
+How to determine 𝑎𝑡+1 that maximize Q network?
+   Discrete actions?
+   Continuous actions?
+
+OFFICE I FACULTY I DEPARTMENT                                                 48
+
+=== PAGE 49 ===
+Q-learning: Policy network
+Policy network 𝜇𝜃 where 𝑎𝑡 ~𝜇𝜃 (𝑠𝑡 )
+
+         state s                       action a
+
+OFFICE I FACULTY I DEPARTMENT                     49
+
+=== PAGE 50 ===
+Q-learning: Policy network
+Policy network 𝜇𝜃 where 𝑎𝑡 ~𝜇𝜃 (𝑠𝑡 )
+
+Goal of the policy network is to output actions that maximize 𝑸𝝋 for all possible
+states, mathematically:
+                                𝜃 ← 𝑎𝑟𝑔 max 𝐸[𝑄𝜑 (𝑠, 𝜇𝜃 (𝑠)]
+                                          𝜃
+
+Hence, we can use gradient ascent to train 𝜃:
+                                     1
+                     𝜃 ← 𝜃 + 𝛼 ∙ ∇𝜃     ෍ 𝑄𝜑 (𝑠, 𝜇𝜃 (𝑠))
+                                    |𝐵|
+                                               𝑠∈𝐵
+
+OFFICE I FACULTY I DEPARTMENT                                                 50
+
+=== PAGE 51 ===
+Q-learning: Gradient Ascent
+
+                                          ?
+
+                 Gradient Descent   Gradient Ascent
+
+OFFICE I FACULTY I DEPARTMENT                         51
+
+=== PAGE 52 ===
+Q-learning: Policy network
+In MSBE, policy network 𝜇𝜃 takes state 𝑠𝑡+1 as input and aims to output 𝑎𝑡+1 that
+maximizes 𝑄𝜑′ 𝑠𝑡+1 , 𝑎𝑡+1 .
+
+Previously, Bellman equation target 𝒚:
+                    𝑦 = 𝑟 + 𝛾(1 − 𝑑) 𝐦𝐚𝐱 𝑄𝜑 (𝑠𝑡+1 , 𝒂𝒕+𝟏 )
+                                                    𝒂𝒕+𝟏
+
+Mean Square Bellman Error(MSBE):
+                  𝑦 = 𝑟 + 𝛾(1 − 𝑑 ) 𝑄𝜑′ (𝑠𝑡+1 , 𝜇𝜃 (𝑠𝑡+1 ))
+                            𝐿 𝜑, 𝐷 = 𝐸 𝑠𝑡 ,𝑎𝑡 ,𝑟,𝑠𝑡+1,𝑑 ~𝐷 [(𝑄𝜑 𝑠𝑡 , 𝑎𝑡 − 𝑦)2 ]
+
+OFFICE I FACULTY I DEPARTMENT                                                     52
+
+=== PAGE 53 ===
+Deep Deterministic Policy Gradient
+Input: Q network parameters 𝜑, target Q network parameters 𝜑′ ← 𝜑, policy
+Network parameters 𝜃, target policy network parameters 𝜃′ ← 𝜃, empty replay
+buffer 𝐷.
+Repeat:
+     Interact with the env using 𝜇𝜃 and collect (𝑠𝑡 , 𝑎𝑡 , 𝑟, 𝑠𝑡+1 , 𝑑) and store it in 𝐷.
+     if it’s time to update:
+            Randomly sample a batch 𝐵 from 𝐷.
+            Update 𝜑 using gradient descent: 𝜑 ← 𝜑 − 𝛼 ∙ ∇𝜑 𝐿(𝜑, 𝐵)
+                                                                1
+             Update 𝜃 using gradient ascent: 𝜃 ← 𝜃 + 𝛼 ∙ ∇𝜃           σ𝑠∈𝐵 𝑄𝜑 (𝑠, 𝜇𝜃 (𝑠))
+                                                                |𝐵|
+             Update target networks: 𝜑′ ← 𝜌𝜑′ + (1 − 𝜌)𝜑
+                                     𝜃′ ← 𝜌𝜃′ + (1 − 𝜌)𝜃
+OFFICE I FACULTY I DEPARTMENT                                                                53
+
+=== PAGE 54 ===
+Deep Deterministic Policy Gradient
+
+OFFICE I FACULTY I DEPARTMENT        54
+
+=== PAGE 55 ===
+Types of RL algorithms
+• Policy gradients:
+   REINFORCE
+• Value-based:
+   DQN
+• Actor-critic:
+   DDPG
+   Soft Actor Critic
+• Model-based RL:
+   Dyna
+
+• Off-policy vs On-policy
+                            55
+
+=== PAGE 56 ===
+Overestimation Bias
+Q network is an approximation. What if Q network begins to overestimate
+state-action values?
+
+For example, the optimal Q function 𝑄∗ 𝑠, 𝑎𝑖 = 0 for all possible actions 𝑎𝑖 at
+state 𝑠. However, the approximate Q values are a bit noisy:
+               𝑄𝜑 𝑠, 𝑎1 = 0.5, 𝑄𝜑 𝑠, 𝑎2 = 0.2, 𝑄𝜑 𝑠, 𝑎3 = −0.3
+
+Based on the update rule, what will happen during the update?
+
+OFFICE I FACULTY I DEPARTMENT                                                     56
+
+=== PAGE 57 ===
+Sample Efficiency Issue
+Collect data points in real-world applications are expensive.
+
+Wall clock time is not the same as efficiency!
+
+OFFICE I FACULTY I DEPARTMENT                                   57
+
+=== PAGE 58 ===
+How to fix the problem
+Twin-delayed DDPG (TD3):
+    Addressing Function Approximation Error in Actor-Critic Methods
+
+Soft-Actor-Critic (SAC):
+     Soft Actor-Critic Algorithms and Applications
+
+Maxmin Q-learning:
+   Maxmin Q-learning: Controlling the Estimation Bias of Q-learning
+
+REDQ:
+   Randomized Ensembled Double Q-Learning: Learning Fast Without a Model
+OFFICE I FACULTY I DEPARTMENT                                         58
+
+=== PAGE 59 ===

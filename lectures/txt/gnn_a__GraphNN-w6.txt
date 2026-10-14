@@ -1,0 +1,473 @@
+COMP8221 Advanced Machine Learning
+Graph Convolutional Network
+Dr. Qiongkai Xu, School of Computing, qiongkai.xu@mq.edu.au
+Outline
+•   Graph Convolutional Networks
+•   Permutation Invariant / Equivalent
+•   General Graph NN framework
+•   GraphSAGE
+•   Graph Attention Networks
+
+
+
+
+                                         2
+Recap: Graph Structured Data
+• Image
+
+
+
+
+• Text/Speech
+
+
+
+
+                               3
+Recap: Graph Structured Data
+Networks are far more complex.
+
+
+
+
+• Arbitrary size and complex topological structure.
+• No fixed node ordering or reference point.
+• Often dynamic and have multimodal features
+
+
+                                                      4
+Today: Deep Graph Encoders
+Deep Graph Encoders:
+      Deep learning methods based on graph neural networks (GNNs)
+
+
+
+                         Multiple layers of
+            𝐸𝑛𝑐(𝑣) = non-linear transformations
+                     based on graph structure
+
+
+
+
+                                                                    5
+Graph Setup
+Assume we have a graph:
+• 𝐺 = (𝑉, 𝐸)
+• 𝑉 is the vertex set
+• 𝐸 is the edge set (undirected edge & directed edge)
+• 𝑨 is the Adjacency matrix
+• 𝑿 ∈ 𝑅|𝑉|×𝑚 is a matrix of node features
+• 𝑣 represents a node in 𝑉
+• 𝑁(𝑣) is the set of neighbors of 𝑣
+
+• Examples of node features:
+Social networks: User profile, User image, …
+Biological networks: Gene expression profile, Gene functional information, …
+                                                                               6
+A Naïve Approach
+• Join adjacency matrix and features
+• Feed them into a neural network
+
+
+
+
+• Issues?
+
+
+
+                                       7
+  A Naïve Approach
+Graph does not
+have a canonical
+order of the nodes!
+
+Consider this
+example:
+Same graph with
+different ordering
+
+The naïve approach
+would have different
+inputs for the same
+graph
+                       8
+Permutation Invariance
+• Graph and node representations should be the same for different order plan.
+• That is, we learn a function 𝑓 that maps a Graph 𝐺 to a vector 𝑅𝑑 for
+embedding that
+                              𝑓 𝑨1 , 𝑿1 = 𝑓 𝑨2 , 𝑿2
+
+
+
+
+                                                                                9
+Permutation Invariance
+• For a graph with |𝑉| nodes, there are |𝑉|! different order plans.
+• If 𝑓 𝑨𝑖 , 𝑿𝑖 = 𝑓 𝑨𝑗 , 𝑿𝑗 for any order plan 𝑖 and 𝑗, we formally say that 𝑓 is a
+permutation invariant function.
+
+
+
+
+                                                                                     10
+Permutation Equivariance
+• Consider we learn a function 𝑓 that maps nodes in 𝐺 to a matrix 𝑅|𝑉|×𝑑 .
+
+
+
+
+                                                                             11
+Permutation Equivariance
+• Consider we learn a function 𝑓 that maps nodes in 𝐺 to a matrix 𝑅|𝑉|×𝑑 .
+• If the output vector of a node at the same position in the graph remains
+unchanged for any order plan, we say 𝑓 is permutation equivariant.
+
+In summary,
+• Permutation Invariant: Map a graph to a vector, if we permute the input, output
+stays the same
+• Permutation Equivariant: Map a graph to a matrix, if we permute the input,
+output permutes accordingly.
+
+
+
+                                                                             12
+Graph Neural Networks
+• Graph neural networks consist of multiple permutation equivariant / invariant
+functions.
+
+
+
+
+                                                                                  13
+Why naïve approach fails.
+• Are classical neural network architectures permutation invariant / equivariant?
+
+
+
+
+                                                                               14
+Graph Convolutional Networks
+• Design graph neural networks that are permutation invariant / equivariant.
+• Key idea: Generate node embeddings based on local network neighborhood.
+• Intuition: Nodes aggregate information from their neighbours using neural
+networks
+
+
+
+
+                                                                        15
+Graph Convolutional Networks
+•   Model can be of arbitrary length
+•   Nodes have embeddings at each layer
+•   Layer-0 embedding of node 𝑣 is its input feature
+•   Layer-𝑘 embedding gets information from nodes that are 𝑘 hops away
+
+
+
+
+                                                                         16
+Idea: Neighbourhood Aggregation
+What is in the box?
+Basic approach:
+• 1) Average information from neighbors
+• 2) apply a neural network.
+
+
+
+
+                                          17
+Neighbourhood Aggregation
+
+
+
+
+                            18
+Neighbourhood Aggregation
+For example,                                         A
+
+                               B
+
+                                                     C
+                                                              Initial 0-th layer embedding
+                                                              is its input feature 𝑋𝐵
+                                    ℎ𝐵0 = 𝑋𝐵
+   Non-linearity(e.g. ReLU)
+                                                    Self-transformation
+                                       0     0
+                                     ℎ𝐴  + ℎ𝐶
+                        ℎ1𝐵 = 𝜎(𝑊0 (           ) + 𝐵0 ℎ𝐵0 )
+                                         2
+
+                              Average of B’s neighbors’ previous layer embedding
+
+                                                                                       19
+   GCN: Invariance and Equivariance
+  Given a node, the GCN that computes its embedding is permutation invariant
+  as average of neighbors’ previous layer embeddings is permutation invariant.
+
+              A                         A
+                                                             0     0
+                                                           ℎ𝐴  + ℎ 𝐶
+                      B                       ℎ1𝐵 = 𝜎(𝑊0 (           ) + 𝐵0 ℎ𝐵0 )
+                                                               2
+     B            C                     C
+                                                                  The Same
+Target node   C
+                                       C
+                                                            0     0
+                                                          ℎ𝐶  + ℎ𝐵
+                      A                       ℎ𝐴1 = 𝜎(𝑊0 (          ) + 𝐵0 ℎ𝐴0 )
+     A            B                                           2
+                                       B
+
+     Two order plans, colors represent input feature for each node                  20
+GCN: Invariance and Equivariance
+Considering all nodes in a graph, GCN computation is permutation
+equivariant.
+               We know from previous slides that, when considering single
+               individual node, GCN is permutation invariant as
+       A
+               output stays the same when we change the order plan.
+               ℎ1𝐵 in order plan1 = ℎ𝐴1 in order plan 2 (𝑟𝑒𝑑),
+B          C   ℎ𝐴1 in order plan1 = ℎ1𝐶 in order plan 2 (yellow),
+               ℎ1𝑐 in order plan1 = ℎ1𝐵 in order plan 2 (𝐵𝑙𝑢𝑒),
+
+       C                                    A                               A
+                            Order plan 1                    Order plan 2
+                            GCN output:     B               GCN output:     B
+A          B
+                                            C                               C
+                                Considering all nodes, when we change the order
+                                plan(permute the input), output permutes accordingly.   21
+GCN: Invariance and Equivariance
+Considering all nodes in a graph, GCN computation is permutation
+equivariant.
+
+
+
+
+                                                                   22
+GCN: Invariance and Equivariance
+Considering all nodes in a graph, GCN computation is permutation
+equivariant.
+
+Detailed reasoning:
+1. The rows of input node features and output embeddings are aligned
+2. We know computing the embedding of a given node with GCN is invariant.
+3. So, after permutation, the location of a given node in the input node feature
+matrix is changed, and the the output embedding of a given node stays the same
+(the colors of node feature and embedding are matched)
+
+This is permutation equivariant.
+
+                                                                              23
+Training GCN
+Model parameters:
+
+
+
+
+                    24
+Supervised Training
+Directly train the model for a supervised task (e.g., node classification)
+
+
+
+
+                                                                             25
+Supervised Training
+Use cross entropy loss:
+                                            𝐶
+
+                          𝐶𝐸 𝑦, 𝑓 𝑥   = − ෍(𝑦𝑖 log 𝑓𝜃 (𝑥)𝑖 )
+                                           𝑖=1
+𝑦𝑖 , 𝑓𝜃 (𝑥)𝑖 are the actual and predicted values of the 𝑖-th class
+
+
+
+
+                                                            (binary classification
+                                                            safe/toxic)
+                                                                                     26
+Unsupervised Training
+One possible idea:
+                 “Similar” nodes have similar embeddings
+
+Again, use cross entropy loss
+
+                        𝐿 = ෍ 𝐶𝐸(𝑦𝑢,𝑣 , 𝐷𝐸𝐶(𝑧𝑢 , 𝑧𝑣 ))
+                                𝑧𝑢 ,𝑧𝑣
+
+
+where 𝑦𝑢,𝑣 = 1 when node 𝑢 and 𝑣 are similar
+𝑧𝑢 , 𝑧𝑣 are the node embeddings
+𝐷𝐸𝐶(∙ , ∙) is the dot product
+
+                                                           27
+GNN Model Overview
+
+
+
+
+                     28
+GNN Model Overview
+
+
+
+
+                     29
+GNN Model Overview
+
+
+
+
+                     30
+Generalize to unseen nodes
+The same aggregation parameters are shared for all nodes
+
+
+
+
+We can train on protein interaction graph from model organism A and generate
+embeddings on newly collected data about organism B
+                                                                               31
+General GNN Framework
+
+
+
+
+                        32
+GCN fits the general framework
+GNN layer = Message + Aggregation
+Different instantiations under this perspective, such as GCN, GraphSAGE,
+GAT, …
+
+For example, GCN:
+In GCN the input graph is assumed to have self-edges that the node itself included
+in the summation.
+
+
+
+
+                                                                              33
+GraphSAGE Layer
+
+
+
+
+                  34
+Stage1 Choices
+
+
+
+
+                 35
+Graph Attention Networks
+For graph attention networks, we have
+
+
+
+
+How it differs to GCN/GraphSAGE?
+
+                          1
+In GCN/GraphSAGE, 𝛼𝑣𝑢 =        is the weight.
+                        |𝑁 𝑣 |
+Which means
+          All neighbors 𝑢 ∈ 𝑁(𝑣) are equally important to node 𝑣
+
+
+
+                                                                   36
+Graph Attention Networks
+However, not all node’s neighbors are equally important
+
+Attention is inspired by cognitive attention.
+The attention 𝛼𝑣𝑢 should focuse on the important parts of the input data and
+fades out the rest.
+
+Idea: the NN should devote more computing power on that small but important
+part of the data. Which part of the data is more important depends on the context
+and is learned through training.
+
+
+
+                                                                               37
+Learning 𝛼𝑣𝑢
+Let 𝛼𝑣𝑢 be computed as a byproduct of an attention mechanism 𝑎:
+
+Attention mechanism 𝒂
+• Compute attention coefficients 𝑒𝑣𝑢 across pairs of nodes 𝑢, 𝑣 based on their
+messages:
+
+
+
+• 𝑒𝑣𝑢 indicates the importance of 𝑢’s message to node 𝑣.
+
+
+
+
+                                                                                 38
+Learning 𝛼𝑣𝑢
+Attention mechanism
+
+• Normalize 𝑒𝑣𝑢 into the final attention weight 𝛼𝑣𝑢
+• We use softmax function so that σ𝑢∈𝑁(𝑣) 𝛼𝑣𝑢 = 1:
+
+
+
+
+• Finally, we compute aggregation based on the final attention weight:
+
+
+
+
+                                                                         39
+What is 𝑎
+Attention mechanism
+
+
+                                       ?
+The approach is agnostic to the choice of 𝑎
+E.g., use a simple single-layer neural network
+
+
+
+
+Parameters of 𝑎 are trained jointly:
+Learn the parameters together with weight matrices (i.e., other parameter of the
+neural net 𝐖 (𝑙) ) in an end-to-end fashion.
+
+                                                                               40
+Multi-head attention
+Can stabilize the learning process of attention mechanism.
+
+
+
+
+                                                             41
+Benefits of attention mechanism
+Key benefit: Allows for (implicitly) specifying different importance values to
+different neighbors
+Computationally efficient:
+• Computation of attentional coefficients can be parallelized across all edges of the graph
+• Aggregation may be parallelized across all nodes
+Storage efficient:
+• Sparse matrix operations
+• Fixed number of parameters, irrespective of graph size
+Localized:
+• Only attends over local network neighborhoods
+Inductive capability:
+• It is a shared edge-wise mechanism
+• It does not depend on the global graph structure
+                                                                                              42
+Things to think about
+How do GNNs compare to Convolutional Neural Nets?
+
+Any issues with this current general framework?
+
+
+
+
+                                                    43
+

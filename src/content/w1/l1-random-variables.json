@@ -1,0 +1,130 @@
+{
+ "id": "w1.l1",
+ "title": "Random variables & distributions",
+ "blurb": "Sample space, p(x), pdf vs probability, cdf",
+ "source": [
+  {
+   "file": "W1",
+   "page": 5
+  },
+  {
+   "file": "W1",
+   "page": 6
+  },
+  {
+   "file": "W1",
+   "page": 8
+  }
+ ],
+ "hook": {
+  "title": "One kilogram of sand",
+  "text": "Imagine you must spread exactly **1 kg of sand** over every outcome a random variable could take. For a die, you make six little piles; no pile can weigh more than 1 kg, and together they weigh exactly 1 kg. For something continuous, like tomorrow's temperature, you spread the sand as a smooth layer: the *height* of the layer at a point is the density, and what carries weight is the sand between two points.",
+  "recall": "Remember the sand: the total must be 1 kg. A discrete pile is a probability (≤ 1), but a squeezed, tall continuous layer can be higher than 1 because only the area counts."
+ },
+ "explore": {
+  "component": "distribution",
+  "intro": "Two ways to spread the sand. Switch tabs.",
+  "tasks": [
+   "Discrete tab: change the raw weights. What happens to the bar labels? Can Σp(x) ever be anything but 1?",
+   "Continuous tab: shrink $\\sigma$. Does the peak density go above 1? Does the shaded area ever exceed 1?"
+  ],
+  "takeaway": "Discrete: each $p(x)\\in[0,1]$ and they sum to 1. Continuous: $f(x)\\ge 0$ and $\\int f=1$; probabilities are *areas*, so $f(x)$ itself can exceed 1."
+ },
+ "build": {
+  "type": "order",
+  "prompt": "Turn raw pixel counts from a dataset into a valid distribution $p(x)$. Put the steps in order.",
+  "items": [
+   "Count how many times each pixel value (0..255) occurs in the data",
+   "Divide every count by the total number of pixels counted",
+   "Check that each $p(x)$ lies between 0 and 1",
+   "Check that $\\sum_x p(x)=1$"
+  ],
+  "explanation": "This is exactly the empirical form on the slides: $P(x=x_i)=n_i/\\sum n$. Dividing by the total guarantees the pile heights are in [0,1] and sum to 1.",
+  "source": {
+   "file": "W1",
+   "page": 7
+  }
+ },
+ "questions": [
+  {
+   "id": "w1.l1.q1",
+   "type": "mcq",
+   "prompt": "For pixel values $x\\in\\{0,1,\\dots,255\\}$, what is $p(x=0)+p(x=1)+\\dots+p(x=255)$?",
+   "options": [
+    "0",
+    "1",
+    "255",
+    "It depends on the image"
+   ],
+   "correct": 1,
+   "explanation": "Every valid distribution sums to 1 over the sample space $\\Omega$. That is the 1 kg of sand: you can move it between outcomes but never add or remove any.",
+   "source": {
+    "file": "W1",
+    "page": 6
+   }
+  },
+  {
+   "id": "w1.l1.q2",
+   "type": "false",
+   "prompt": "Which statement about probability distributions is FALSE?",
+   "options": [
+    "For discrete $x$: $0\\le p(x)\\le1$",
+    "For continuous $x$: $p(x)\\ge 0$",
+    "For continuous $x$ the density $f(x)$ can never exceed 1",
+    "$\\int_{x\\in\\Omega} f(x)\\,dx=1$ for a pdf"
+   ],
+   "correct": 2,
+   "explanation": "A density is height of the sand layer, not an amount of sand. Squeeze the layer narrow and the height goes above 1 while the total area stays 1. Only the integral must equal 1.",
+   "source": {
+    "file": "W1",
+    "page": 6
+   }
+  },
+  {
+   "id": "w1.l1.q3",
+   "type": "numeric",
+   "prompt": "Three pixel values have probabilities $p(0)=0.2$ and $p(128)=0.5$. The only other value is 255. What is $p(255)$?",
+   "value": 0.3,
+   "tol": 0.005,
+   "explanation": "The sand must total 1: $1-0.2-0.5=0.3$.",
+   "source": {
+    "file": "W1",
+    "page": 6
+   }
+  },
+  {
+   "id": "w1.l1.q4",
+   "type": "bug",
+   "prompt": "A student says: *“My narrow Gaussian has $f(0)=2.5$. That’s impossible, because probabilities can’t exceed 1.”* What is wrong with this reasoning?",
+   "options": [
+    "Nothing, a valid pdf must have $f(x)\\le1$",
+    "$f(0)$ is a density, not a probability. Only $\\int f\\,dx$ (areas) must be 1",
+    "The Gaussian must be wider so that $\\sigma\\ge1$",
+    "A pdf can be negative, so 2.5 is fine"
+   ],
+   "correct": 1,
+   "explanation": "The student confused height with weight. $P(a\\le X\\le b)=\\int_a^b f(x)dx$ is the probability; $f(0)$ alone is a density and can be large when the layer is narrow.",
+   "source": {
+    "file": "W1",
+    "page": 8
+   }
+  },
+  {
+   "id": "w1.l1.q5",
+   "type": "mcq",
+   "prompt": "If $F_X(x)=P(X\\le x)$ is the cdf, then $P(a\\le X\\le b)$ equals:",
+   "options": [
+    "$F_X(b)-F_X(a)$",
+    "$F_X(a)-F_X(b)$",
+    "$f(b)-f(a)$",
+    "$F_X(b)+F_X(a)$"
+   ],
+   "correct": 0,
+   "explanation": "The cdf is the sand to the left of $x$. The sand between $a$ and $b$ is the sand left of $b$ minus the sand left of $a$ (equivalently $\\int_a^b f$).",
+   "source": {
+    "file": "W1",
+    "page": 8
+   }
+  }
+ ]
+}

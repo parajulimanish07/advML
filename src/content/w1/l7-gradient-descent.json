@@ -1,0 +1,154 @@
+{
+ "id": "w1.l7",
+ "title": "Continuous optimisation: gradient descent",
+ "blurb": "Gradient, step size, local minima",
+ "source": [
+  {
+   "file": "W1",
+   "page": 31
+  },
+  {
+   "file": "W1",
+   "page": 32
+  },
+  {
+   "file": "W1",
+   "page": 33
+  },
+  {
+   "file": "W1",
+   "page": 34
+  }
+ ],
+ "hook": {
+  "title": "Blindfolded down a valley",
+  "text": "You're blindfolded on a hillside and want the valley floor. All you can feel is the **slope under your feet**. The sensible strategy: take a step *opposite* to the slope (downhill). Make the step small and you inch down safely; make it too long and you leap across the valley and end up *higher* on the other side. And if the valley is a long narrow trough, you will zig-zag between its walls.",
+  "recall": "Remember the blindfolded hiker: step *against* the slope; a step that's too long overshoots the valley and can send you flying."
+ },
+ "explore": {
+  "component": "gd",
+  "intro": "The slide's quadratic: $f(x)=\\tfrac12x^\\top\\begin{pmatrix}2&1\\\\1&20\\end{pmatrix}x-\\begin{pmatrix}5\\\\3\\end{pmatrix}^\\top x$, start $x_0=[-3,-1]^\\top$.",
+  "tasks": [
+   "Use $\\gamma=0.05$ and 15 steps. Does $f$ decrease at every step?",
+   "Raise $\\gamma$ to 0.11. What happens? Then lower it to 0.01 with 60 steps."
+  ],
+  "takeaway": "$x_{i+1}=x_i-\\gamma_i\\nabla f(x_i)$. With a suitable step size, $f(x_0)\\ge f(x_1)\\ge\\dots$ converges to a (local) minimum. A step that is too large can diverge, and a narrow valley slows progress."
+ },
+ "build": {
+  "type": "fill",
+  "prompt": "Complete the gradient descent update.",
+  "template": "$x_{i+1}=x_i$ {0} $\\gamma_i$ {1}",
+  "blanks": [
+   {
+    "options": [
+     "+",
+     "−",
+     "×"
+    ],
+    "correct": 1
+   },
+   {
+    "options": [
+     "∇f(x_i): the gradient at the current point",
+     "f(x_i): the current loss value",
+     "x_i: the current point"
+    ],
+    "correct": 0
+   }
+  ],
+  "explanation": "Equation (20): $x_{i+1}=x_i-\\gamma_i\\,\\partial f/\\partial x|_{x_i}$, a step of size $\\gamma_i$ against the gradient.",
+  "source": {
+   "file": "W1",
+   "page": 32
+  }
+ },
+ "questions": [
+  {
+   "id": "w1.l7.q1",
+   "type": "mcq",
+   "prompt": "Which is the gradient descent update for minimising $f$?",
+   "options": [
+    "$x_{i+1}=x_i+\\gamma_i\\nabla f(x_i)$",
+    "$x_{i+1}=x_i-\\gamma_i\\nabla f(x_i)$",
+    "$x_{i+1}=x_i-\\gamma_i f(x_i)$",
+    "$x_{i+1}=\\gamma_i\\nabla f(x_i)$"
+   ],
+   "correct": 1,
+   "explanation": "Downhill is *minus* the gradient, as the hiker steps against the slope.",
+   "source": {
+    "file": "W1",
+    "page": 32
+   }
+  },
+  {
+   "id": "w1.l7.q2",
+   "type": "numeric",
+   "prompt": "$f(x)=x^2$, start $x_0=3$, step size $\\gamma=0.25$. What is $x_1$?",
+   "value": 1.5,
+   "tol": 0.01,
+   "explanation": "$\\nabla f=2x=6$. $x_1=3-0.25\\cdot6=1.5$.",
+   "source": {
+    "file": "W1",
+    "page": 32
+   }
+  },
+  {
+   "id": "w1.l7.q3",
+   "type": "numeric",
+   "prompt": "On the slide's quadratic, $\\nabla f(x)=Ax-b$ with $A=\\begin{pmatrix}2&1\\\\1&20\\end{pmatrix}$, $b=(5,3)^\\top$. Compute the **second component** of $\\nabla f$ at $x_0=(-3,-1)^\\top$.",
+   "value": -26,
+   "tol": 0.05,
+   "explanation": "$(Ax_0-b)_2=1\\cdot(-3)+20\\cdot(-1)-3=-26$ (and the first is $2(-3)+(-1)-5=-12$). The steep, negative slope in $x_2$ is why a narrow trough zig-zags.",
+   "source": {
+    "file": "W1",
+    "page": 33
+   }
+  },
+  {
+   "id": "w1.l7.q4",
+   "type": "numeric",
+   "prompt": "Continue: using $\\gamma=0.05$, what is the **second component** of $x_1=x_0-\\gamma\\nabla f(x_0)$?",
+   "value": 0.3,
+   "tol": 0.01,
+   "explanation": "$-1-0.05\\cdot(-26)=-1+1.3=0.3$ (first component: $-3-0.05(-12)=-2.4$). Notice $x_2$ already overshot past 0, the hiker leaping across the trough.",
+   "source": {
+    "file": "W1",
+    "page": 33
+   }
+  },
+  {
+   "id": "w1.l7.q5",
+   "type": "false",
+   "prompt": "Which statement about gradient descent is FALSE?",
+   "options": [
+    "For a suitable step size, $f(x_0)\\ge f(x_1)\\ge f(x_2)\\ge\\cdots$",
+    "The sequence converges to a local minimum for suitable step sizes",
+    "A step size that is too large can fail to converge",
+    "Gradient descent always converges to the global minimum of any differentiable function"
+   ],
+   "correct": 3,
+   "explanation": "The slide only promises a **local** minimum for suitable step sizes: the blindfolded hiker can end up in the wrong valley.",
+   "source": {
+    "file": "W1",
+    "page": 32
+   }
+  },
+  {
+   "id": "w1.l7.q6",
+   "type": "bug",
+   "prompt": "*“To decrease $f$ I move in the direction of the gradient $\\nabla f$.”* What is wrong?",
+   "options": [
+    "Nothing",
+    "The gradient points uphill (steepest increase). To decrease $f$ move along $-\\nabla f$",
+    "The gradient is always zero",
+    "You must move perpendicular to the gradient"
+   ],
+   "correct": 1,
+   "explanation": "The slide's arrows (Figure 3) show *negative* gradients: you step against the slope.",
+   "source": {
+    "file": "W1",
+    "page": 31
+   }
+  }
+ ]
+}

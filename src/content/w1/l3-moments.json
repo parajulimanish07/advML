@@ -1,0 +1,134 @@
+{
+ "id": "w1.l3",
+ "title": "Mean, covariance & transformations",
+ "blurb": "E, Cov, V and affine maps",
+ "source": [
+  {
+   "file": "W1",
+   "page": 13
+  },
+  {
+   "file": "W1",
+   "page": 14
+  },
+  {
+   "file": "W1",
+   "page": 15
+  }
+ ],
+ "hook": {
+  "title": "Converting a price list",
+  "text": "You sell phone cases at random prices $x$ in AUD. Your supplier gives you a USD list: multiply by 0.65 and add a flat **$5 shipping**. The *average* USD price moves exactly the same way (scale, then shift). But what about the *spread* of prices? Multiplying by 0.65 squeezes the spread; adding $5 shipping **slides** everything over without changing the spread at all.",
+  "recall": "Remember the price list: scaling ($A$) changes both the mean and the spread (the spread by $A\\,V\\,A^\\top$), shifting ($b$) only moves the mean."
+ },
+ "explore": {
+  "component": "moments",
+  "intro": "Grey = original cloud $x$. Green = transformed cloud $Ax+b$.",
+  "tasks": [
+   "Move $b_1$ and $b_2$ only. Does the covariance reading change?",
+   "Set $A$ to $0.5\\cdot I$. What happens to the measured variance versus the formula $AV[x]A^\\top$?"
+  ],
+  "takeaway": "$\\mathbb E[Ax+b]=A\\mathbb E[x]+b$ and $\\mathbb V[Ax+b]=A\\mathbb V[x]A^\\top$. The formula and the measurement agree: $b$ never appears in the variance."
+ },
+ "build": {
+  "type": "predict",
+  "prompt": "$x$ has mean 2 and variance 1. Let $y=-3x+1$. **Predict $\\mathbb V[y]$** before you reveal.",
+  "kind": "numeric",
+  "value": 9,
+  "tol": 0.01,
+  "reveal": "$\\mathbb V[Ax+b]=A\\mathbb V[x]A^\\top$. In 1-D that is $(-3)^2\\cdot 1=9$. The sign flips the cloud but never makes variance negative, and the $+1$ shift disappears. (The mean is $-3\\cdot2+1=-5$.)",
+  "source": {
+   "file": "W1",
+   "page": 15
+  }
+ },
+ "questions": [
+  {
+   "id": "w1.l3.q1",
+   "type": "mcq",
+   "prompt": "For a random vector $x$, which expression gives $\\mathbb V[Ax+b]$?",
+   "options": [
+    "$A\\,\\mathbb V[x]\\,A^\\top+b$",
+    "$A\\,\\mathbb V[x]\\,A^\\top$",
+    "$A\\,\\mathbb V[x]+b$",
+    "$\\mathbb V[x]+AA^\\top$"
+   ],
+   "correct": 1,
+   "explanation": "The shipping fee $b$ shifts all prices equally, so no spread is added. Scaling by $A$ transforms the covariance on both sides.",
+   "source": {
+    "file": "W1",
+    "page": 15
+   }
+  },
+  {
+   "id": "w1.l3.q2",
+   "type": "numeric",
+   "prompt": "$\\mathbb E[x]=3$, $\\mathbb V[x]=4$ (1-D). Let $y=2x+5$. What is $\\mathbb E[y]$?",
+   "value": 11,
+   "tol": 0.01,
+   "explanation": "$\\mathbb E[Ax+b]=A\\mathbb E[x]+b=2\\cdot3+5=11$. Scale the average, then add the shipping.",
+   "source": {
+    "file": "W1",
+    "page": 15
+   }
+  },
+  {
+   "id": "w1.l3.q3",
+   "type": "numeric",
+   "prompt": "Same $x$ and $y=2x+5$. What is $\\mathbb V[y]$?",
+   "value": 16,
+   "tol": 0.01,
+   "explanation": "$\\mathbb V[y]=2^2\\cdot4=16$. The $+5$ shipping doesn’t move the spread.",
+   "source": {
+    "file": "W1",
+    "page": 15
+   }
+  },
+  {
+   "id": "w1.l3.q4",
+   "type": "false",
+   "prompt": "Which statement is FALSE?",
+   "options": [
+    "$\\mathbb E[x+y]=\\mathbb E[x]+\\mathbb E[y]$",
+    "$\\mathbb V[x+y]=\\mathbb V[x]+\\mathbb V[y]+2\\,\\mathrm{Cov}[x,y]$",
+    "$\\mathbb V[x+y]=\\mathbb V[x]+\\mathbb V[y]$ for any $x,y$",
+    "$\\mathbb E[Ax+b]=A\\mathbb E[x]+b$"
+   ],
+   "correct": 2,
+   "explanation": "The covariance term vanishes only when $\\mathrm{Cov}[x,y]=0$ (e.g. independent variables). Two prices that rise and fall together make the total much more variable than the variances alone suggest.",
+   "source": {
+    "file": "W1",
+    "page": 15
+   }
+  },
+  {
+   "id": "w1.l3.q5",
+   "type": "numeric",
+   "prompt": "A coin: head = 1, tail = 0, and $p(\\text{head})=0.7$. What is the mean?",
+   "value": 0.7,
+   "tol": 0.005,
+   "explanation": "$\\mathbb E[x]=1\\cdot0.7+0\\cdot0.3=0.7$ (the slide asks this for 0.5 and 0.7).",
+   "source": {
+    "file": "W1",
+    "page": 13
+   }
+  },
+  {
+   "id": "w1.l3.q6",
+   "type": "bug",
+   "prompt": "$x,y$ are independent, so $\\mathrm{Cov}=0$. A student concludes: *“$\\mathbb V[x-y]=\\mathbb V[x]-\\mathbb V[y]$.”* Where is the mistake?",
+   "options": [
+    "Covariance is never zero for independent variables",
+    "Variance of a difference is $\\mathbb V[x]+\\mathbb V[y]-2\\mathrm{Cov}[x,y]$, which becomes $\\mathbb V[x]+\\mathbb V[y]$. Spreads add, even for a difference",
+    "The correct answer is $\\mathbb V[x]\\mathbb V[y]$",
+    "Nothing, it is correct"
+   ],
+   "correct": 1,
+   "explanation": "Subtracting an independent noisy price can’t make the result *less* noisy: variances are never negative, so they add. (Squaring the $-1$ in $A\\mathbb V A^\\top$ again.)",
+   "source": {
+    "file": "W1",
+    "page": 15
+   }
+  }
+ ]
+}

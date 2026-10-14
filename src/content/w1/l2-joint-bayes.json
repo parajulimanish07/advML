@@ -1,0 +1,161 @@
+{
+ "id": "w1.l2",
+ "title": "Joint, marginal, conditional & Bayes",
+ "blurb": "Sum rule, product rule, independence, Bayes theorem",
+ "source": [
+  {
+   "file": "W1",
+   "page": 7
+  },
+  {
+   "file": "W1",
+   "page": 10
+  },
+  {
+   "file": "W1",
+   "page": 12
+  }
+ ],
+ "hook": {
+  "title": "The smoke alarm that cries wolf",
+  "text": "Your house has a smoke alarm that is **90% accurate**: it rings in 90% of real fires. But it also rings 8% of the time when you merely burn toast. Fires are rare (2% of days). The alarm rings. *How worried should you be?* Most people say “90%”. The truth is far lower, because you must combine what the alarm says (the **likelihood**) with what you believed before it rang (the **prior**).",
+  "recall": "Remember the smoke alarm: a ringing alarm doesn't replace your prior, it updates it. Posterior ∝ likelihood × prior, normalised by the evidence."
+ },
+ "explore": {
+  "component": "jointbayes",
+  "intro": "Start on the joint table, then open the Bayes tab.",
+  "tasks": [
+   "Joint tab: click a weather row. Which rule turns the joint table into $p(x\\mid y)$? Make the table independent (every $p(x,y)=p(x)p(y)$) using the +/− buttons.",
+   "Bayes tab: set the prior to 0.02, sensitivity 0.9, false-positive rate 0.08. Then lower the prior to 0.01. What happens to the posterior?"
+  ],
+  "takeaway": "Sum rule → marginal. Product rule → $p(x,y)=p(y|x)p(x)$. Bayes' theorem rearranges it: $p(x|y)=p(y|x)p(x)/p(y)$. The evidence $p(y)$ is a sum over all the ways to get the observation."
+ },
+ "build": {
+  "type": "fill",
+  "prompt": "Complete Bayes' theorem in words.",
+  "template": "**posterior** $p(x\\mid y)$ = ( {0} × {1} ) ÷ {2}",
+  "blanks": [
+   {
+    "options": [
+     "likelihood p(y|x)",
+     "prior p(x)",
+     "evidence p(y)",
+     "posterior p(x|y)"
+    ],
+    "correct": 0
+   },
+   {
+    "options": [
+     "likelihood p(y|x)",
+     "prior p(x)",
+     "evidence p(y)",
+     "posterior p(x|y)"
+    ],
+    "correct": 1
+   },
+   {
+    "options": [
+     "likelihood p(y|x)",
+     "prior p(x)",
+     "evidence p(y)",
+     "posterior p(x|y)"
+    ],
+    "correct": 2
+   }
+  ],
+  "explanation": "$p(x|y)=\\dfrac{p(y|x)p(x)}{p(y)}$: posterior, likelihood, prior and evidence, exactly the naming on the slide.",
+  "source": {
+   "file": "W1",
+   "page": 12
+  }
+ },
+ "questions": [
+  {
+   "id": "w1.l2.q1",
+   "type": "numeric",
+   "prompt": "Smoke-alarm numbers: prior $p(\\text{fire})=0.02$, $p(\\text{ring}\\mid\\text{fire})=0.9$, $p(\\text{ring}\\mid\\text{no fire})=0.08$. Compute $p(\\text{fire}\\mid\\text{ring})$ (3 decimals).",
+   "value": 0.187,
+   "tol": 0.004,
+   "explanation": "Evidence: $p(\\text{ring})=0.9(0.02)+0.08(0.98)=0.0964$. Posterior $=0.018/0.0964\\approx0.187$. Under 19%, not 90%, because false alarms from the many non-fire days dominate.",
+   "source": {
+    "file": "W1",
+    "page": 12
+   }
+  },
+  {
+   "id": "w1.l2.q2",
+   "type": "mcq",
+   "prompt": "In $p(x|y)=\\dfrac{p(y|x)\\,p(x)}{p(y)}$, the term $p(y|x)$ is called the:",
+   "options": [
+    "Posterior",
+    "Likelihood",
+    "Prior",
+    "Evidence"
+   ],
+   "correct": 1,
+   "explanation": "$p(y|x)$ is how likely the observation $y$ is under hypothesis $x$: the alarm's 90% accuracy, in the smoke-alarm story.",
+   "source": {
+    "file": "W1",
+    "page": 12
+   }
+  },
+  {
+   "id": "w1.l2.q3",
+   "type": "false",
+   "prompt": "Suppose $x$ and $y$ are independent. Which statement is FALSE?",
+   "options": [
+    "$p(x,y)=p(x)p(y)$",
+    "$p(y|x)=p(y)$",
+    "$p(x|y)=p(x)$",
+    "$p(y|x)=p(x)$"
+   ],
+   "correct": 3,
+   "explanation": "Independence means that learning $x$ tells you nothing about $y$: $p(y|x)=p(y)$, not $p(x)$. In the alarm story, independence would mean ringing tells you nothing about fire.",
+   "source": {
+    "file": "W1",
+    "page": 10
+   }
+  },
+  {
+   "id": "w1.l2.q4",
+   "type": "numeric",
+   "prompt": "Sum rule: $p(x=a,y=1)=0.12$, $p(x=a,y=2)=0.18$, $p(x=a,y=3)=0.10$ (these are all the values of $y$). What is the marginal $p(x=a)$?",
+   "value": 0.4,
+   "tol": 0.005,
+   "explanation": "$p(x)=\\sum_y p(x,y)=0.12+0.18+0.10=0.40$. Marginalising adds up every way to see $x=a$, like counting every kind of toast-or-fire that could ring the alarm.",
+   "source": {
+    "file": "W1",
+    "page": 10
+   }
+  },
+  {
+   "id": "w1.l2.q5",
+   "type": "bug",
+   "prompt": "$x$ = image pixels, $y$ = weather. A student says: *“$p(x|y)$ and $p(y|x)$ are the same thing, they’re both just x and y together.”* What’s wrong?",
+   "options": [
+    "Nothing: conditionals are symmetric",
+    "$p(x|y)$ is the probability of pixels given the weather; $p(y|x)$ is the probability of weather given the image. They are different distributions, linked by Bayes",
+    "$p(x|y)$ is always larger than $p(y|x)$",
+    "They differ only when $x$ and $y$ are independent"
+   ],
+   "correct": 1,
+   "explanation": "Order matters: $P(\\text{ring}\\mid\\text{fire})=0.9$ but $P(\\text{fire}\\mid\\text{ring})\\approx0.19$, the whole point of the smoke-alarm story. Bayes' theorem converts one into the other.",
+   "source": {
+    "file": "W1",
+    "page": 10
+   }
+  },
+  {
+   "id": "w1.l2.q6",
+   "type": "numeric",
+   "prompt": "Product rule: $p(x)=0.2$ and $p(y|x)=0.5$. What is $p(x,y)$?",
+   "value": 0.1,
+   "tol": 0.005,
+   "explanation": "$p(x,y)=p(y|x)\\,p(x)=0.5\\times0.2=0.1$.",
+   "source": {
+    "file": "W1",
+    "page": 10
+   }
+  }
+ ]
+}
