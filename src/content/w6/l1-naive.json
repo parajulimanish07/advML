@@ -1,0 +1,151 @@
+{
+ "id": "w6.l1",
+ "title": "Graph data & why the naive approach fails",
+ "blurb": "No canonical order, arbitrary topology",
+ "source": [
+  {
+   "file": "W6",
+   "page": 4
+  },
+  {
+   "file": "W6",
+   "page": 6
+  },
+  {
+   "file": "W6",
+   "page": 7
+  },
+  {
+   "file": "W6",
+   "page": 8
+  }
+ ],
+ "hook": {
+  "title": "The seating chart",
+  "text": "A dinner party can be described by a **seating chart**: who is next to whom, plus a note about each guest. Photos have a natural order (pixel row 1, row 2, …) and sentences too (word 1, word 2, …). A party does not: you can list the guests in *any* order and it is still the same party. Now imagine stapling the guest list and the 'who sits next to whom' table into one long vector and feeding it to a standard neural net. Re-list the guests alphabetically and the vector changes completely, though nothing about the party changed.",
+  "recall": "Remember the seating chart: the same party can be written down in $|V|!$ ways. A network that sees a different input for each way can’t learn the party itself."
+ },
+ "explore": {
+  "component": "graphperm",
+  "intro": "One six-node graph. Press the button to list its nodes in a different order.",
+  "tasks": [
+   "Re-order the nodes several times. Does the *graph picture* ever change? What changes in the adjacency table?",
+   "Compare the naive MLP output with the neighbour-averaging layer + sum readout."
+  ],
+  "takeaway": "Graphs have no canonical node ordering. A model on $[A\\,|\\,X]$ gives different outputs for relabelings of the same graph; a model built from neighbourhood aggregation does not."
+ },
+ "build": {
+  "type": "order",
+  "prompt": "Order the argument for why the naive approach fails (slides 7–8).",
+  "items": [
+   "Join the adjacency matrix $A$ and the feature matrix $X$ into one input",
+   "Feed the result into an ordinary neural network",
+   "Re-label (permute) the nodes: this is the same graph",
+   "The input vector changes, so the network can output something different for the same graph"
+  ],
+  "explanation": "The graph does not have a canonical order of nodes, so the naive approach has different inputs for the same graph.",
+  "source": {
+   "file": "W6",
+   "page": 8
+  }
+ },
+ "questions": [
+  {
+   "id": "w6.l1.q1",
+   "type": "mcq",
+   "prompt": "Which property of graph data makes the naive “feed $A$ and $X$ to an MLP” approach fail?",
+   "options": [
+    "Graphs have no canonical node ordering",
+    "Graphs have no features",
+    "Graphs are always too small",
+    "Graphs can’t have edges"
+   ],
+   "correct": 0,
+   "explanation": "The seating chart can be written in many orders; an MLP treats each as a different input.",
+   "source": {
+    "file": "W6",
+    "page": 8
+   }
+  },
+  {
+   "id": "w6.l1.q2",
+   "type": "numeric",
+   "prompt": "A graph has $|V|=6$ nodes. How many different node-order plans exist ($|V|!$)?",
+   "value": 720,
+   "tol": 0.5,
+   "explanation": "$6!=720$ (slide: “there are $|V|!$ different order plans”).",
+   "source": {
+    "file": "W6",
+    "page": 10
+   }
+  },
+  {
+   "id": "w6.l1.q3",
+   "type": "false",
+   "prompt": "Which statement about graph-structured data is FALSE?",
+   "options": [
+    "Networks can have arbitrary size and complex topology",
+    "There is no fixed node ordering or reference point",
+    "Networks are often dynamic with multimodal features",
+    "Graphs come with a canonical node order like the pixels of an image"
+   ],
+   "correct": 3,
+   "explanation": "Images and text have a natural order; graphs don’t.",
+   "source": {
+    "file": "W6",
+    "page": 4
+   }
+  },
+  {
+   "id": "w6.l1.q4",
+   "type": "mcq",
+   "prompt": "In the naive approach, what is the problem with using the same graph under two different node orderings?",
+   "options": [
+    "Two different inputs for the same graph",
+    "The graph becomes disconnected",
+    "The features are lost",
+    "Nothing, the outputs are identical"
+   ],
+   "correct": 0,
+   "explanation": "“The naive approach would have different inputs for the same graph.”",
+   "source": {
+    "file": "W6",
+    "page": 8
+   }
+  },
+  {
+   "id": "w6.l1.q5",
+   "type": "bug",
+   "prompt": "*“The adjacency matrices under two node orderings look different, so they describe two different graphs, and the MLP is right to output different values.”* What’s wrong?",
+   "options": [
+    "Nothing",
+    "Both orderings are the *same graph* relabelled; a graph model should give the same graph-level output",
+    "The adjacency matrices are always equal",
+    "MLPs cannot take matrices"
+   ],
+   "correct": 1,
+   "explanation": "Same party, different seating-chart handwriting.",
+   "source": {
+    "file": "W6",
+    "page": 8
+   }
+  },
+  {
+   "id": "w6.l1.q6",
+   "type": "mcq",
+   "prompt": "Which data types have a natural fixed ordering (recap slide)?",
+   "options": [
+    "Images and text/speech",
+    "Social networks and molecules",
+    "Protein interaction graphs",
+    "Knowledge graphs"
+   ],
+   "correct": 0,
+   "explanation": "Pixels on a grid; words in a sequence. Networks don’t.",
+   "source": {
+    "file": "W6",
+    "page": 3
+   }
+  }
+ ]
+}

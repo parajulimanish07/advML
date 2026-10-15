@@ -103,7 +103,7 @@ export function LatentSample() {
           <circle cx={X(0)} cy={Y(0)} r={34 * 2} fill="none" stroke="#2a3a54" strokeDasharray="4" />
           {CL.map((c, k) => <circle key={k} cx={X(c[0] * scale)} cy={Y(c[1] * scale)} r={1.6 * sd * 34} fill={COLS[k] + '22'} stroke={COLS[k]} />)}
           {mode === 'enc' ? enc.map((p, i) => <circle key={i} cx={X(p.x)} cy={Y(p.y)} r={2.6} fill={COLS[p.k]} />) : prior.map((p, i) => <circle key={i} cx={X(p[0])} cy={Y(p[1])} r={3} fill={near(p) ? '#3ddc97' : '#ff6b81'} opacity={0.85} />)}
-          <text x={8} y={14} fill="#8fa0b8" fontSize="11">dashed ring = 2σ of the prior N(0,I) · coloured discs = regions that decode to real digits</text>
+          <text x={8} y={14} fill="#8fa0b8" fontSize="11">dashed = prior 2σ · discs = decodable regions</text>
         </svg>
       </div>
       <div className="ctrls">

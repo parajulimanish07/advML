@@ -1,0 +1,167 @@
+{
+ "id": "w6.l4",
+ "title": "Training a GCN & generalising to unseen nodes",
+ "blurb": "Supervised / unsupervised losses, shared parameters",
+ "source": [
+  {
+   "file": "W6",
+   "page": 24
+  },
+  {
+   "file": "W6",
+   "page": 25
+  },
+  {
+   "file": "W6",
+   "page": 26
+  },
+  {
+   "file": "W6",
+   "page": 27
+  },
+  {
+   "file": "W6",
+   "page": 28
+  },
+  {
+   "file": "W6",
+   "page": 29
+  },
+  {
+   "file": "W6",
+   "page": 30
+  },
+  {
+   "file": "W6",
+   "page": 31
+  }
+ ],
+ "hook": {
+  "title": "One recipe card for every kitchen",
+  "text": "The GCN's learnable parts, $W_k$ and $B_k$, are one **recipe card shared by every cook** (node) at each layer. Teach the recipe on one kitchen's ingredients (say the protein graph of organism A) and any other kitchen, even one never seen before (organism B), can follow the same recipe on *its* ingredients and produce embeddings. The recipe never depended on the identity of a particular cook.",
+  "recall": "Remember the shared recipe: the same aggregation parameters are used by every node, so a trained GNN can embed nodes (even whole new graphs) it never saw."
+ },
+ "explore": {
+  "component": "gnntrain",
+  "intro": "A 10-node graph with two communities and *noisy* 1-D features. A 1-layer GCN-style classifier with shared weights $W,B,c$ is trained by gradient descent.",
+  "tasks": [
+   "Note the accuracy when only the node’s own feature is used ($W=0$). Then train 30 steps. What happens to $W$ and to accuracy?",
+   "Why can neighbours help even though the features are noisy?"
+  ],
+  "takeaway": "Train $W_k,B_k$ with SGD on any loss: supervised cross-entropy for node classes, or unsupervised “similar nodes ↔ similar embeddings”. Shared parameters ⇒ embeddings for unseen nodes."
+ },
+ "build": {
+  "type": "order",
+  "prompt": "Order the GNN model overview (slides 28–30).",
+  "items": [
+   "Define a neighbourhood aggregation function",
+   "Define a loss function on the embeddings",
+   "Train on a set of nodes, i.e. a batch of compute graphs",
+   "Generate embeddings for nodes as needed, even for nodes we never trained on"
+  ],
+  "explanation": "The four numbered points of “GNN Model Overview”.",
+  "source": {
+   "file": "W6",
+   "page": 28
+  }
+ },
+ "questions": [
+  {
+   "id": "w6.l4.q1",
+   "type": "mcq",
+   "prompt": "Which parameters does a GCN learn?",
+   "options": [
+    "Only the input features",
+    "Weight matrices $W_k$ (neighbourhood) and $B_k$ (self) for each layer, shared across nodes",
+    "One embedding per node, unrelated to others",
+    "The adjacency matrix"
+   ],
+   "correct": 1,
+   "explanation": "Slide 24: trainable weight matrices.",
+   "source": {
+    "file": "W6",
+    "page": 24
+   }
+  },
+  {
+   "id": "w6.l4.q2",
+   "type": "mcq",
+   "prompt": "The unsupervised-training idea on the slides is:",
+   "options": [
+    "Similar nodes should have similar embeddings, e.g. $L=\\sum CE(y_{u,v},DEC(z_u,z_v))$ with a dot-product decoder",
+    "Maximise the number of edges",
+    "Minimise the number of layers",
+    "Random embeddings"
+   ],
+   "correct": 0,
+   "explanation": "$y_{u,v}=1$ when nodes $u$ and $v$ are similar; $DEC$ is the dot product.",
+   "source": {
+    "file": "W6",
+    "page": 27
+   }
+  },
+  {
+   "id": "w6.l4.q3",
+   "type": "numeric",
+   "prompt": "Cross-entropy $CE(y,f(x))=-\\sum_iy_i\\log f_\\theta(x)_i$. True class one-hot $y=(0,1,0)$, prediction $f=(0.2,0.5,0.3)$. Compute CE (natural log, 3 decimals).",
+   "value": 0.693,
+   "tol": 0.003,
+   "explanation": "Only the true class contributes: $-\\ln0.5\\approx0.693$.",
+   "source": {
+    "file": "W6",
+    "page": 26
+   }
+  },
+  {
+   "id": "w6.l4.q4",
+   "type": "false",
+   "prompt": "Which statement is FALSE?",
+   "options": [
+    "Supervised training can use cross-entropy for node classification",
+    "Unsupervised training can use similarity between nodes as the label $y_{u,v}$",
+    "A trained GCN can generate embeddings for nodes it never saw in training",
+    "A GCN must be retrained from scratch to embed any new node"
+   ],
+   "correct": 3,
+   "explanation": "The aggregation parameters are shared, so new nodes just run the same recipe.",
+   "source": {
+    "file": "W6",
+    "page": 30
+   }
+  },
+  {
+   "id": "w6.l4.q5",
+   "type": "mcq",
+   "prompt": "Why can a model trained on protein graphs of organism A embed organism B’s newly collected data?",
+   "options": [
+    "B has the same nodes",
+    "The same aggregation parameters are shared across all nodes, so the trained rule applies to new graphs",
+    "Because organism B was in the training set",
+    "It can’t"
+   ],
+   "correct": 1,
+   "explanation": "Same recipe card for any kitchen.",
+   "source": {
+    "file": "W6",
+    "page": 31
+   }
+  },
+  {
+   "id": "w6.l4.q6",
+   "type": "bug",
+   "prompt": "*“Embeddings depend on each node’s neighbourhood, so a trained GCN cannot embed any node outside its training graph.”* What’s wrong?",
+   "options": [
+    "Nothing",
+    "The learned weights are shared per layer; any new node’s embedding is computed by applying the same aggregation to its own neighbourhood",
+    "GCNs have no weights",
+    "Training graphs are always complete"
+   ],
+   "correct": 1,
+   "explanation": "The recipe doesn’t mention any individual cook.",
+   "source": {
+    "file": "W6",
+    "page": 31
+   }
+  }
+ ]
+}

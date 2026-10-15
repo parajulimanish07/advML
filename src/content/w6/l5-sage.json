@@ -1,0 +1,159 @@
+{
+ "id": "w6.l5",
+ "title": "General GNN framework & GraphSAGE",
+ "blurb": "Message + aggregation, mean / pool / LSTM aggregators",
+ "source": [
+  {
+   "file": "W6",
+   "page": 32
+  },
+  {
+   "file": "W6",
+   "page": 33
+  },
+  {
+   "file": "W6",
+   "page": 34
+  },
+  {
+   "file": "W6",
+   "page": 35
+  }
+ ],
+ "hook": {
+  "title": "How should a committee combine opinions?",
+  "text": "Each node holds a committee made of its neighbours' messages. How to combine them is a design choice. **Mean**: take the average opinion. **Pool**: have each member amplify their message through a little megaphone (an MLP), then take the loudest per topic (max). **LSTM**: read the messages one after another like a story, but then reading order would matter, so you must shuffle. GraphSAGE adds a twist: first combine the neighbours, *then* combine that with your own prior opinion by **concatenation**.",
+  "recall": "Remember the committee: a GNN layer = message + aggregation; GraphSAGE aggregates neighbours first (mean / pool / LSTM), then concatenates with its own embedding."
+ },
+ "explore": {
+  "component": "agg",
+  "intro": "Node $v$ has $h_v=(1,1)$ and a growing set of neighbour vectors. Switch aggregators and add neighbours.",
+  "tasks": [
+   "Add neighbours with *Sum*, then with *Mean*. Which one depends on the neighbour count?",
+   "Pick *Pool*: what changes compared with *Max*?"
+  ],
+  "takeaway": "General framework: (1) message, (2) aggregation, (3) layer connectivity, (4) graph augmentation, (5) learning objective. GraphSAGE: $h_v^{(l)}=\\sigma(W^{(l)}\\cdot\\text{CONCAT}(h_v^{(l-1)},\\text{AGG}(\\{h_u^{(l-1)}\\})))$."
+ },
+ "build": {
+  "type": "fill",
+  "prompt": "Complete GraphSAGE’s two stages.",
+  "template": "Stage 1: $h_{N(v)}^{(l)}\\leftarrow$ {0}.  Stage 2: $h_v^{(l)}\\leftarrow\\sigma(W^{(l)}\\cdot\\text{CONCAT}($ {1} $,\\,h_{N(v)}^{(l)}))$",
+  "blanks": [
+   {
+    "options": [
+     "AGG({h_u^(l−1), ∀u ∈ N(v)})",
+     "the sum of all nodes in the graph",
+     "h_v^(l−1)"
+    ],
+    "correct": 0
+   },
+   {
+    "options": [
+     "h_v^(l−1) (the node’s own embedding)",
+     "a random vector",
+     "h_u of one neighbour"
+    ],
+    "correct": 0
+   }
+  ],
+  "explanation": "Slide 34: two-stage aggregation: first aggregate from node neighbours, then further aggregate over the node itself.",
+  "source": {
+   "file": "W6",
+   "page": 34
+  }
+ },
+ "questions": [
+  {
+   "id": "w6.l5.q1",
+   "type": "mcq",
+   "prompt": "In the general GNN framework, a GNN layer consists of:",
+   "options": [
+    "Message + Aggregation",
+    "Loss + Optimiser",
+    "Encoder + Decoder only",
+    "Pooling + Dropout"
+   ],
+   "correct": 0,
+   "explanation": "GCN, GraphSAGE and GAT are different instantiations.",
+   "source": {
+    "file": "W6",
+    "page": 33
+   }
+  },
+  {
+   "id": "w6.l5.q2",
+   "type": "numeric",
+   "prompt": "GraphSAGE with $h_v^{(l-1)}\\in\\mathbb R^{16}$ and aggregated neighbour vector in $\\mathbb R^{16}$. What is the dimension of $\\text{CONCAT}$?",
+   "value": 32,
+   "tol": 0.5,
+   "explanation": "Concatenation stacks the two vectors: $16+16=32$.",
+   "source": {
+    "file": "W6",
+    "page": 34
+   }
+  },
+  {
+   "id": "w6.l5.q3",
+   "type": "mcq",
+   "prompt": "Which Stage-1 aggregators are listed for GraphSAGE?",
+   "options": [
+    "Mean, Pool, LSTM",
+    "Only Mean",
+    "Only Max",
+    "Sum and Product"
+   ],
+   "correct": 0,
+   "explanation": "Mean (weighted average), Pool (MLP then Mean/Max), LSTM (on shuffled neighbours).",
+   "source": {
+    "file": "W6",
+    "page": 35
+   }
+  },
+  {
+   "id": "w6.l5.q4",
+   "type": "numeric",
+   "prompt": "Neighbour vectors $(2,0)$, $(0,3)$, $(-1,1)$. The elementwise **max** aggregator gives a vector; what is its second component?",
+   "value": 3,
+   "tol": 0.01,
+   "explanation": "Elementwise max: $(\\max(2,0,-1),\\max(0,3,1))=(2,3)$.",
+   "source": {
+    "file": "W6",
+    "page": 35
+   }
+  },
+  {
+   "id": "w6.l5.q5",
+   "type": "false",
+   "prompt": "Which statement is FALSE?",
+   "options": [
+    "Pool aggregation applies an MLP to neighbour vectors, then Mean or Max",
+    "The LSTM aggregator is applied to a reshuffled (permuted) neighbour list",
+    "GraphSAGE uses two-stage aggregation",
+    "The LSTM aggregator is naturally permutation invariant, so no shuffling is needed"
+   ],
+   "correct": 3,
+   "explanation": "An LSTM reads a sequence so order matters; the slide feeds it $\\pi(N(v))$, a permuted neighbour list. (Reason for the shuffle is textbook context.)",
+   "source": {
+    "file": "W6",
+    "page": 35
+   }
+  },
+  {
+   "id": "w6.l5.q6",
+   "type": "bug",
+   "prompt": "*“GraphSAGE can only use the mean of neighbours.”* The error:",
+   "options": [
+    "Nothing",
+    "The AGG function is a design choice: mean, pool (MLP then mean/max) or LSTM",
+    "GraphSAGE has no aggregation",
+    "It uses only sum"
+   ],
+   "correct": 1,
+   "explanation": "The committee’s voting rule is pluggable.",
+   "source": {
+    "file": "W6",
+    "page": 35
+   }
+  }
+ ]
+}

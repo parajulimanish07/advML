@@ -1,0 +1,163 @@
+{
+ "id": "w6.l6",
+ "title": "Graph attention networks",
+ "blurb": "Learned neighbour weights, softmax, multi-head attention",
+ "source": [
+  {
+   "file": "W6",
+   "page": 36
+  },
+  {
+   "file": "W6",
+   "page": 37
+  },
+  {
+   "file": "W6",
+   "page": 38
+  },
+  {
+   "file": "W6",
+   "page": 39
+  },
+  {
+   "file": "W6",
+   "page": 40
+  },
+  {
+   "file": "W6",
+   "page": 41
+  },
+  {
+   "file": "W6",
+   "page": 42
+  }
+ ],
+ "hook": {
+  "title": "Not every friend deserves equal airtime",
+  "text": "In a meeting you don't weigh every colleague's opinion equally: the expert on this topic gets more attention than a bystander, and *which* person is the expert depends on the topic. GCN and GraphSAGE give every neighbour the same weight $1/|N(v)|$. A **graph attention network** lets the model *learn* those weights from the messages themselves: score each neighbour, turn scores into a probability distribution, then listen accordingly.",
+  "recall": "Remember the meeting: attention weights $\\alpha_{vu}$ are learned from content, normalised by a softmax over the neighbours, and computed by a shared mechanism, so they work on any graph."
+ },
+ "explore": {
+  "component": "gat",
+  "intro": "Node $v$ with four neighbours. You control the attention vector $a$; the page shows the softmax weights and the aggregated output.",
+  "tasks": [
+   "Move the sliders so that neighbour $u_4$ dominates. Compare with the uniform GCN weights.",
+   "Switch to 3 heads: what is concatenated?"
+  ],
+  "takeaway": "$e_{vu}=a(W h_u,Wh_v)$, $\\alpha_{vu}=\\frac{\\exp(e_{vu})}{\\sum_{k\\in N(v)}\\exp(e_{vk})}$, $h_v^{(l)}=\\sigma(\\sum_{u\\in N(v)}\\alpha_{vu}W^{(l)}h_u^{(l-1)})$. Multi-head attention stabilises learning."
+ },
+ "build": {
+  "type": "order",
+  "prompt": "Order the steps of one graph attention layer for node $v$.",
+  "items": [
+   "Compute attention coefficients $e_{vu}$ for each neighbour from the messages",
+   "Normalise them with a softmax into $\\alpha_{vu}$ ($\\sum_u\\alpha_{vu}=1$)",
+   "Aggregate: $\\sum_{u}\\alpha_{vu}Wh_u$",
+   "Apply the non-linearity $\\sigma$"
+  ],
+  "explanation": "Slides 38–39: compute $e_{vu}$, normalise with softmax, then aggregate with the final attention weights.",
+  "source": {
+   "file": "W6",
+   "page": 39
+  }
+ },
+ "questions": [
+  {
+   "id": "w6.l6.q1",
+   "type": "mcq",
+   "prompt": "In GCN/GraphSAGE the weight of neighbour $u$ in the aggregation is:",
+   "options": [
+    "$\\alpha_{vu}=1/|N(v)|$ (all neighbours equally important)",
+    "Learned per edge",
+    "Random",
+    "Zero"
+   ],
+   "correct": 0,
+   "explanation": "That’s precisely what GAT changes.",
+   "source": {
+    "file": "W6",
+    "page": 36
+   }
+  },
+  {
+   "id": "w6.l6.q2",
+   "type": "numeric",
+   "prompt": "Attention scores for three neighbours are $(\\ln2,\\,0,\\,0)$. What is $\\alpha$ for the first neighbour after softmax?",
+   "value": 0.5,
+   "tol": 0.005,
+   "explanation": "$e^{\\ln2}=2$, $e^0=1$, $e^0=1$; $2/4=0.5$.",
+   "source": {
+    "file": "W6",
+    "page": 39
+   }
+  },
+  {
+   "id": "w6.l6.q3",
+   "type": "mcq",
+   "prompt": "Why are the coefficients $e_{vu}$ passed through a softmax?",
+   "options": [
+    "So that $\\sum_{u\\in N(v)}\\alpha_{vu}=1$",
+    "To make them negative",
+    "To reduce the number of neighbours",
+    "To make attention uniform"
+   ],
+   "correct": 0,
+   "explanation": "A proper probability distribution over the neighbours.",
+   "source": {
+    "file": "W6",
+    "page": 39
+   }
+  },
+  {
+   "id": "w6.l6.q4",
+   "type": "false",
+   "prompt": "Which statement about graph attention is FALSE?",
+   "options": [
+    "The approach is agnostic to the choice of $a$ (e.g. a single-layer network)",
+    "The parameters of $a$ are trained jointly with $W^{(l)}$",
+    "Attention coefficients can be computed in parallel across all edges",
+    "Attention must be computed one edge at a time"
+   ],
+   "correct": 3,
+   "explanation": "Computation of attentional coefficients can be parallelised across all edges.",
+   "source": {
+    "file": "W6",
+    "page": 42
+   }
+  },
+  {
+   "id": "w6.l6.q5",
+   "type": "mcq",
+   "prompt": "What is multi-head attention used for?",
+   "options": [
+    "It can stabilise the learning process of the attention mechanism; heads are aggregated by concatenation or summation",
+    "It reduces the graph size",
+    "It removes the softmax",
+    "It makes the graph directed"
+   ],
+   "correct": 0,
+   "explanation": "Several attention replicas with different parameters.",
+   "source": {
+    "file": "W6",
+    "page": 41
+   }
+  },
+  {
+   "id": "w6.l6.q6",
+   "type": "bug",
+   "prompt": "*“GAT must learn a separate free weight for every edge in the graph, so it cannot be applied to a new graph.”* What’s wrong?",
+   "options": [
+    "Nothing",
+    "$\\alpha_{vu}$ comes from a shared edge-wise mechanism $a$ with a fixed number of parameters irrespective of graph size, hence inductive",
+    "GAT has no parameters",
+    "New graphs always have fewer edges"
+   ],
+   "correct": 1,
+   "explanation": "Benefits slide: shared edge-wise mechanism; fixed number of parameters; inductive capability.",
+   "source": {
+    "file": "W6",
+    "page": 42
+   }
+  }
+ ]
+}

@@ -1,0 +1,156 @@
+{
+ "id": "w6.l3",
+ "title": "The GCN layer",
+ "blurb": "Neighbourhood aggregation, W and B, k hops",
+ "source": [
+  {
+   "file": "W6",
+   "page": 15
+  },
+  {
+   "file": "W6",
+   "page": 16
+  },
+  {
+   "file": "W6",
+   "page": 17
+  },
+  {
+   "file": "W6",
+   "page": 18
+  },
+  {
+   "file": "W6",
+   "page": 19
+  }
+ ],
+ "hook": {
+  "title": "Gossip at a party",
+  "text": "At a party everyone holds an opinion. In each round, each person forms a new opinion by **averaging their friends’ opinions** (run through a little thinking step) and mixing in a dose of their own conviction. After one round you've heard from your friends; after two, from friends-of-friends; after $k$ rounds, from everyone within $k$ handshakes.",
+  "recall": "Remember the gossip: each round = average the friends, transform, mix in yourself. After $k$ rounds you’ve heard from everyone within $k$ hops."
+ },
+ "explore": {
+  "component": "mp",
+  "intro": "The GCN layer $h_v^{(k+1)}=\\sigma\\big(W_k\\sum_{u\\in N(v)}\\frac{h_u^{(k)}}{|N(v)|}+B_kh_v^{(k)}\\big)$ on a 6-node graph with 2-D features. $W,B$ are scalars here.",
+  "tasks": [
+   "Select node D (one neighbour) and step $k$ from 1 to 3. Watch the yellow receptive field grow.",
+   "Set $W=1,B=0$ with no non-linearity. What does a layer do to node B?"
+  ],
+  "takeaway": "Layer-0 embedding = input feature. A layer averages neighbours’ previous embeddings (transformed by $W_k$), adds $B_kh_v^{(k)}$ and applies a non-linearity. After $k$ layers a node sees its $k$-hop neighbourhood."
+ },
+ "build": {
+  "type": "order",
+  "prompt": "Order the computation of one GCN layer for node $v$.",
+  "items": [
+   "Take the previous-layer embeddings of the neighbours $u\\in N(v)$",
+   "Average them: $\\sum_u h_u^{(k)}/|N(v)|$",
+   "Transform the average with $W_k$",
+   "Add the self term $B_kh_v^{(k)}$",
+   "Apply the non-linearity $\\sigma$ (e.g. ReLU)"
+  ],
+  "explanation": "Slide 17–18: average information from neighbours, then apply a neural network; the formula is $\\sigma(W_k\\sum h_u/|N(v)|+B_kh_v)$.",
+  "source": {
+   "file": "W6",
+   "page": 18
+  }
+ },
+ "questions": [
+  {
+   "id": "w6.l3.q1",
+   "type": "numeric",
+   "prompt": "Take the slide’s example: node B has neighbours A and C. Scalar embeddings $h_A^0=2$, $h_C^0=4$, $h_B^0=1$; $W_0=1$, $B_0=0.5$; ignore the non-linearity. Compute $h_B^1=W_0\\frac{h_A^0+h_C^0}{2}+B_0h_B^0$.",
+   "value": 3.5,
+   "tol": 0.01,
+   "explanation": "$1\\cdot\\frac{2+4}{2}+0.5\\cdot1=3+0.5=3.5$.",
+   "source": {
+    "file": "W6",
+    "page": 19
+   }
+  },
+  {
+   "id": "w6.l3.q2",
+   "type": "mcq",
+   "prompt": "The layer-$k$ embedding of a node carries information from nodes how far away?",
+   "options": [
+    "Only its direct neighbours",
+    "$k$ hops away",
+    "All nodes in the graph",
+    "Nodes at distance exactly 1 and $k$ only"
+   ],
+   "correct": 1,
+   "explanation": "$k$ rounds of gossip = $k$ handshakes.",
+   "source": {
+    "file": "W6",
+    "page": 16
+   }
+  },
+  {
+   "id": "w6.l3.q3",
+   "type": "mcq",
+   "prompt": "What is the layer-0 embedding $h_v^{(0)}$?",
+   "options": [
+    "A random vector",
+    "The node’s input feature $x_v$",
+    "The average of all nodes",
+    "Zero"
+   ],
+   "correct": 1,
+   "explanation": "Slide 16: layer-0 embedding of node $v$ is its input feature.",
+   "source": {
+    "file": "W6",
+    "page": 16
+   }
+  },
+  {
+   "id": "w6.l3.q4",
+   "type": "mcq",
+   "prompt": "Path graph $v - a - b - c - d$. After **2** GCN layers, the embedding of $v$ depends on the input features of:",
+   "options": [
+    "$v$ only",
+    "$v$ and $a$",
+    "$v$, $a$ and $b$",
+    "all five nodes"
+   ],
+   "correct": 2,
+   "explanation": "Receptive field = 2 hops from $v$.",
+   "source": {
+    "file": "W6",
+    "page": 16
+   }
+  },
+  {
+   "id": "w6.l3.q5",
+   "type": "false",
+   "prompt": "Which statement about the GCN layer is FALSE?",
+   "options": [
+    "$W_k$ transforms the aggregated neighbourhood vector",
+    "$B_k$ transforms the node’s own hidden vector",
+    "The summation over neighbours is a permutation-invariant aggregation",
+    "The summation over neighbours depends on the order in which neighbours are listed"
+   ],
+   "correct": 3,
+   "explanation": "“Notice summation is a permutation invariant pooling/aggregation.”",
+   "source": {
+    "file": "W6",
+    "page": 18
+   }
+  },
+  {
+   "id": "w6.l3.q6",
+   "type": "bug",
+   "prompt": "*“A 2-layer GCN lets node A see only its direct neighbours.”* What’s wrong?",
+   "options": [
+    "Nothing",
+    "After two layers A’s embedding contains information from nodes up to **2 hops** away (neighbours of neighbours)",
+    "A 2-layer GCN sees the entire graph always",
+    "Layers don’t add reach"
+   ],
+   "correct": 1,
+   "explanation": "Round 2 of gossip carries friends-of-friends’ opinions.",
+   "source": {
+    "file": "W6",
+    "page": 16
+   }
+  }
+ ]
+}

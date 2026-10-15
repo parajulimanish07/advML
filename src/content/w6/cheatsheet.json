@@ -1,0 +1,97 @@
+{
+ "title": "Week 6 Cheat Sheet: GCN, GraphSAGE, GAT",
+ "items": [
+  {
+   "label": "Graph setup",
+   "note": "$G=(V,E)$, adjacency $A$, features $X\\in\\mathbb R^{|V|\\times m}$, neighbours $N(v)$.",
+   "source": {
+    "file": "W6",
+    "page": 6
+   }
+  },
+  {
+   "label": "Why naive fails",
+   "note": "No canonical node order: $|V|!$ orderings give different inputs for the same graph.",
+   "source": {
+    "file": "W6",
+    "page": 10
+   }
+  },
+  {
+   "label": "Invariant / equivariant",
+   "note": "Graph→vector: invariant. Graph→matrix: equivariant (output permutes with input).",
+   "source": {
+    "file": "W6",
+    "page": 12
+   }
+  },
+  {
+   "label": "GCN layer",
+   "note": "Average neighbours (×$W_k$) + self ($B_k$), non-linearity; $k$ layers ⇒ $k$ hops.",
+   "source": {
+    "file": "W6",
+    "page": 18
+   },
+   "latex": "h_v^{(k+1)}=\\sigma\\Big(W_k\\!\\!\\sum_{u\\in N(v)}\\!\\frac{h_u^{(k)}}{|N(v)|}+B_kh_v^{(k)}\\Big)"
+  },
+  {
+   "label": "Training",
+   "note": "Supervised: cross-entropy. Unsupervised: similar nodes ↔ similar embeddings with dot-product decoder.",
+   "source": {
+    "file": "W6",
+    "page": 26
+   },
+   "latex": "CE(y,f)=-\\sum_iy_i\\log f_i,\\ L=\\sum CE(y_{u,v},z_u^\\top z_v)"
+  },
+  {
+   "label": "Inductive",
+   "note": "Shared parameters ⇒ embeddings for unseen nodes/graphs.",
+   "source": {
+    "file": "W6",
+    "page": 31
+   }
+  },
+  {
+   "label": "General framework",
+   "note": "Layer = Message + Aggregation; also layer connectivity, graph augmentation, learning objective.",
+   "source": {
+    "file": "W6",
+    "page": 32
+   }
+  },
+  {
+   "label": "GraphSAGE",
+   "note": "AGG ∈ {mean, pool, LSTM on shuffled neighbours}; concatenate with own embedding.",
+   "source": {
+    "file": "W6",
+    "page": 34
+   },
+   "latex": "h_v^{(l)}=\\sigma\\big(W^{(l)}\\cdot\\mathrm{CONCAT}(h_v^{(l-1)},\\mathrm{AGG}(\\{h_u^{(l-1)}\\}))\\big)"
+  },
+  {
+   "label": "GAT",
+   "note": "Learned weights: score, softmax over neighbours, weighted aggregation.",
+   "source": {
+    "file": "W6",
+    "page": 39
+   },
+   "latex": "\\alpha_{vu}=\\frac{\\exp(e_{vu})}{\\sum_{k\\in N(v)}\\exp(e_{vk})},\\ e_{vu}=a(Wh_u,Wh_v)"
+  },
+  {
+   "label": "Multi-head",
+   "note": "Several attention replicas; concatenate or sum; stabilises learning.",
+   "source": {
+    "file": "W6",
+    "page": 41
+   }
+  },
+  {
+   "label": "Attention benefits",
+   "note": "Parallel over edges, sparse, localised, fixed parameter count ⇒ inductive.",
+   "source": {
+    "file": "W6",
+    "page": 42
+   }
+  }
+ ]
+}

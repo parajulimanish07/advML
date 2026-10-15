@@ -1,0 +1,166 @@
+{
+ "id": "w6.l2",
+ "title": "Permutation invariance & equivariance",
+ "blurb": "Graph-level vs node-level symmetry",
+ "source": [
+  {
+   "file": "W6",
+   "page": 9
+  },
+  {
+   "file": "W6",
+   "page": 10
+  },
+  {
+   "file": "W6",
+   "page": 11
+  },
+  {
+   "file": "W6",
+   "page": 12
+  },
+  {
+   "file": "W6",
+   "page": 13
+  }
+ ],
+ "hook": {
+  "title": "Team score vs personal rating",
+  "text": "A volleyball team has a **team score** and each player has a **personal rating**. Re-list the roster in any order: the team score must not change (**invariant**). The personal ratings must *follow their players* wherever they appear in the list (**equivariant**): the list of ratings is shuffled in exactly the same way as the roster.",
+  "recall": "Remember team score vs personal rating: graph → vector is invariant (same under reordering); graph → matrix (one row per node) is equivariant (rows reorder with the input)."
+ },
+ "explore": {
+  "component": "equivar",
+  "intro": "Embeddings from one neighbour-averaging layer. Permute the input order and watch.",
+  "tasks": [
+   "Find node C in the table after several permutations. Is its embedding ever different?",
+   "Does the sum-pooled vector change?"
+  ],
+  "takeaway": "Invariant: $f(A_1,X_1)=f(A_2,X_2)$ (graph → $\\mathbb R^d$). Equivariant: permute the input ⇒ the output matrix is permuted accordingly (graph → $\\mathbb R^{|V|\\times d}$). GNNs are built from such functions."
+ },
+ "build": {
+  "type": "fill",
+  "prompt": "Fill in the definitions.",
+  "template": "Mapping a graph to a **vector**: {0}.  Mapping a graph to a **matrix** with one row per node: {1}.",
+  "blanks": [
+   {
+    "options": [
+     "permutation invariant: permuting the input leaves the output unchanged",
+     "permutation equivariant: the output permutes accordingly"
+    ],
+    "correct": 0
+   },
+   {
+    "options": [
+     "permutation invariant: permuting the input leaves the output unchanged",
+     "permutation equivariant: the output permutes accordingly"
+    ],
+    "correct": 1
+   }
+  ],
+  "explanation": "Slide 12: Permutation Invariant: map a graph to a vector; if we permute the input, output stays the same. Permutation Equivariant: map a graph to a matrix; if we permute the input, output permutes accordingly.",
+  "source": {
+   "file": "W6",
+   "page": 12
+  }
+ },
+ "questions": [
+  {
+   "id": "w6.l2.q1",
+   "type": "mcq",
+   "prompt": "A function mapping a graph to a vector is **permutation invariant** if:",
+   "options": [
+    "Permuting the input leaves the output unchanged",
+    "Permuting the input permutes the output",
+    "It uses an adjacency matrix",
+    "It has no parameters"
+   ],
+   "correct": 0,
+   "explanation": "Team score: roster order doesn’t matter.",
+   "source": {
+    "file": "W6",
+    "page": 12
+   }
+  },
+  {
+   "id": "w6.l2.q2",
+   "type": "mcq",
+   "prompt": "A function mapping a graph to an $|V|\\times d$ matrix is **permutation equivariant** if:",
+   "options": [
+    "The output never changes",
+    "Permuting the input permutes the output rows accordingly",
+    "The output has fewer rows",
+    "The output is the identity"
+   ],
+   "correct": 1,
+   "explanation": "Personal ratings follow their players.",
+   "source": {
+    "file": "W6",
+    "page": 12
+   }
+  },
+  {
+   "id": "w6.l2.q3",
+   "type": "false",
+   "prompt": "Which statement about GCNs is FALSE?",
+   "options": [
+    "For a single node, averaging neighbours’ previous embeddings is permutation invariant",
+    "Considering all nodes, GCN computation is permutation equivariant",
+    "GNNs consist of multiple permutation equivariant/invariant functions",
+    "If we permute the input, the GCN output matrix stays exactly the same"
+   ],
+   "correct": 3,
+   "explanation": "The output matrix is permuted accordingly (equivariant), not unchanged.",
+   "source": {
+    "file": "W6",
+    "page": 21
+   }
+  },
+  {
+   "id": "w6.l2.q4",
+   "type": "numeric",
+   "prompt": "Three nodes have embeddings with first components $1$, $3$, $2$. Sum pooling gives a graph-level vector. What is its first component after the nodes are listed in any other order?",
+   "value": 6,
+   "tol": 0.01,
+   "explanation": "Addition is order-independent: $1+3+2=6$. Pooling makes an equivariant per-node output into an invariant graph-level output.",
+   "source": {
+    "file": "W7",
+    "page": 38
+   }
+  },
+  {
+   "id": "w6.l2.q5",
+   "type": "bug",
+   "prompt": "*“GCN is permutation invariant, so after shuffling the input rows the output embedding matrix is identical row by row.”* What’s the error?",
+   "options": [
+    "None",
+    "Per-node vectors are unchanged, but their *rows* move with the nodes: the matrix as a whole is equivariant, not invariant",
+    "GCN is neither",
+    "Shuffled rows destroy the graph"
+   ],
+   "correct": 1,
+   "explanation": "Personal ratings are the same, but listed in the shuffled order.",
+   "source": {
+    "file": "W6",
+    "page": 23
+   }
+  },
+  {
+   "id": "w6.l2.q6",
+   "type": "mcq",
+   "prompt": "For a graph with $|V|$ nodes, how many order plans are there?",
+   "options": [
+    "$|V|$",
+    "$|V|^2$",
+    "$|V|!$",
+    "$2^{|V|}$"
+   ],
+   "correct": 2,
+   "explanation": "Every permutation of the nodes is a different listing.",
+   "source": {
+    "file": "W6",
+    "page": 10
+   }
+  }
+ ]
+}

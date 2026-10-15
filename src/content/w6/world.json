@@ -1,0 +1,17 @@
+{
+ "id": "w6",
+ "title": "Graph Galaxy",
+ "week": "Week 6",
+ "subtitle": "GCN, permutation symmetry, GraphSAGE, graph attention",
+ "emoji": "🕸️",
+ "color": "#c28bff",
+ "status": "ready",
+ "levels": [
+  "l1-naive",
+  "l2-symmetry",
+  "l3-gcn",
+  "l4-training",
+  "l5-sage",
+  "l6-gat"
+ ]
+}
