@@ -178,3 +178,25 @@ table.grid td.click:hover { background: #1a2640; }
 
 @media (max-width: 760px) { .viz, .orderwrap { grid-template-columns: 1fr; } .nav { gap: 10px; padding: 8px 12px; } }
 @media print { body { background: #fff; color: #000; } .noprint { display: none !important; } .panel, .cheatitem { background: #fff; border-color: #bbb; color: #000; } .cn, .cl { color: #000; } }
+
+/* phones */
+@media (max-width: 600px) {
+  main { padding: 14px 14px 48px; }
+  .hero h1 { font-size: 30px; }
+  .stats { width: 100%; }
+  .stat { flex: 1; min-width: 0; padding: 8px 10px; }
+  .world { padding: 14px; }
+  .worldhead { flex-wrap: wrap; gap: 10px; }
+  .wemoji { width: 52px; height: 52px; font-size: 30px; }
+  .wtitle { min-width: 0; flex-basis: calc(100% - 70px); }
+  .wprog { width: 100%; text-align: left; }
+  .path { display: grid; grid-template-columns: 1fr 1fr; }
+  .node { width: auto; min-height: 104px; }
+  .nav { overflow-x: auto; white-space: nowrap; gap: 12px; }
+  .nav .toggle { white-space: nowrap; }
+  .panel { padding: 16px; }
+  .qprompt { font-size: 17px; }
+  .bosshud { flex-wrap: wrap; gap: 6px; font-size: 14px; }
+  .fillline { line-height: 2.2; font-size: 16px; }
+  .numin { width: 100%; }
+}
