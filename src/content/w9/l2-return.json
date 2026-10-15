@@ -1,0 +1,146 @@
+{
+ "id": "w9.l2",
+ "title": "Return & discounting",
+ "blurb": "Monte Carlo return, why $\\gamma$ matters",
+ "source": [
+  {
+   "file": "W9",
+   "page": 13
+  },
+  {
+   "file": "W9",
+   "page": 14
+  },
+  {
+   "file": "W9",
+   "page": 15
+  },
+  {
+   "file": "W9",
+   "page": 16
+  },
+  {
+   "file": "W9",
+   "page": 17
+  },
+  {
+   "file": "W9",
+   "page": 18
+  }
+ ],
+ "hook": {
+  "title": "A dollar now vs a dollar later",
+  "text": "Would you rather have \\$100 today or \\$100 in ten years? Almost everyone takes today's money: it can be used sooner, and the future is uncertain. The **discount factor** $\\gamma$ is your patience: each step into the future the reward is worth $\\gamma$ times less. $\\gamma=0$ is a pure live-for-today agent; $\\gamma$ near 1 is a far-sighted planner. And with an endless cycle of positive rewards, discounting keeps the total from blowing up to infinity.",
+  "recall": "Remember the dollar now vs later: $G_t=r_t+\\gamma r_{t+1}+\\gamma^2r_{t+2}+\\cdots$ weights near rewards more, keeps cyclic sums finite, and can change which policy is optimal."
+ },
+ "explore": {
+  "component": "discount",
+  "intro": "Sutton’s exercise 3.22 from the slides: two policies, left gets rewards $1,0,1,0,\\dots$, right gets $0,2,0,2,\\dots$.",
+  "tasks": [
+   "Set $\\gamma=0$, then $0.9$, then $0.5$. Which policy is optimal each time?",
+   "Increase $\\gamma$ toward 0.99. What happens to the two returns?"
+  ],
+  "takeaway": "$G_t=\\sum_k\\gamma^kr_{t+k}$. $\\gamma=0$: $\\pi_{left}$ optimal; $\\gamma=0.9$: $\\pi_{right}$; $\\gamma=0.5$: tie."
+ },
+ "build": {
+  "type": "predict",
+  "prompt": "A trajectory gives rewards $0,\\,0,\\,10$ (at $t=0,1,2$) and $\\gamma=0.9$. **Predict the return** $G_0$.",
+  "kind": "numeric",
+  "value": 8.1,
+  "tol": 0.02,
+  "reveal": "$G_0=0+0.9\\cdot0+0.9^2\\cdot10=0.81\\cdot10=8.1$. The jackpot two steps away is worth 81% of its face value today.",
+  "source": {
+   "file": "W9",
+   "page": 13
+  }
+ },
+ "questions": [
+  {
+   "id": "w9.l2.q1",
+   "type": "numeric",
+   "prompt": "Slide’s trajectory (rewards $-0.04,\\,-0.04,\\,-0.04,\\,+1.0$ at $t=0..3$), $\\gamma=0.9$. Compute $G_0$ (3 decimals).",
+   "value": 0.621,
+   "tol": 0.003,
+   "explanation": "$-0.04-0.9\\cdot0.04-0.81\\cdot0.04+0.729\\cdot1.0=0.6206$. (The slide leaves this as an exercise and its last reward label is a typo; see open-questions.md.)",
+   "source": {
+    "file": "W9",
+    "page": 14
+   }
+  },
+  {
+   "id": "w9.l2.q2",
+   "type": "numeric",
+   "prompt": "Exercise 3.22 with $\\gamma=0.9$: the discounted contribution of the reward $2$ received at $t=3$ for the right policy is $\\gamma^3\\cdot2$. Compute it.",
+   "value": 1.458,
+   "tol": 0.002,
+   "explanation": "$0.9^3\\cdot2=0.729\\cdot2=1.458$ (the slide lists $1.8+1.458+\\dots$).",
+   "source": {
+    "file": "W9",
+    "page": 17
+   }
+  },
+  {
+   "id": "w9.l2.q3",
+   "type": "mcq",
+   "prompt": "In Exercise 3.22 with $\\gamma=0.5$, which policy is optimal?",
+   "options": [
+    "$\\pi_{left}$",
+    "$\\pi_{right}$",
+    "Either is optimal (they tie)",
+    "Neither"
+   ],
+   "correct": 2,
+   "explanation": "At $\\gamma=0.5$: $G_{left}=1+0.25+\\dots$ and $G_{right}=1+0.25+\\dots$ (slide 17).",
+   "source": {
+    "file": "W9",
+    "page": 18
+   }
+  },
+  {
+   "id": "w9.l2.q4",
+   "type": "false",
+   "prompt": "Which is NOT a reason given for discounting?",
+   "options": [
+    "It is mathematically convenient",
+    "It avoids infinite returns in cyclic Markov processes",
+    "It weights immediate rewards more",
+    "$\\gamma$ must exceed 1 to make rewards grow"
+   ],
+   "correct": 3,
+   "explanation": "$\\gamma\\in[0,1]$.",
+   "source": {
+    "file": "W9",
+    "page": 15
+   }
+  },
+  {
+   "id": "w9.l2.q5",
+   "type": "numeric",
+   "prompt": "Rewards $2,2,2$ at $t=0,1,2$ and $\\gamma=0.5$. What is the return $G_0$?",
+   "value": 3.5,
+   "tol": 0.01,
+   "explanation": "$2+0.5\\cdot2+0.25\\cdot2=2+1+0.5=3.5$.",
+   "source": {
+    "file": "W9",
+    "page": 13
+   }
+  },
+  {
+   "id": "w9.l2.q6",
+   "type": "bug",
+   "prompt": "*“Discounting only rescales the return, so it never changes which policy is optimal.”* What’s wrong?",
+   "options": [
+    "Nothing",
+    "Exercise 3.22: $\\gamma=0$ makes $\\pi_{left}$ optimal, $\\gamma=0.9$ makes $\\pi_{right}$ optimal",
+    "Discounting makes all policies equal",
+    "$\\gamma$ only affects the first reward"
+   ],
+   "correct": 1,
+   "explanation": "Patience changes preference.",
+   "source": {
+    "file": "W9",
+    "page": 18
+   }
+  }
+ ]
+}

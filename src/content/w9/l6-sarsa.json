@@ -1,0 +1,161 @@
+{
+ "id": "w9.l6",
+ "title": "Q-learning vs SARSA",
+ "blurb": "Off-policy vs on-policy targets",
+ "source": [
+  {
+   "file": "W9",
+   "page": 43
+  },
+  {
+   "file": "W9",
+   "page": 44
+  },
+  {
+   "file": "W9",
+   "page": 45
+  }
+ ],
+ "hook": {
+  "title": "Walking the cliff edge with a shaky hand",
+  "text": "You must walk to a goal along a cliff. **Q-learning** plans as if it will always step perfectly: the shortest path hugs the edge. **SARSA** knows its own hand shakes (it *really does* explore randomly 10% of the time) and learns the value of the policy *it actually follows*, so it prefers a path with a safety margin. Same notebook, different target: Q-learning bootstraps from the *best* next action, SARSA from the action it *actually chose* next.",
+  "recall": "Remember the shaky hand: Q-learning (off-policy) uses $\\max_{a'}Q(s',a')$ in its target; SARSA (on-policy) uses $Q(s',a')$ for the next action actually chosen by its own ε-greedy policy."
+ },
+ "explore": {
+  "component": "cliff",
+  "intro": "Cliff walking: −1 per step, −100 for falling (back to start). Both agents explore with ε-greedy.",
+  "tasks": [
+   "Compare the two greedy paths at $\\varepsilon=0.1$. Which hugs the cliff edge?",
+   "Set $\\varepsilon=0$. Do the paths still differ?"
+  ],
+  "takeaway": "Q-learning target: $r+\\gamma\\max_{a'}Q(s',a')$. SARSA target: $r+\\gamma Q(s',a')$ with $a'$ chosen by the policy. (The slides show the cliff figure with “optimal path” and “safer path”; which algorithm learns which is textbook context.)"
+ },
+ "build": {
+  "type": "fill",
+  "prompt": "Complete the two targets.",
+  "template": "Q-learning uses {0} in its target; SARSA uses {1}.",
+  "blanks": [
+   {
+    "options": [
+     "max over a′ of Q(s′, a′)",
+     "Q(s′, a′) for the action a′ actually chosen next",
+     "the immediate reward only"
+    ],
+    "correct": 0
+   },
+   {
+    "options": [
+     "max over a′ of Q(s′, a′)",
+     "Q(s′, a′) for the action a′ actually chosen next",
+     "the immediate reward only"
+    ],
+    "correct": 1
+   }
+  ],
+  "explanation": "Slides 42–43: Q-learning has $\\gamma\\max_{a_{t+1}}Q(s_{t+1},a_{t+1})$; SARSA chooses $a_{t+1}$ from the policy and uses $\\gamma Q(s_{t+1},a_{t+1})$.",
+  "source": {
+   "file": "W9",
+   "page": 43
+  }
+ },
+ "questions": [
+  {
+   "id": "w9.l6.q1",
+   "type": "mcq",
+   "prompt": "What is different in SARSA’s update?",
+   "options": [
+    "The target uses $Q(s_{t+1},a_{t+1})$ with $a_{t+1}$ chosen by the policy (on-policy) instead of $\\max_{a'}Q$",
+    "SARSA has no learning rate",
+    "SARSA doesn’t use rewards",
+    "SARSA uses a neural network"
+   ],
+   "correct": 0,
+   "explanation": "SARSA = State, Action, Reward, State, Action.",
+   "source": {
+    "file": "W9",
+    "page": 43
+   }
+  },
+  {
+   "id": "w9.l6.q2",
+   "type": "numeric",
+   "prompt": "$r=0$, $\\gamma=0.9$, next-state values $Q(s',\\cdot)=(2,6)$, and the policy actually picks the action with $Q=2$. What is the **SARSA** target?",
+   "value": 1.8,
+   "tol": 0.01,
+   "explanation": "$0+0.9\\cdot2=1.8$ (Q-learning would use $0.9\\cdot6=5.4$).",
+   "source": {
+    "file": "W9",
+    "page": 43
+   }
+  },
+  {
+   "id": "w9.l6.q3",
+   "type": "mcq",
+   "prompt": "Why is Q-learning called **off-policy**?",
+   "options": [
+    "Its Q-values approximate $Q^*$ regardless of the policy used to collect the data",
+    "It never explores",
+    "It has no policy",
+    "It needs the optimal policy to collect data"
+   ],
+   "correct": 0,
+   "explanation": "“The Q values directly approximate optimal Q values, no matter which policy is used.”",
+   "source": {
+    "file": "W9",
+    "page": 41
+   }
+  },
+  {
+   "id": "w9.l6.q4",
+   "type": "false",
+   "prompt": "Which statement is FALSE?",
+   "options": [
+    "SARSA = State, Action, Reward, State, Action",
+    "Q-learning’s target uses the greedy (max) action",
+    "SARSA’s target uses the action the behaviour policy chose",
+    "In the cliff example the slides state that Q-learning takes the safer path"
+   ],
+   "correct": 3,
+   "explanation": "The slides label the figure “optimal path” vs “safer path” but don’t say which algorithm takes which; the standard result is SARSA = safer. (Textbook context.)",
+   "source": {
+    "file": "W9",
+    "page": 45,
+    "extra": true
+   }
+  },
+  {
+   "id": "w9.l6.q5",
+   "type": "mcq",
+   "prompt": "In the SARSA algorithm, when is $a_{t+1}$ chosen?",
+   "options": [
+    "Before the update, from the ε-greedy policy at $s_{t+1}$; it is then reused as the next action",
+    "After the episode ends",
+    "Never",
+    "Uniformly at random always"
+   ],
+   "correct": 0,
+   "explanation": "The update needs the next action first.",
+   "source": {
+    "file": "W9",
+    "page": 43
+   }
+  },
+  {
+   "id": "w9.l6.q6",
+   "type": "bug",
+   "prompt": "*“Since Q-learning uses $\\max$, its behaviour policy must also be greedy.”* What’s wrong?",
+   "options": [
+    "Nothing",
+    "The max is only in the *target*; the behaviour policy can be ε-greedy (it needs exploration)",
+    "The behaviour policy must be uniform",
+    "There is no behaviour policy"
+   ],
+   "correct": 1,
+   "explanation": "Shaky hands collect data; the target pretends they’re steady.",
+   "source": {
+    "file": "W9",
+    "page": 42
+   }
+  }
+ ]
+}

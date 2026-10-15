@@ -1,0 +1,160 @@
+{
+ "id": "w9.l5",
+ "title": "Tabular Q-learning",
+ "blurb": "Q-table, update rule, ε-greedy, off-policy",
+ "source": [
+  {
+   "file": "W9",
+   "page": 31
+  },
+  {
+   "file": "W9",
+   "page": 32
+  },
+  {
+   "file": "W9",
+   "page": 33
+  },
+  {
+   "file": "W9",
+   "page": 40
+  },
+  {
+   "file": "W9",
+   "page": 41
+  },
+  {
+   "file": "W9",
+   "page": 42
+  }
+ ],
+ "hook": {
+  "title": "A notebook of how good each turn is",
+  "text": "Learning to drive in a new city, you keep a **notebook**: for every junction and every possible turn, a number for “how good is it to turn this way?”. Each time you try a turn you see the immediate result and peek at the best number written for the *next* junction, then you **nudge** your old number a little toward “result + discounted best-next”. Occasionally you try a random turn (**ε-greedy**) so every page of the notebook keeps getting updates. Over time the notebook converges to the optimal guide $Q^*$ — even though you didn't always drive optimally.",
+  "recall": "Remember the notebook: nudge each entry toward $r+\\gamma\\max Q(s',\\cdot)$ by a fraction $\\alpha$ of the error; explore occasionally so every entry keeps being updated; the greedy turn from the notebook is $\\arg\\max_aQ(s,a)$."
+ },
+ "explore": {
+  "component": "qlearn",
+  "intro": "A 4×4 grid with +10 at the bottom-right (terminal), −1 per move. Watch the Q-table fill in.",
+  "tasks": [
+   "Press *1 step* a few times and read the update line. What changes in the table?",
+   "Run 3000 steps with $\\varepsilon=0$ then with $\\varepsilon=0.2$. Which explores the whole grid?"
+  ],
+  "takeaway": "$Q(s_t,a_t)\\leftarrow Q(s_t,a_t)+\\alpha[r+\\gamma\\max_{a'}Q(s_{t+1},a')-Q(s_t,a_t)]$. Converges if all pairs keep being updated."
+ },
+ "build": {
+  "type": "order",
+  "prompt": "Order the tabular Q-learning algorithm (slide 42).",
+  "items": [
+   "Randomly initialise $Q(s_t,a_t)$ for all state–action pairs",
+   "Initialise the starting state $s_t$ of the episode",
+   "Choose $a_t$ from a policy derived from $Q$ (e.g. ε-greedy)",
+   "Take $a_t$; observe $r_t$ and $s_{t+1}$",
+   "Update $Q(s_t,a_t)\\leftarrow Q+\\alpha[r+\\gamma\\max_{a'}Q(s_{t+1},a')-Q]$ and move to $s_{t+1}$"
+  ],
+  "explanation": "Repeat for each step until $s_t$ is terminal and for each episode.",
+  "source": {
+   "file": "W9",
+   "page": 42
+  }
+ },
+ "questions": [
+  {
+   "id": "w9.l5.q1",
+   "type": "mcq",
+   "prompt": "If $Q^*$ is known, the optimal action in state $s$ is:",
+   "options": [
+    "$\\arg\\max_aQ^*(s,a)$",
+    "$\\arg\\min_aQ^*(s,a)$",
+    "A uniformly random action",
+    "$\\max_aQ^*(s,a)$ (the value, not the action)"
+   ],
+   "correct": 0,
+   "explanation": "For $Q^*(s,\\cdot)=(1,0.3,0.6,0.8)$ the best is $a_0$.",
+   "source": {
+    "file": "W9",
+    "page": 31
+   }
+  },
+  {
+   "id": "w9.l5.q2",
+   "type": "numeric",
+   "prompt": "Tabular update: $Q(s,a)=2$, $\\alpha=0.5$, $r=1$, $\\gamma=0.9$, $\\max_{a'}Q(s',a')=4$. Compute the new $Q(s,a)$.",
+   "value": 3.3,
+   "tol": 0.01,
+   "explanation": "Target $1+0.9\\cdot4=4.6$; error $4.6-2=2.6$; new $Q=2+0.5\\cdot2.6=3.3$.",
+   "source": {
+    "file": "W9",
+    "page": 41
+   }
+  },
+  {
+   "id": "w9.l5.q3",
+   "type": "mcq",
+   "prompt": "For correct convergence of tabular Q-learning, the only requirement mentioned is:",
+   "options": [
+    "All state–action pairs continue to be updated",
+    "The policy is always greedy",
+    "$\\alpha=1$",
+    "The environment is stochastic"
+   ],
+   "correct": 0,
+   "explanation": "So the notebook needs exploration.",
+   "source": {
+    "file": "W9",
+    "page": 41
+   }
+  },
+  {
+   "id": "w9.l5.q4",
+   "type": "false",
+   "prompt": "Which statement is FALSE?",
+   "options": [
+    "A Q-table stores a value for each state–action pair",
+    "ε-greedy is an example of a policy derived from $Q$",
+    "Q-learning converges to $Q^*$ only if the data is collected by the optimal policy",
+    "Tabular Q-learning needs finite state and action spaces"
+   ],
+   "correct": 2,
+   "explanation": "“No matter which policy is used to collect the state and action pairs”: it is off-policy.",
+   "source": {
+    "file": "W9",
+    "page": 41
+   }
+  },
+  {
+   "id": "w9.l5.q5",
+   "type": "bug",
+   "prompt": "*“Initialise $Q$ to zeros and always act greedily; every pair will be updated.”* What’s wrong?",
+   "options": [
+    "Nothing",
+    "A purely greedy agent may never try some actions, so some pairs stop being updated; use exploration (e.g. ε-greedy)",
+    "Greedy agents update every entry",
+    "Q must start random and negative"
+   ],
+   "correct": 1,
+   "explanation": "If you always take the first turn that looks good you never write the rest of the notebook.",
+   "source": {
+    "file": "W9",
+    "page": 42
+   }
+  },
+  {
+   "id": "w9.l5.q6",
+   "type": "mcq",
+   "prompt": "In the continuous case we instead use:",
+   "options": [
+    "A parameterised Q network $Q_\\varphi$ approximating $Q^*$",
+    "A bigger table",
+    "A random policy",
+    "Only $V$"
+   ],
+   "correct": 0,
+   "explanation": "Too many states for a notebook, so a function approximator.",
+   "source": {
+    "file": "W9",
+    "page": 32
+   }
+  }
+ ]
+}

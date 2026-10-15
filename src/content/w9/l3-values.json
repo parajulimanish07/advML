@@ -1,0 +1,161 @@
+{
+ "id": "w9.l3",
+ "title": "Value functions $V^\\pi$ and $Q^\\pi$",
+ "blurb": "How good is a state? How good is an action?",
+ "source": [
+  {
+   "file": "W9",
+   "page": 19
+  },
+  {
+   "file": "W9",
+   "page": 20
+  },
+  {
+   "file": "W9",
+   "page": 21
+  },
+  {
+   "file": "W9",
+   "page": 22
+  },
+  {
+   "file": "W9",
+   "page": 23
+  }
+ ],
+ "hook": {
+  "title": "Rating towns and roads",
+  "text": "A travel guide can rate **towns** (“how good is it to be *here*, on average, if I follow my usual habits from now on?”) and it can rate **roads out of a town** (“how good is it to take *this* road first, and then carry on with my usual habits?”). The first is $V^\\pi(s)$; the second is $Q^\\pi(s,a)$. Two roads leaving the same town can have very different ratings, and the better rating tells you which road to take.",
+  "recall": "Remember the guidebook: $V^\\pi(s)$ rates a town, $Q^\\pi(s,a)$ rates a road out of it (then follow $\\pi$). If $Q^\\pi(s,a_1)>Q^\\pi(s,a_2)$, take $a_1$."
+ },
+ "explore": {
+  "component": "vq",
+  "intro": "A 3×3 grid with +1 on reaching the goal, 0 otherwise. The policy walks the shortest path.",
+  "tasks": [
+   "Read the grid at $\\gamma=0.9$. How does value fall with distance from the goal?",
+   "Click the middle cell: compare $Q$ for Up and Down."
+  ],
+  "takeaway": "$V^\\pi(s)=\\mathbb E[\\sum_t\\gamma^tr_t\\mid s_0=s]$; $Q^\\pi(s,a)=\\mathbb E[G_0\\mid s_0=s,a_0=a]$. A state 2 steps from the goal is worth $\\gamma$, 4 steps away $\\gamma^3$."
+ },
+ "build": {
+  "type": "fill",
+  "prompt": "Match each function with the question it answers.",
+  "template": "$V^\\pi(s)$ answers: {0}.  $Q^\\pi(s,a)$ answers: {1}.",
+  "blanks": [
+   {
+    "options": [
+     "How good is it to be in state s?",
+     "How good is it to take action a in s, then follow π?"
+    ],
+    "correct": 0
+   },
+   {
+    "options": [
+     "How good is it to be in state s?",
+     "How good is it to take action a in s, then follow π?"
+    ],
+    "correct": 1
+   }
+  ],
+  "explanation": "Slide 23: “If I’m here, how much future reward can I expect?” vs “If I take this action here, how much future reward can I expect?”.",
+  "source": {
+   "file": "W9",
+   "page": 23
+  }
+ },
+ "questions": [
+  {
+   "id": "w9.l3.q1",
+   "type": "mcq",
+   "prompt": "$V^\\pi(s)$ is:",
+   "options": [
+    "The expected discounted return for policy $\\pi$ beginning in state $s$",
+    "The reward of the next step",
+    "The best action in $s$",
+    "The probability of reaching $s$"
+   ],
+   "correct": 0,
+   "explanation": "A town’s average rating under your habits.",
+   "source": {
+    "file": "W9",
+    "page": 19
+   }
+  },
+  {
+   "id": "w9.l3.q2",
+   "type": "mcq",
+   "prompt": "$Q^\\pi(s,a)$ is:",
+   "options": [
+    "The expected discounted return starting in $s$, initially taking action $a$, then following $\\pi$",
+    "The expected return of the best policy",
+    "The immediate reward $r(s,a)$",
+    "The transition probability"
+   ],
+   "correct": 0,
+   "explanation": "A road’s rating.",
+   "source": {
+    "file": "W9",
+    "page": 19
+   }
+  },
+  {
+   "id": "w9.l3.q3",
+   "type": "numeric",
+   "prompt": "Grid with $+1$ on reaching the goal. Under policy $\\pi$ the top-left cell is 4 steps from the goal. With $\\gamma=0.9$, what is $V^\\pi(\\text{top-left})=\\gamma^3\\cdot1$?",
+   "value": 0.729,
+   "tol": 0.002,
+   "explanation": "$0+\\gamma\\cdot0+\\gamma^2\\cdot0+\\gamma^3\\cdot1=0.9^3=0.729$.",
+   "source": {
+    "file": "W9",
+    "page": 20
+   }
+  },
+  {
+   "id": "w9.l3.q4",
+   "type": "numeric",
+   "prompt": "From the middle cell, action Up leads (then following $\\pi$) to the goal after 4 steps. With $\\gamma=0.8$, what is $Q^\\pi(\\text{middle},\\text{Up})=\\gamma^3$?",
+   "value": 0.512,
+   "tol": 0.003,
+   "explanation": "$0.8^3=0.512$. Down reaches the goal in 2 steps: $Q=\\gamma=0.8$, so Down is better.",
+   "source": {
+    "file": "W9",
+    "page": 21
+   }
+  },
+  {
+   "id": "w9.l3.q5",
+   "type": "false",
+   "prompt": "Which statement is FALSE?",
+   "options": [
+    "If $Q^\\pi(s,a_1)>Q^\\pi(s,a_2)$ then $a_1$ is a better action than $a_2$ at $s$",
+    "$V^\\pi$ rates states, $Q^\\pi$ rates state–action pairs",
+    "$V^\\pi(s)=\\mathbb E[G_0|s_0=s]$",
+    "$V^\\pi$ and $Q^\\pi$ don’t depend on the policy $\\pi$"
+   ],
+   "correct": 3,
+   "explanation": "The superscript says it: the habits matter.",
+   "source": {
+    "file": "W9",
+    "page": 22
+   }
+  },
+  {
+   "id": "w9.l3.q6",
+   "type": "bug",
+   "prompt": "*“$V^\\pi(s)$ is just the immediate reward of the best action in state $s$.”* What’s wrong?",
+   "options": [
+    "Nothing",
+    "$V^\\pi(s)$ is the expected *discounted return* (all future rewards) following the policy $\\pi$, not the best action’s immediate reward",
+    "$V^\\pi$ is always 0",
+    "$V^\\pi$ is a probability"
+   ],
+   "correct": 1,
+   "explanation": "A town is rated by everything that follows.",
+   "source": {
+    "file": "W9",
+    "page": 19
+   }
+  }
+ ]
+}

@@ -6,6 +6,7 @@ import { ELBODemo, LVMMix, LatentSample, MargDemo, PCADemo, Reparam, VAEStep, VI
 import { AggDemo, Equivar, GATDemo, GNNTrain, GraphPerm, MPDemo } from './w6'
 import { ModulesDemo, GraphManip, HeadsDemo, LinkPredDemo, MetricsDemo, OverSmooth, ReceptiveField, SplitDemo } from './w7'
 import { HeteroAgg, LinkRank, RGCNLayer, RGCNParams, Relations } from './w8'
+import { BellmanGrid, CliffDemo, DDPGDemo, DQNTarget, DiscountDemo, MazeAgent, Overestimate, QLearnGrid, VQDemo } from './w9'
 import { Distribution, GDDemo, GMMDemo, Gaussian2D, JointBayes, MLEDemo, Moments } from './w1'
 
 const w = (c: ComponentType<never>) => c as unknown as ComponentType<ExploreProps>
@@ -51,5 +52,14 @@ export const EXPLORE: Record<string, ComponentType<ExploreProps>> = {
   rgcnparams: w(RGCNParams),
   linkrank: w(LinkRank),
   heteroagg: w(HeteroAgg),
+  maze: w(MazeAgent),
+  discount: w(DiscountDemo),
+  vq: w(VQDemo),
+  bellman: w(BellmanGrid),
+  qlearn: w(QLearnGrid),
+  cliff: w(CliffDemo),
+  dqn: w(DQNTarget),
+  ddpg: w(DDPGDemo),
+  overest: w(Overestimate),
   artrain: w(ARTrain),
 }

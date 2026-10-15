@@ -5,6 +5,26 @@ const order = (import.meta.glob('./worlds.json', { eager: true, import: 'default
   './worlds.json'
 ]
 
+// Deterministically shuffle answer options (per question id) so the correct answer isn't
+// always in the same slot. Short enumerations (e.g. "0 hops / 1 hop / ...") keep their order.
+function hash(str: string) {
+  let h = 2166136261
+  for (let i = 0; i < str.length; i++) h = Math.imul(h ^ str.charCodeAt(i), 16777619)
+  return h >>> 0
+}
+function prep(q: Question): Question {
+  if (q.type === 'numeric' || !q.options || q.correct === undefined) return q
+  if (Math.max(...q.options.map((o) => o.length)) < 28) return q
+  const idx = q.options.map((_, i) => i)
+  let s = hash(q.id) || 1
+  for (let i = idx.length - 1; i > 0; i--) {
+    s = (Math.imul(s, 1664525) + 1013904223) >>> 0
+    const j = s % (i + 1)
+    ;[idx[i], idx[j]] = [idx[j], idx[i]]
+  }
+  return { ...q, options: idx.map((i) => q.options![i]), correct: idx.indexOf(q.correct) }
+}
+
 function get<T>(world: string, name: string): T | undefined {
   return files[`./${world}/${name}.json`] as T | undefined
 }
@@ -20,8 +40,9 @@ export const WORLDS: LoadedWorld[] = order
   .map((id): LoadedWorld | null => {
     const meta = get<WorldMeta>(id, 'world')
     if (!meta) return null
-    const levels = meta.levels.map((n) => get<Level>(id, n)!).filter(Boolean)
-    return { meta, levels, boss: get<Boss>(id, 'boss'), cheat: get<Cheat>(id, 'cheatsheet') }
+    const levels = meta.levels.map((n) => get<Level>(id, n)!).filter(Boolean).map((l) => ({ ...l, questions: l.questions.map(prep) }))
+    const boss = get<Boss>(id, 'boss')
+    return { meta, levels, boss: boss && { ...boss, questions: boss.questions.map(prep) }, cheat: get<Cheat>(id, 'cheatsheet') }
   })
   .filter((w): w is LoadedWorld => w !== null)
 

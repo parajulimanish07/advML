@@ -18,7 +18,7 @@
  ],
  "hook": {
   "title": "Converting a price list",
-  "text": "You sell phone cases at random prices $x$ in AUD. Your supplier gives you a USD list: multiply by 0.65 and add a flat **$5 shipping**. The *average* USD price moves exactly the same way (scale, then shift). But what about the *spread* of prices? Multiplying by 0.65 squeezes the spread; adding $5 shipping **slides** everything over without changing the spread at all.",
+  "text": "You sell phone cases at random prices $x$ in AUD. Your supplier gives you a USD list: multiply by 0.65 and add a flat **\\$5 shipping**. The *average* USD price moves exactly the same way (scale, then shift). But what about the *spread* of prices? Multiplying by 0.65 squeezes the spread; adding \\$5 shipping **slides** everything over without changing the spread at all.",
   "recall": "Remember the price list: scaling ($A$) changes both the mean and the spread (the spread by $A\\,V\\,A^\\top$), shifting ($b$) only moves the mean."
  },
  "explore": {

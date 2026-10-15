@@ -1,0 +1,183 @@
+{
+ "title": "The Bellman Behemoth",
+ "intro": "Everything from Week 9: MDPs, returns, value functions, Bellman equations, Q-learning, SARSA, DQN, DDPG and overestimation bias.",
+ "questions": [
+  {
+   "id": "w9.boss.q1",
+   "type": "numeric",
+   "prompt": "Part 1. What is $V^*(s_3)$ (one step from the goal)?",
+   "value": 1,
+   "tol": 0.005,
+   "explanation": "$V^*(s_3)=r+\\gamma V^*(\\text{goal})=1+0=1$.",
+   "source": {
+    "file": "W9",
+    "page": 35
+   },
+   "scenario": "**Scenario A (values on a chain).** A deterministic chain $s_1\\to s_2\\to s_3\\to\\text{goal}$. Every move gives reward 0 except the last move into the goal, which gives $+1$ and ends the episode. $\\gamma=0.8$ and the optimal policy moves forward.",
+   "step": "Scenario A · part 1 of 3"
+  },
+  {
+   "id": "w9.boss.q2",
+   "type": "numeric",
+   "prompt": "Part 2. What is $V^*(s_2)$?",
+   "value": 0.8,
+   "tol": 0.005,
+   "explanation": "$V^*(s_2)=0+\\gamma V^*(s_3)=0.8$.",
+   "source": {
+    "file": "W9",
+    "page": 36
+   },
+   "scenario": "**Scenario A (values on a chain).** A deterministic chain $s_1\\to s_2\\to s_3\\to\\text{goal}$. Every move gives reward 0 except the last move into the goal, which gives $+1$ and ends the episode. $\\gamma=0.8$ and the optimal policy moves forward.",
+   "step": "Scenario A · part 2 of 3"
+  },
+  {
+   "id": "w9.boss.q3",
+   "type": "numeric",
+   "prompt": "Part 3. What is $V^*(s_1)$?",
+   "value": 0.64,
+   "tol": 0.005,
+   "explanation": "$0+0.8\\cdot0.8=0.64=\\gamma^2$.",
+   "source": {
+    "file": "W9",
+    "page": 36
+   },
+   "scenario": "**Scenario A (values on a chain).** A deterministic chain $s_1\\to s_2\\to s_3\\to\\text{goal}$. Every move gives reward 0 except the last move into the goal, which gives $+1$ and ends the episode. $\\gamma=0.8$ and the optimal policy moves forward.",
+   "step": "Scenario A · part 3 of 3"
+  },
+  {
+   "id": "w9.boss.q4",
+   "type": "numeric",
+   "prompt": "Part 1. What is the **Q-learning** target $r+\\gamma\\max_{a'}Q(s',a')$?",
+   "value": 2.6,
+   "tol": 0.01,
+   "explanation": "$-1+0.9\\cdot4=2.6$.",
+   "source": {
+    "file": "W9",
+    "page": 42
+   },
+   "scenario": "**Scenario B (Q-learning vs SARSA update).** $Q(s,a)=1.0$, $\\alpha=0.5$, $r=-1$, $\\gamma=0.9$. At the next state the Q-values are $Q(s',a_1)=2$, $Q(s',a_2)=4$, $Q(s',a_3)=3$. The agent’s ε-greedy policy actually picks $a_3$ next.",
+   "step": "Scenario B · part 1 of 3"
+  },
+  {
+   "id": "w9.boss.q5",
+   "type": "numeric",
+   "prompt": "Part 2. What is the new $Q(s,a)$ under Q-learning?",
+   "value": 1.8,
+   "tol": 0.01,
+   "explanation": "$1+0.5(2.6-1)=1.8$.",
+   "source": {
+    "file": "W9",
+    "page": 41
+   },
+   "scenario": "**Scenario B (Q-learning vs SARSA update).** $Q(s,a)=1.0$, $\\alpha=0.5$, $r=-1$, $\\gamma=0.9$. At the next state the Q-values are $Q(s',a_1)=2$, $Q(s',a_2)=4$, $Q(s',a_3)=3$. The agent’s ε-greedy policy actually picks $a_3$ next.",
+   "step": "Scenario B · part 2 of 3"
+  },
+  {
+   "id": "w9.boss.q6",
+   "type": "numeric",
+   "prompt": "Part 3. What is the new $Q(s,a)$ under **SARSA** (uses the action actually chosen, $a_3$)?",
+   "value": 1.35,
+   "tol": 0.01,
+   "explanation": "Target $-1+0.9\\cdot3=1.7$; new $Q=1+0.5(1.7-1)=1.35$.",
+   "source": {
+    "file": "W9",
+    "page": 43
+   },
+   "scenario": "**Scenario B (Q-learning vs SARSA update).** $Q(s,a)=1.0$, $\\alpha=0.5$, $r=-1$, $\\gamma=0.9$. At the next state the Q-values are $Q(s',a_1)=2$, $Q(s',a_2)=4$, $Q(s',a_3)=3$. The agent’s ε-greedy policy actually picks $a_3$ next.",
+   "step": "Scenario B · part 3 of 3"
+  },
+  {
+   "id": "w9.boss.q7",
+   "type": "numeric",
+   "prompt": "Part 1. What is the DQN target $y$ if $s'$ is not terminal?",
+   "value": 6.5,
+   "tol": 0.01,
+   "explanation": "$2+0.9\\cdot5=6.5$.",
+   "source": {
+    "file": "W9",
+    "page": 47
+   },
+   "scenario": "**Scenario C (DQN/DDPG machinery).** A transition has $r=2$, $\\gamma=0.9$. The target network gives $\\max_{a'}Q_{\\varphi'}(s',a')=5$.",
+   "step": "Scenario C · part 1 of 3"
+  },
+  {
+   "id": "w9.boss.q8",
+   "type": "numeric",
+   "prompt": "Part 2. What is $y$ if $s'$ **is** terminal ($d=1$)?",
+   "value": 2,
+   "tol": 0.01,
+   "explanation": "The future term is zeroed: $y=r=2$.",
+   "source": {
+    "file": "W9",
+    "page": 47
+   },
+   "scenario": "**Scenario C (DQN/DDPG machinery).** A transition has $r=2$, $\\gamma=0.9$. The target network gives $\\max_{a'}Q_{\\varphi'}(s',a')=5$.",
+   "step": "Scenario C · part 2 of 3"
+  },
+  {
+   "id": "w9.boss.q9",
+   "type": "numeric",
+   "prompt": "Part 3. Polyak averaging with $\\rho=0.9$, $\\varphi'=1$, $\\varphi=3$: what is the new $\\varphi'$?",
+   "value": 1.2,
+   "tol": 0.01,
+   "explanation": "$0.9\\cdot1+0.1\\cdot3=1.2$.",
+   "source": {
+    "file": "W9",
+    "page": 53
+   },
+   "scenario": "**Scenario C (DQN/DDPG machinery).** A transition has $r=2$, $\\gamma=0.9$. The target network gives $\\max_{a'}Q_{\\varphi'}(s',a')=5$.",
+   "step": "Scenario C · part 3 of 3"
+  },
+  {
+   "id": "w9.boss.q10",
+   "type": "mcq",
+   "prompt": "Which pairing is correct?",
+   "options": [
+    "Policy gradients: REINFORCE; value-based: DQN; actor–critic: DDPG, SAC; model-based: Dyna",
+    "Value-based: DDPG; actor–critic: DQN",
+    "Model-based: REINFORCE",
+    "Policy gradients: Dyna"
+   ],
+   "correct": 0,
+   "explanation": "Slide 5.",
+   "source": {
+    "file": "W9",
+    "page": 5
+   }
+  },
+  {
+   "id": "w9.boss.q11",
+   "type": "false",
+   "prompt": "Which statement is FALSE?",
+   "options": [
+    "Q-learning is off-policy",
+    "SARSA’s target uses the action chosen by the behaviour policy",
+    "The actor in DDPG does gradient descent on $Q$",
+    "A target network keeps the Bellman target fixed over multiple updates"
+   ],
+   "correct": 2,
+   "explanation": "The actor does gradient ascent on $Q_\\varphi(s,\\mu_\\theta(s))$.",
+   "source": {
+    "file": "W9",
+    "page": 50
+   }
+  },
+  {
+   "id": "w9.boss.q12",
+   "type": "bug",
+   "prompt": "*“Noisy Q-estimates have zero-mean error, so the max in the Bellman target is unbiased.”*",
+   "options": [
+    "Correct",
+    "The max over noisy values is biased upward (overestimation), and training toward these targets compounds it",
+    "Max cancels noise exactly",
+    "Noise is always negative"
+   ],
+   "correct": 1,
+   "explanation": "Taking the best of noisy quotes.",
+   "source": {
+    "file": "W9",
+    "page": 56
+   }
+  }
+ ]
+}

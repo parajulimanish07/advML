@@ -1,0 +1,152 @@
+{
+ "id": "w9.l8",
+ "title": "Policy networks & DDPG",
+ "blurb": "Actor–critic, gradient ascent, replay buffer, target networks",
+ "source": [
+  {
+   "file": "W9",
+   "page": 49
+  },
+  {
+   "file": "W9",
+   "page": 50
+  },
+  {
+   "file": "W9",
+   "page": 52
+  },
+  {
+   "file": "W9",
+   "page": 53
+  }
+ ],
+ "hook": {
+  "title": "The coach and the scout",
+  "text": "A **scout** (the Q-network, the *critic*) rates any proposed play: “state $s$, action $a$ is worth this much.” A **coach** (the policy network, the *actor*) chooses the play. The coach's training signal is simple: *choose the play the scout rates highest*. So the coach does gradient **ascent** on the scout's rating. The scout, meanwhile, is trained by gradient **descent** to match Bellman targets, using a game-film **replay buffer** and slowly-moving **target** copies of both coach and scout.",
+  "recall": "Remember coach and scout: the actor does gradient *ascent* on $Q_\\varphi(s,\\mu_\\theta(s))$, the critic does gradient *descent* on the MSBE, with a replay buffer and Polyak-averaged target networks."
+ },
+ "explore": {
+  "component": "ddpg",
+  "intro": "A toy 1-D actor–critic (my own toy) plus the Polyak target update.",
+  "tasks": [
+   "Press *20 steps*: does $\\theta$ climb toward the optimum 2?",
+   "Tab 2: vary $\\rho$. What does a large $\\rho$ do to the target?"
+  ],
+  "takeaway": "Actor: $\\theta\\leftarrow\\theta+\\alpha\\nabla_\\theta\\frac1{|B|}\\sum_{s\\in B}Q_\\varphi(s,\\mu_\\theta(s))$. Targets: $\\varphi'\\leftarrow\\rho\\varphi'+(1-\\rho)\\varphi$, $\\theta'\\leftarrow\\rho\\theta'+(1-\\rho)\\theta$."
+ },
+ "build": {
+  "type": "order",
+  "prompt": "Order the DDPG loop (slide 53).",
+  "items": [
+   "Interact with the environment using $\\mu_\\theta$ and store $(s_t,a_t,r,s_{t+1},d)$ in the replay buffer $D$",
+   "Randomly sample a batch $B$ from $D$",
+   "Update $\\varphi$ by gradient descent on the MSBE",
+   "Update $\\theta$ by gradient ascent on $\\frac1{|B|}\\sum Q_\\varphi(s,\\mu_\\theta(s))$",
+   "Update the target networks $\\varphi',\\theta'$ by Polyak averaging"
+  ],
+  "explanation": "Slide 53.",
+  "source": {
+   "file": "W9",
+   "page": 53
+  }
+ },
+ "questions": [
+  {
+   "id": "w9.l8.q1",
+   "type": "mcq",
+   "prompt": "How is the policy network $\\mu_\\theta$ trained in DDPG?",
+   "options": [
+    "Gradient ascent on $\\frac1{|B|}\\sum_{s\\in B}Q_\\varphi(s,\\mu_\\theta(s))$",
+    "Gradient descent on $Q$",
+    "Supervised on expert actions",
+    "It is not trained"
+   ],
+   "correct": 0,
+   "explanation": "The coach chases the scout’s highest rating.",
+   "source": {
+    "file": "W9",
+    "page": 50
+   }
+  },
+  {
+   "id": "w9.l8.q2",
+   "type": "numeric",
+   "prompt": "Polyak update $\\varphi'\\leftarrow\\rho\\varphi'+(1-\\rho)\\varphi$ with $\\rho=0.95$, $\\varphi'=1.0$, $\\varphi=2.0$. New $\\varphi'$?",
+   "value": 1.05,
+   "tol": 0.005,
+   "explanation": "$0.95\\cdot1+0.05\\cdot2=1.05$: the target creeps toward $\\varphi$.",
+   "source": {
+    "file": "W9",
+    "page": 53
+   }
+  },
+  {
+   "id": "w9.l8.q3",
+   "type": "mcq",
+   "prompt": "What is stored in the replay buffer $D$?",
+   "options": [
+    "Transitions $(s_t,a_t,r,s_{t+1},d)$ collected by interacting with $\\mu_\\theta$",
+    "Only rewards",
+    "The policy weights",
+    "Final scores"
+   ],
+   "correct": 0,
+   "explanation": "Game film that we sample from at random.",
+   "source": {
+    "file": "W9",
+    "page": 53
+   }
+  },
+  {
+   "id": "w9.l8.q4",
+   "type": "false",
+   "prompt": "Which statement is FALSE?",
+   "options": [
+    "The critic is updated by gradient descent on the MSBE",
+    "The actor is updated by gradient ascent on $Q$",
+    "DDPG is a purely value-based method with no policy network",
+    "Target networks are updated by Polyak averaging"
+   ],
+   "correct": 2,
+   "explanation": "DDPG is actor–critic (slide 5/55).",
+   "source": {
+    "file": "W9",
+    "page": 55
+   }
+  },
+  {
+   "id": "w9.l8.q5",
+   "type": "mcq",
+   "prompt": "In the taxonomy on the slides DDPG is:",
+   "options": [
+    "Actor–critic",
+    "Policy gradient (REINFORCE)",
+    "Model-based (Dyna)",
+    "Value-based only (DQN)"
+   ],
+   "correct": 0,
+   "explanation": "Policy gradients: REINFORCE; value-based: DQN; actor-critic: DDPG, SAC; model-based: Dyna.",
+   "source": {
+    "file": "W9",
+    "page": 5
+   }
+  },
+  {
+   "id": "w9.l8.q6",
+   "type": "bug",
+   "prompt": "*“The actor should minimise $Q_\\varphi(s,\\mu_\\theta(s))$ by gradient descent to find the best action.”* What’s wrong?",
+   "options": [
+    "Nothing",
+    "The goal is to *maximise* $Q$: gradient ascent (or descent on $-Q$)",
+    "The actor doesn’t use $Q$",
+    "$Q$ is a loss"
+   ],
+   "correct": 1,
+   "explanation": "The coach wants the highest-rated play.",
+   "source": {
+    "file": "W9",
+    "page": 50
+   }
+  }
+ ]
+}

@@ -1,0 +1,163 @@
+{
+ "id": "w9.l1",
+ "title": "Markov decision processes",
+ "blurb": "States, actions, rewards, transitions, policies",
+ "source": [
+  {
+   "file": "W9",
+   "page": 6
+  },
+  {
+   "file": "W9",
+   "page": 7
+  },
+  {
+   "file": "W9",
+   "page": 8
+  },
+  {
+   "file": "W9",
+   "page": 9
+  },
+  {
+   "file": "W9",
+   "page": 10
+  },
+  {
+   "file": "W9",
+   "page": 11
+  },
+  {
+   "file": "W9",
+   "page": 12
+  }
+ ],
+ "hook": {
+  "title": "A mouse in a maze",
+  "text": "A mouse wants the cheese. Each step it chooses a direction; the choice changes *where it is next* (and so what it can reach later), not just the cheese-scent it smells right now. Bumping a wall costs extra, every step costs a little, the cheese is a jackpot. That is the whole recipe of reinforcement learning: a world with **states**, the agent's **actions**, **rewards**, and **rules for what happens next**. A **policy** is the mouse's habit: in each state, a distribution over which way to go.",
+  "recall": "Remember the mouse: actions affect the next state *and* future rewards, not just the immediate reward. An MDP is $(S,A,r,p,\\rho,\\gamma)$ and a policy $\\pi(a|s)$ is the mouse’s habit."
+ },
+ "explore": {
+  "component": "maze",
+  "intro": "Be the agent: move the mouse to the cheese and watch the return accumulate.",
+  "tasks": [
+   "Reach the cheese by the shortest path. What is the discounted return at $\\gamma=0.9$? Compare with $\\gamma=0$ and $\\gamma=1$.",
+   "Deliberately bump into a wall. What happens to the reward and to your position?"
+  ],
+  "takeaway": "MDP $(S,A,r,p,\\rho,\\gamma)$: states, actions, bounded reward $r(s,a)$, transition $p(s'|s,a)$, initial distribution $\\rho$, discount $\\gamma\\in[0,1]$. Trajectory $\\tau=(s_0,a_0,r_0,s_1,\\dots)$."
+ },
+ "build": {
+  "type": "order",
+  "prompt": "Order one step of the agent–environment loop (slide 11).",
+  "items": [
+   "At time $t$ the agent is in state $s_t$",
+   "It takes action $a_t$ according to the policy $\\pi$",
+   "It receives reward $r_t=r(s_t,a_t)$",
+   "It transitions to the next state $s_{t+1}$ according to $p(\\cdot|s_t,a_t)$"
+  ],
+  "explanation": "Exactly the four bullets that collect a trajectory.",
+  "source": {
+   "file": "W9",
+   "page": 11
+  }
+ },
+ "questions": [
+  {
+   "id": "w9.l1.q1",
+   "type": "mcq",
+   "prompt": "In the MDP tuple $(S,A,r,p,\\rho,\\gamma)$, what is $\\rho$?",
+   "options": [
+    "The initial state distribution",
+    "The reward",
+    "The discount factor",
+    "The policy"
+   ],
+   "correct": 0,
+   "explanation": "Where the mouse may start. (γ is the discount factor, $p$ the transition, $r$ the reward.)",
+   "source": {
+    "file": "W9",
+    "page": 7
+   }
+  },
+  {
+   "id": "w9.l1.q2",
+   "type": "mcq",
+   "prompt": "What does $p(s'|s,a)$ denote?",
+   "options": [
+    "The probability of transitioning into $s'$ by taking action $a$ in state $s$",
+    "The probability of taking action $a$",
+    "The reward",
+    "The discounted return"
+   ],
+   "correct": 0,
+   "explanation": "The maze’s rules of motion; in the deterministic maze it is 1 for the unique next state.",
+   "source": {
+    "file": "W9",
+    "page": 7
+   }
+  },
+  {
+   "id": "w9.l1.q3",
+   "type": "numeric",
+   "prompt": "A policy gives $\\pi(a_0|s)=0.4$, $\\pi(a_1|s)=0.1$, $\\pi(a_2|s)=0.2$ for a four-action problem. What must $\\pi(a_3|s)$ be?",
+   "value": 0.3,
+   "tol": 0.005,
+   "explanation": "A policy is a distribution over actions, so probabilities sum to 1: $1-0.7=0.3$.",
+   "source": {
+    "file": "W9",
+    "page": 10
+   }
+  },
+  {
+   "id": "w9.l1.q4",
+   "type": "false",
+   "prompt": "Which statement about MDPs is FALSE?",
+   "options": [
+    "A policy maps a state to a probability distribution over actions",
+    "Actions influence not just immediate rewards, but also subsequent states and future rewards",
+    "The maze example is deterministic: $p(s'|s,a)=1$ for the resulting next state",
+    "The reward $r(s,a)$ depends only on the state and never on the action"
+   ],
+   "correct": 3,
+   "explanation": "The reward function $r(s,a)$ maps state–action pairs to rewards.",
+   "source": {
+    "file": "W9",
+    "page": 7
+   }
+  },
+  {
+   "id": "w9.l1.q5",
+   "type": "mcq",
+   "prompt": "Which is NOT part of the loop that collects a trajectory?",
+   "options": [
+    "The agent samples $a_t\\sim\\pi$",
+    "The environment samples $s_{t+1}\\sim p(\\cdot|s_t,a_t)$",
+    "The agent picks the next state $s_{t+1}$ directly",
+    "The agent receives $r_t=r(s_t,a_t)$"
+   ],
+   "correct": 2,
+   "explanation": "The agent chooses actions; the world decides where they lead.",
+   "source": {
+    "file": "W9",
+    "page": 11
+   }
+  },
+  {
+   "id": "w9.l1.q6",
+   "type": "bug",
+   "prompt": "*“In an MDP, my action only affects the immediate reward.”* What’s wrong?",
+   "options": [
+    "Nothing",
+    "Actions influence the immediate reward, the *next state*, and through it all future rewards",
+    "Actions don’t affect anything",
+    "Only the first action matters"
+   ],
+   "correct": 1,
+   "explanation": "Moving left changes where the mouse will be, and thus what it can reach.",
+   "source": {
+    "file": "W9",
+    "page": 8
+   }
+  }
+ ]
+}

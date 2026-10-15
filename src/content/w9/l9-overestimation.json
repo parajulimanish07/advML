@@ -1,0 +1,152 @@
+{
+ "id": "w9.l9",
+ "title": "Overestimation bias & sample efficiency",
+ "blurb": "Why max over noisy estimates is optimistic, and what to do",
+ "source": [
+  {
+   "file": "W9",
+   "page": 55
+  },
+  {
+   "file": "W9",
+   "page": 56
+  },
+  {
+   "file": "W9",
+   "page": 57
+  },
+  {
+   "file": "W9",
+   "page": 58
+  }
+ ],
+ "hook": {
+  "title": "Taking the best of noisy quotes",
+  "text": "You ask three contractors to quote a job whose true price is **zero** (free). Their quotes are noisy: +0.5, +0.2, −0.3. If you always take the most *favourable-looking* one for planning, you consistently believe in a bonus that isn't there. A Q-network's value estimates are noisy too; the **max** in the Bellman target systematically picks up positive noise, and since the new estimates are trained *toward* these inflated targets, the optimism feeds on itself.",
+  "recall": "Remember the noisy quotes: $\\max$ over noisy estimates is biased upward, so targets are too high and the error compounds. Real-world data is expensive, so sample efficiency matters; TD3, SAC, Maxmin Q-learning and REDQ address estimation bias."
+ },
+ "explore": {
+  "component": "overest",
+  "intro": "True $Q^*=0$ for every action; the estimates are noisy. How big is the error of $\\max_aQ_\\varphi$?",
+  "tasks": [
+   "Raise the number of actions with $\\sigma=0.4$. What happens to the bias?",
+   "Turn on the independent-evaluation toggle (an extra idea)."
+  ],
+  "takeaway": "$\\mathbb E[\\max_a\\hat Q]\\ge\\max_a\\mathbb E[\\hat Q]$: noise makes the max optimistic. The slide lists TD3, SAC, Maxmin Q-learning and REDQ as fixes."
+ },
+ "build": {
+  "type": "predict",
+  "prompt": "True $Q^*(s,a_i)=0$ for all actions, but the network outputs $0.5,\\,0.2,\\,-0.3$. With $r=0$, the Bellman target uses $\\max_{a'}Q_\\varphi(s,a')$. **Predict**: compared with the true value 0, the target is…",
+  "kind": "mcq",
+  "options": [
+   "higher than 0 (overestimated)",
+   "exactly 0",
+   "lower than 0 (underestimated)"
+  ],
+  "correct": 0,
+  "reveal": "The max picks $0.5$, so $y=\\gamma\\cdot0.5>0$ although the true value is 0. Training $Q_\\varphi(s,a)$ toward that target pushes its value up, making the overestimate worse.",
+  "source": {
+   "file": "W9",
+   "page": 56
+  }
+ },
+ "questions": [
+  {
+   "id": "w9.l9.q1",
+   "type": "numeric",
+   "prompt": "Using the slide’s noisy values $(0.5,0.2,-0.3)$, $r=0$ and $\\gamma=0.9$, what is the Bellman target $y=r+\\gamma\\max_{a'}Q_\\varphi$?",
+   "value": 0.45,
+   "tol": 0.005,
+   "explanation": "$0.9\\cdot0.5=0.45$, though the true value is 0.",
+   "source": {
+    "file": "W9",
+    "page": 56
+   }
+  },
+  {
+   "id": "w9.l9.q2",
+   "type": "mcq",
+   "prompt": "What will the update tend to do to $Q_\\varphi(s,a)$ in that situation?",
+   "options": [
+    "Push it up toward the inflated target",
+    "Push it down to 0",
+    "Leave it unchanged",
+    "Make it negative"
+   ],
+   "correct": 0,
+   "explanation": "Targets above truth drag estimates upward.",
+   "source": {
+    "file": "W9",
+    "page": 56
+   }
+  },
+  {
+   "id": "w9.l9.q3",
+   "type": "mcq",
+   "prompt": "Why is sample efficiency important according to the slides?",
+   "options": [
+    "Collecting data points in real-world applications is expensive; wall-clock time is not the same as efficiency",
+    "GPUs are slow",
+    "Because $\\gamma<1$",
+    "It isn’t important"
+   ],
+   "correct": 0,
+   "explanation": "Each real-world sample can cost money or time.",
+   "source": {
+    "file": "W9",
+    "page": 57
+   }
+  },
+  {
+   "id": "w9.l9.q4",
+   "type": "false",
+   "prompt": "Which statement is FALSE?",
+   "options": [
+    "TD3 addresses function approximation error in actor–critic methods",
+    "SAC and Maxmin Q-learning are listed as ways to fix estimation problems",
+    "REDQ is a randomised ensembled double Q-learning method",
+    "The slide lists TD3, SAC, Maxmin Q-learning and REDQ as ways to create overestimation bias"
+   ],
+   "correct": 3,
+   "explanation": "They are listed as ways to *fix* it.",
+   "source": {
+    "file": "W9",
+    "page": 58
+   }
+  },
+  {
+   "id": "w9.l9.q5",
+   "type": "mcq",
+   "prompt": "Which algorithm family lists SAC as an example?",
+   "options": [
+    "Actor-critic",
+    "Policy gradients",
+    "Value-based",
+    "Model-based"
+   ],
+   "correct": 0,
+   "explanation": "Policy gradients: REINFORCE; value-based: DQN; actor–critic: DDPG, Soft Actor-Critic; model-based: Dyna.",
+   "source": {
+    "file": "W9",
+    "page": 55
+   }
+  },
+  {
+   "id": "w9.l9.q6",
+   "type": "bug",
+   "prompt": "*“Q-estimate noise has mean zero, so $\\mathbb E[\\max_a\\hat Q]=\\max_aQ^*$: no overestimation can occur.”* What’s wrong?",
+   "options": [
+    "Nothing",
+    "The max of noisy values is biased upward: $\\mathbb E[\\max\\hat Q]\\ge\\max\\mathbb E[\\hat Q]$ (try the explorer); zero-mean noise doesn’t cancel inside a max",
+    "The noise must be positive",
+    "Max is linear"
+   ],
+   "correct": 1,
+   "explanation": "The best-looking quote is selected *because* it is lucky.",
+   "source": {
+    "file": "W9",
+    "page": 56
+   }
+  }
+ ]
+}

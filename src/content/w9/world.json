@@ -1,0 +1,20 @@
+{
+ "id": "w9",
+ "title": "Reward Reef",
+ "week": "Week 9",
+ "subtitle": "MDPs, returns, value functions, Bellman, Q-learning, SARSA, DQN and DDPG",
+ "emoji": "🎮",
+ "color": "#4de1a0",
+ "status": "ready",
+ "levels": [
+  "l1-mdp",
+  "l2-return",
+  "l3-values",
+  "l4-bellman",
+  "l5-qlearning",
+  "l6-sarsa",
+  "l7-dqn",
+  "l8-ddpg",
+  "l9-overestimation"
+ ]
+}

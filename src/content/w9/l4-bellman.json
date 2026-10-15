@@ -1,0 +1,166 @@
+{
+ "id": "w9.l4",
+ "title": "Optimality & the Bellman equations",
+ "blurb": "$V^*$, $Q^*$, one-step recursion",
+ "source": [
+  {
+   "file": "W9",
+   "page": 24
+  },
+  {
+   "file": "W9",
+   "page": 27
+  },
+  {
+   "file": "W9",
+   "page": 29
+  },
+  {
+   "file": "W9",
+   "page": 30
+  },
+  {
+   "file": "W9",
+   "page": 35
+  },
+  {
+   "file": "W9",
+   "page": 36
+  },
+  {
+   "file": "W9",
+   "page": 37
+  },
+  {
+   "file": "W9",
+   "page": 38
+  },
+  {
+   "file": "W9",
+   "page": 39
+  }
+ ],
+ "hook": {
+  "title": "Today’s value = today’s reward + tomorrow’s best",
+  "text": "You don't need to plan the whole trip to know a town's value: it equals **what you get right now** plus **the (discounted) value of the best place you can reach next**. Value looks one step ahead and trusts that the future's value is already right. Walk that idea backwards from the destination (value 0 at the goal, 1 one step before it, $\\gamma$ before that…) and you can fill in the whole map. That one-step bookkeeping is the **Bellman equation**.",
+  "recall": "Remember the one-step rule: $Q^*(s,a)=r(s,a)+\\gamma V^*(s')$ (deterministic) and $V^*(s)=\\max_aQ^*(s,a)$. Work backwards from the goal."
+ },
+ "explore": {
+  "component": "bellman",
+  "intro": "Sutton’s A/B gridworld from the slides: from A all actions give +10 and jump to A′; from B +5 to B′; leaving the grid costs −1. $\\gamma=0.9$.",
+  "tasks": [
+   "Press *+50 sweeps* and compare with the slide’s $v_*$ grid. Is $v_*(A)\\approx24.4$?",
+   "Click cell A and read off the Bellman backup. Why does A beat every neighbour?"
+  ],
+  "takeaway": "$V^*(s)=\\max_aQ^*(s,a)$; $Q^*(s,a)=\\mathbb E_{s'}[r(s,a)+\\gamma V^*(s')]$; $Q^*(s_t,a_t)=\\mathbb E[r+\\gamma\\max_{a'}Q^*(s_{t+1},a')]$."
+ },
+ "build": {
+  "type": "order",
+  "prompt": "Order the derivation of $v_*(A)\\approx24.4$ (slide 38).",
+  "items": [
+   "Bellman: $v_*(A)=10+\\gamma\\,v_*(A')$",
+   "Following the loop back to A takes four more steps of zero reward: $v_*(A')=\\gamma^4v_*(A)$",
+   "Substitute: $v_*(A)=10+\\gamma^5v_*(A)$",
+   "Solve: $(1-\\gamma^5)v_*(A)=10$, so $v_*(A)=10/(1-\\gamma^5)\\approx24.4$ for $\\gamma=0.9$"
+  ],
+  "explanation": "Slide 38, step by step.",
+  "source": {
+   "file": "W9",
+   "page": 38
+  }
+ },
+ "questions": [
+  {
+   "id": "w9.l4.q1",
+   "type": "mcq",
+   "prompt": "Which equation relates $V^*$ to $Q^*$?",
+   "options": [
+    "$V^*(s)=\\max_aQ^*(s,a)$",
+    "$V^*(s)=\\min_aQ^*(s,a)$",
+    "$V^*(s)=\\sum_aQ^*(s,a)$",
+    "$V^*(s)=Q^*(s,s)$"
+   ],
+   "correct": 0,
+   "explanation": "The best of the roads out of the town.",
+   "source": {
+    "file": "W9",
+    "page": 29
+   }
+  },
+  {
+   "id": "w9.l4.q2",
+   "type": "mcq",
+   "prompt": "Which expression gives $Q^*(s,a)$ in terms of $V^*$?",
+   "options": [
+    "$\\mathbb E_{s'}[r(s,a)+\\gamma V^*(s')]$",
+    "$\\max_a V^*(s)$",
+    "$r(s,a)-\\gamma V^*(s')$",
+    "$V^*(s)+V^*(s')$"
+   ],
+   "correct": 0,
+   "explanation": "Immediate reward plus discounted best future from the next state.",
+   "source": {
+    "file": "W9",
+    "page": 30
+   }
+  },
+  {
+   "id": "w9.l4.q3",
+   "type": "numeric",
+   "prompt": "Gridworld A/B, $\\gamma=0.9$: $v_*(A)=10/(1-\\gamma^5)\\approx24.42$ and $v_*(A')=\\gamma^4v_*(A)$. Compute $v_*(A')$ (1 decimal).",
+   "value": 16.0,
+   "tol": 0.1,
+   "explanation": "$0.6561\\times24.42\\approx16.0$ (matches the bottom-left-ish 16.0 on the slide’s $v_*$ grid).",
+   "source": {
+    "file": "W9",
+    "page": 38
+   }
+  },
+  {
+   "id": "w9.l4.q4",
+   "type": "numeric",
+   "prompt": "Chain to a goal with +1 on the final step, $\\gamma=0.9$: $V^*(\\text{goal})=0$, $V^*(\\text{middle right})=1$. What is $V^*(\\text{middle})=0+\\gamma V^*(\\text{middle right})$?",
+   "value": 0.9,
+   "tol": 0.005,
+   "explanation": "$0.9\\cdot1=0.9$ (slide 36).",
+   "source": {
+    "file": "W9",
+    "page": 36
+   }
+  },
+  {
+   "id": "w9.l4.q5",
+   "type": "false",
+   "prompt": "Which statement is FALSE?",
+   "options": [
+    "There can be multiple optimal policies",
+    "All optimal policies share the same $V^*$ and $Q^*$",
+    "$\\pi^*$ maximises $V^\\pi(s)$ for each state $s$",
+    "Different optimal policies have different optimal value functions"
+   ],
+   "correct": 3,
+   "explanation": "They share $V^*(s)$ and $Q^*(s,a)$ for all $s$ and $(s,a)$.",
+   "source": {
+    "file": "W9",
+    "page": 27
+   }
+  },
+  {
+   "id": "w9.l4.q6",
+   "type": "bug",
+   "prompt": "*“Even in a deterministic environment, $Q^*(s,a)=\\mathbb E_{s'}[\\dots]$ requires averaging over many next states.”* What’s wrong?",
+   "options": [
+    "Nothing",
+    "If $s'$ is determined by $s$ and $a$, no expectation is needed: $Q^*(s,a)=r(s,a)+\\gamma V^*(s')$",
+    "The expectation must be over actions",
+    "There is no Bellman equation in deterministic worlds"
+   ],
+   "correct": 1,
+   "explanation": "One road, one destination.",
+   "source": {
+    "file": "W9",
+    "page": 30
+   }
+  }
+ ]
+}

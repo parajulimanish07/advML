@@ -1,0 +1,146 @@
+{
+ "id": "w9.l7",
+ "title": "Deep Q-learning: MSBE & target networks",
+ "blurb": "Bellman target, mean-squared Bellman error, fixed targets",
+ "source": [
+  {
+   "file": "W9",
+   "page": 34
+  },
+  {
+   "file": "W9",
+   "page": 46
+  },
+  {
+   "file": "W9",
+   "page": 47
+  },
+  {
+   "file": "W9",
+   "page": 48
+  }
+ ],
+ "hook": {
+  "title": "Grading with a moving answer key",
+  "text": "Training a Q-network is like a student who learns from an answer key, except the key is *written by the student's own current brain*. Every time the student improves, the key changes, and the student chases a moving target. The fix: copy the student into a **frozen reference** (the target network) and grade against the *frozen* key for a while, only refreshing it occasionally. The terminal flag $d$ is the 'no more future' stamp: when the episode ends there's nothing left to bootstrap from.",
+  "recall": "Remember the moving answer key: freeze a target network $Q_{\\varphi'}$ to keep $y$ fixed over many updates, and zero the future term with $(1-d)$ at terminal states."
+ },
+ "explore": {
+  "component": "dqn",
+  "intro": "Two tabs: build the Bellman target $y$, then see why a target network helps.",
+  "tasks": [
+   "Toggle the terminal flag. How does $y$ change?",
+   "Move the Q-values of next actions: which one sets the target?"
+  ],
+  "takeaway": "$y=r+\\gamma(1-d)\\max_{a'}Q_{\\varphi'}(s',a')$; MSBE $L(\\varphi,D)=\\mathbb E[(Q_\\varphi(s_t,a_t)-y)^2]$; $\\varphi\\leftarrow\\varphi-\\alpha\\nabla_\\varphi L(\\varphi,B)$."
+ },
+ "build": {
+  "type": "order",
+  "prompt": "Order one deep Q-learning update from a replay dataset $D$.",
+  "items": [
+   "Sample a mini-batch $B$ of $(s_t,a_t,r,s_{t+1},d)$ from $D$",
+   "Compute targets $y=r+\\gamma(1-d)\\max_{a'}Q_{\\varphi'}(s_{t+1},a')$ with the target network",
+   "Compute the mean squared Bellman error $L(\\varphi,B)$",
+   "Take a gradient-descent step $\\varphi\\leftarrow\\varphi-\\alpha\\nabla_\\varphi L(\\varphi,B)$"
+  ],
+  "explanation": "Slides 46–48.",
+  "source": {
+   "file": "W9",
+   "page": 47
+  }
+ },
+ "questions": [
+  {
+   "id": "w9.l7.q1",
+   "type": "mcq",
+   "prompt": "The Bellman target for training a Q-network is:",
+   "options": [
+    "$y=r+\\gamma(1-d)\\max_{a_{t+1}}Q_\\varphi(s_{t+1},a_{t+1})$",
+    "$y=r$",
+    "$y=Q_\\varphi(s_t,a_t)$",
+    "$y=\\max r$"
+   ],
+   "correct": 0,
+   "explanation": "Immediate reward plus discounted best next value, zero if terminal.",
+   "source": {
+    "file": "W9",
+    "page": 47
+   }
+  },
+  {
+   "id": "w9.l7.q2",
+   "type": "numeric",
+   "prompt": "$r=1$, $\\gamma=0.9$, $\\max_{a'}Q(s',a')=5$. What is $y$ if $s'$ is **terminal** ($d=1$)?",
+   "value": 1,
+   "tol": 0.01,
+   "explanation": "$y=1+0.9\\cdot(1-1)\\cdot5=1$.",
+   "source": {
+    "file": "W9",
+    "page": 47
+   }
+  },
+  {
+   "id": "w9.l7.q3",
+   "type": "numeric",
+   "prompt": "Same numbers but $d=0$. What is $y$?",
+   "value": 5.5,
+   "tol": 0.01,
+   "explanation": "$1+0.9\\cdot5=5.5$.",
+   "source": {
+    "file": "W9",
+    "page": 47
+   }
+  },
+  {
+   "id": "w9.l7.q4",
+   "type": "false",
+   "prompt": "Which statement is FALSE?",
+   "options": [
+    "$d$ indicates whether $s_{t+1}$ is a terminal state",
+    "MSBE is $\\mathbb E[(Q_\\varphi(s_t,a_t)-y)^2]$",
+    "A target network maintains a fixed target over multiple updates",
+    "The target network is trained from scratch by its own gradient at every step"
+   ],
+   "correct": 3,
+   "explanation": "It holds a lagged copy; it is not trained directly.",
+   "source": {
+    "file": "W9",
+    "page": 48
+   }
+  },
+  {
+   "id": "w9.l7.q5",
+   "type": "mcq",
+   "prompt": "Why can’t we always compute $\\max_{a_{t+1}}Q_{\\varphi'}(s_{t+1},a_{t+1})$ by enumeration?",
+   "options": [
+    "With continuous actions there are infinitely many candidates, so we need a policy network",
+    "Because Q is always discrete",
+    "Because $d=0$",
+    "Because $\\gamma=1$"
+   ],
+   "correct": 0,
+   "explanation": "The slide asks: discrete actions? continuous actions?",
+   "source": {
+    "file": "W9",
+    "page": 48
+   }
+  },
+  {
+   "id": "w9.l7.q6",
+   "type": "bug",
+   "prompt": "*“The terminal flag $d$ is unnecessary: bootstrap from $\\max Q(s')$ anyway.”* What’s wrong?",
+   "options": [
+    "Nothing",
+    "At a terminal state the agent gets no more rewards, so the future term must be zeroed by $(1-d)$",
+    "$d$ makes $y$ negative",
+    "$d$ changes the learning rate"
+   ],
+   "correct": 1,
+   "explanation": "No more road after the finish line.",
+   "source": {
+    "file": "W9",
+    "page": 47
+   }
+  }
+ ]
+}

@@ -1,0 +1,93 @@
+{
+ "title": "Week 9 Cheat Sheet: Intro to Deep RL",
+ "items": [
+  {
+   "label": "MDP",
+   "note": "$(S,A,r,p,\\rho,\\gamma)$; policy $\\pi(a|s)$; trajectory $\\tau=(s_0,a_0,r_0,s_1,\\dots)$; actions affect next states and future rewards.",
+   "source": {
+    "file": "W9",
+    "page": 7
+   }
+  },
+  {
+   "label": "Return",
+   "note": "Discounted sum of rewards; γ keeps cyclic sums finite and can change the optimal policy.",
+   "source": {
+    "file": "W9",
+    "page": 13
+   },
+   "latex": "G_t=r_t+\\gamma r_{t+1}+\\gamma^2r_{t+2}+\\cdots"
+  },
+  {
+   "label": "Value functions",
+   "note": "$V$ rates a state, $Q$ rates a state–action pair (then follow π).",
+   "source": {
+    "file": "W9",
+    "page": 19
+   },
+   "latex": "V^\\pi(s)=\\mathbb E[G_0|s_0=s],\\ Q^\\pi(s,a)=\\mathbb E[G_0|s_0=s,a_0=a]"
+  },
+  {
+   "label": "Optimality",
+   "note": "Optimal policies share $V^*,Q^*$; $V^*=\\max_aQ^*$.",
+   "source": {
+    "file": "W9",
+    "page": 29
+   },
+   "latex": "V^*(s)=\\max_aQ^*(s,a),\\ Q^*(s,a)=\\mathbb E_{s'}[r+\\gamma V^*(s')]"
+  },
+  {
+   "label": "Bellman for Q*",
+   "note": "Deterministic case: no expectation.",
+   "source": {
+    "file": "W9",
+    "page": 39
+   },
+   "latex": "Q^*(s_t,a_t)=\\mathbb E[r+\\gamma\\max_{a'}Q^*(s_{t+1},a')]"
+  },
+  {
+   "label": "Tabular Q-learning",
+   "note": "Off-policy; all pairs must keep being updated (ε-greedy).",
+   "source": {
+    "file": "W9",
+    "page": 41
+   },
+   "latex": "Q\\leftarrow Q+\\alpha[r+\\gamma\\max_{a'}Q(s',a')-Q]"
+  },
+  {
+   "label": "SARSA",
+   "note": "On-policy: uses the action actually chosen next.",
+   "source": {
+    "file": "W9",
+    "page": 43
+   },
+   "latex": "Q\\leftarrow Q+\\alpha[r+\\gamma Q(s',a')-Q]"
+  },
+  {
+   "label": "Deep Q-learning",
+   "note": "Target network $\\varphi'$ for a fixed target; $d$ = terminal flag; MSBE.",
+   "source": {
+    "file": "W9",
+    "page": 47
+   },
+   "latex": "y=r+\\gamma(1-d)\\max_{a'}Q_{\\varphi'}(s',a'),\\ L=\\mathbb E[(Q_\\varphi-y)^2]"
+  },
+  {
+   "label": "Policy network (DDPG)",
+   "note": "Actor ascends the critic: $\\theta\\leftarrow\\theta+\\alpha\\nabla_\\theta\\frac1{|B|}\\sum Q_\\varphi(s,\\mu_\\theta(s))$; replay buffer; Polyak targets.",
+   "source": {
+    "file": "W9",
+    "page": 53
+   },
+   "latex": "\\varphi'\\leftarrow\\rho\\varphi'+(1-\\rho)\\varphi"
+  },
+  {
+   "label": "Overestimation",
+   "note": "Max over noisy Q is biased upward; fixes: TD3, SAC, Maxmin Q-learning, REDQ.",
+   "source": {
+    "file": "W9",
+    "page": 56
+   }
+  }
+ ]
+}
