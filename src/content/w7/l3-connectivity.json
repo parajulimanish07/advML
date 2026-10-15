@@ -1,0 +1,172 @@
+{
+ "id": "w7.l3",
+ "title": "Layer connectivity: fighting over-smoothing",
+ "blurb": "Expressive layers, MLP pre/post layers, skip connections",
+ "source": [
+  {
+   "file": "W7",
+   "page": 17
+  },
+  {
+   "file": "W7",
+   "page": 18
+  },
+  {
+   "file": "W7",
+   "page": 19
+  },
+  {
+   "file": "W7",
+   "page": 20
+  },
+  {
+   "file": "W7",
+   "page": 21
+  },
+  {
+   "file": "W7",
+   "page": 22
+  }
+ ],
+ "hook": {
+  "title": "Keep the early drafts",
+  "text": "You revise an essay through many drafts. The more you rewrite, the blurrier your original voice. Smart writers keep the early drafts alongside the latest: the final piece is a mix of lightly revised and heavily revised versions. A **skip connection** does that for a GNN: the final embedding includes the *earlier-layer* embeddings, which still distinguish nodes, and effectively gives you an ensemble of shallow and deep GNNs.",
+  "recall": "Remember keeping the early drafts: skip connections add the earlier embedding back ($F(x)+x$), and $N$ skips make $2^N$ paths, a mixture of shallow and deep GNNs."
+ },
+ "explore": {
+  "component": "oversmooth",
+  "intro": "12-node graph in two communities. Add layers with and without skip connections.",
+  "tasks": [
+   "With a plain stack go from 0 to 12 layers. What happens to the spread and to the distance between nodes from different communities?",
+   "Switch on skip connections and repeat."
+  ],
+  "takeaway": "Shallow GNNs can be made more expressive by (1) deeper aggregation/transformation inside layers, (2) MLP pre/post-process layers, (3) skip connections for when many layers are really needed."
+ },
+ "build": {
+  "type": "fill",
+  "prompt": "Write the GCN layer with a skip connection (slide 22).",
+  "template": "$h_v^{(l)}=\\sigma\\Big($ {0} $+$ {1} $\\Big)$",
+  "blanks": [
+   {
+    "options": [
+     "F(x) = Σ_u W h_u^(l−1) / |N(v)|",
+     "h_v^(l−1)",
+     "B h_v^(l−1)"
+    ],
+    "correct": 0
+   },
+   {
+    "options": [
+     "x = h_v^(l−1)",
+     "F(x)",
+     "W h_v^(l)"
+    ],
+    "correct": 0
+   }
+  ],
+  "explanation": "$h_v^{(l)}=\\sigma\\big(\\sum_{u\\in N(v)}W^{(l)}\\frac{h_u^{(l-1)}}{|N(v)|}+h_v^{(l-1)}\\big)$: $F(x)+x$.",
+  "source": {
+   "file": "W7",
+   "page": 22
+  }
+ },
+ "questions": [
+  {
+   "id": "w7.l3.q1",
+   "type": "mcq",
+   "prompt": "**Solution 1** for making a *shallow* GNN more expressive:",
+   "options": [
+    "Increase the expressive power within each GNN layer (e.g. make aggregation/transformation a deep network)",
+    "Add dropout",
+    "Remove the activations",
+    "Increase the batch size"
+   ],
+   "correct": 0,
+   "explanation": "Each aggregation/transformation can be more than one linear layer.",
+   "source": {
+    "file": "W7",
+    "page": 18
+   }
+  },
+  {
+   "id": "w7.l3.q2",
+   "type": "mcq",
+   "prompt": "**Solution 2** for shallow GNNs:",
+   "options": [
+    "Add MLP layers (applied to each node) before and after the GNN layers (pre-/post-process layers)",
+    "Add more neighbours",
+    "Remove the loss",
+    "Reduce the features"
+   ],
+   "correct": 0,
+   "explanation": "A GNN doesn’t only have to contain GNN layers.",
+   "source": {
+    "file": "W7",
+    "page": 19
+   }
+  },
+  {
+   "id": "w7.l3.q3",
+   "type": "numeric",
+   "prompt": "$N=4$ skip connections create how many possible paths (a mixture of shallow and deep GNNs)?",
+   "value": 16,
+   "tol": 0.5,
+   "explanation": "$2^N=2^4=16$.",
+   "source": {
+    "file": "W7",
+    "page": 21
+   }
+  },
+  {
+   "id": "w7.l3.q4",
+   "type": "false",
+   "prompt": "Which statement about skip connections is FALSE?",
+   "options": [
+    "A GCN layer with skip: $\\sigma(F(x)+x)$",
+    "They create a mixture of shallow and deep GNNs",
+    "Node embeddings in earlier layers can sometimes better differentiate nodes",
+    "They make a GNN strictly shallower"
+   ],
+   "correct": 3,
+   "explanation": "They don’t reduce depth; they add shortcut paths from earlier layers.",
+   "source": {
+    "file": "W7",
+    "page": 21
+   }
+  },
+  {
+   "id": "w7.l3.q5",
+   "type": "mcq",
+   "prompt": "Why do earlier-layer embeddings help against over-smoothing?",
+   "options": [
+    "They can sometimes better differentiate nodes",
+    "They are larger",
+    "They have no parameters",
+    "They don’t use the graph"
+   ],
+   "correct": 0,
+   "explanation": "The early drafts still carry the original voice.",
+   "source": {
+    "file": "W7",
+    "page": 20
+   }
+  },
+  {
+   "id": "w7.l3.q6",
+   "type": "bug",
+   "prompt": "*“Once I add skip connections the number of layers doesn’t matter at all; use $L=100$.”* What’s wrong?",
+   "options": [
+    "Nothing",
+    "Slide 17 still warns not to set $L$ unnecessarily large; skip connections *help*, they don’t make depth free",
+    "Skip connections forbid depth",
+    "Depth must equal 2"
+   ],
+   "correct": 1,
+   "explanation": "Better editors still don’t need 100 drafts.",
+   "source": {
+    "file": "W7",
+    "page": 17
+   }
+  }
+ ]
+}

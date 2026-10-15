@@ -1,0 +1,81 @@
+{
+ "title": "Week 7 Cheat Sheet: GNN Design & Training",
+ "items": [
+  {
+   "label": "Modules",
+   "note": "Batch norm: zero mean, unit variance (stabilises). Dropout: zero neurons w.p. $p$ in training, all neurons at test. ReLU most common; sigmoid only to restrict range.",
+   "source": {
+    "file": "W7",
+    "page": 7
+   }
+  },
+  {
+   "label": "Over-smoothing",
+   "note": "Many layers ⇒ large overlapping receptive fields ⇒ similar embeddings. $K$ layers = $K$-hop field.",
+   "source": {
+    "file": "W7",
+    "page": 16
+   }
+  },
+  {
+   "label": "Layer connectivity",
+   "note": "More expressive layers; pre/post MLP layers; skip connections: $N$ skips → $2^N$ paths.",
+   "source": {
+    "file": "W7",
+    "page": 21
+   },
+   "latex": "h_v^{(l)}=\\sigma\\big(F(x)+x\\big)"
+  },
+  {
+   "label": "Graph manipulation",
+   "note": "No features → constants/one-hot IDs. Sparse → virtual edges/node (distance ≤ 2). Dense → neighbour sampling. Large → subgraph sampling.",
+   "source": {
+    "file": "W7",
+    "page": 25
+   }
+  },
+  {
+   "label": "Prediction heads",
+   "note": "Node: $W_{head}h_v$. Edge: Linear(Concat) or $h_v^\\top h_u$. Graph: mean/max/sum pooling.",
+   "source": {
+    "file": "W7",
+    "page": 37
+   },
+   "latex": "\\hat y_v=W_{head}h_v^{(L)},\\ \\hat y_{vu}=h_v^\\top h_u"
+  },
+  {
+   "label": "Losses",
+   "note": "Cross-entropy for classification, MSE (L2) for regression.",
+   "source": {
+    "file": "W7",
+    "page": 40
+   },
+   "latex": "CE=-\\sum_jy_j\\log\\hat y_j,\\ MSE=\\sum_j(y_j-\\hat y_j)^2"
+  },
+  {
+   "label": "Metrics",
+   "note": "Accuracy, precision, recall, F1.",
+   "source": {
+    "file": "W7",
+    "page": 42
+   },
+   "latex": "P=\\tfrac{TP}{TP+FP},\\ R=\\tfrac{TP}{TP+FN},\\ F1=\\tfrac{2PR}{P+R}"
+  },
+  {
+   "label": "Splits",
+   "note": "Transductive: one graph, split labels. Inductive: break edges, multiple graphs; graph classification is inductive only.",
+   "source": {
+    "file": "W7",
+    "page": 46
+   }
+  },
+  {
+   "label": "Link prediction",
+   "note": "Self-supervised. Message edges feed the GNN; supervision edges are targets and are not fed in.",
+   "source": {
+    "file": "W7",
+    "page": 49
+   }
+  }
+ ]
+}

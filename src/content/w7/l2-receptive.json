@@ -1,0 +1,155 @@
+{
+ "id": "w7.l2",
+ "title": "Stacking layers: receptive fields & over-smoothing",
+ "blurb": "K-hop receptive field, why embeddings collapse",
+ "source": [
+  {
+   "file": "W7",
+   "page": 12
+  },
+  {
+   "file": "W7",
+   "page": 13
+  },
+  {
+   "file": "W7",
+   "page": 14
+  },
+  {
+   "file": "W7",
+   "page": 15
+  },
+  {
+   "file": "W7",
+   "page": 16
+  }
+ ],
+ "hook": {
+  "title": "Overlapping address books",
+  "text": "Every node's embedding is built from the nodes in its **address book**: everyone within $K$ hops. Two people with completely different address books form different opinions. But as $K$ grows, address books balloon and overlap; two people who mostly hear from the *same crowd* end up with the *same opinion*. Stack enough layers and **everyone's opinion converges**, making it impossible to tell nodes apart. That is **over-smoothing**.",
+  "recall": "Remember the overlapping address books: more layers ⇒ larger, overlapping receptive fields ⇒ similar embeddings ⇒ over-smoothing. We need embeddings to *differentiate* nodes."
+ },
+ "explore": {
+  "component": "receptive",
+  "intro": "A path graph; the receptive field of a node after $K$ layers is its $K$-hop neighbourhood.",
+  "tasks": [
+   "Keep nodes $a=4$ and $b=9$ fixed and raise $K$ from 0 to 8. When do their fields first overlap?",
+   "Move $a$ and $b$ close together. What happens to the overlap fraction?"
+  ],
+  "takeaway": "Receptive field = nodes that determine a node’s embedding; in a $K$-layer GNN it is the $K$-hop neighbourhood. Many layers ⇒ highly overlapping fields ⇒ over-smoothing."
+ },
+ "build": {
+  "type": "order",
+  "prompt": "Order the over-smoothing logic (slide 16).",
+  "items": [
+   "Stack many GNN layers",
+   "Nodes get highly overlapping receptive fields",
+   "Node embeddings become highly similar",
+   "The GNN suffers from over-smoothing"
+  ],
+  "explanation": "Logic: stack many GNN layers → nodes will have highly overlapped receptive fields → node embeddings will be highly similar → over-smoothing.",
+  "source": {
+   "file": "W7",
+   "page": 16
+  }
+ },
+ "questions": [
+  {
+   "id": "w7.l2.q1",
+   "type": "mcq",
+   "prompt": "The over-smoothing problem is that:",
+   "options": [
+    "All node embeddings converge to the same value",
+    "Embeddings become too different",
+    "The graph gets bigger",
+    "The loss becomes negative"
+   ],
+   "correct": 0,
+   "explanation": "Bad because we want embeddings to *differentiate* nodes.",
+   "source": {
+    "file": "W7",
+    "page": 13
+   }
+  },
+  {
+   "id": "w7.l2.q2",
+   "type": "mcq",
+   "prompt": "In a $K$-layer GNN, each node’s receptive field is:",
+   "options": [
+    "Its 1-hop neighbourhood",
+    "Its $K$-hop neighbourhood",
+    "The whole graph always",
+    "Only itself"
+   ],
+   "correct": 1,
+   "explanation": "The set of nodes that determine the embedding of the node of interest.",
+   "source": {
+    "file": "W7",
+    "page": 14
+   }
+  },
+  {
+   "id": "w7.l2.q3",
+   "type": "numeric",
+   "prompt": "In a long **path graph**, how many nodes are in the receptive field of an interior node after $K=3$ layers (itself plus everything within 3 hops on both sides)?",
+   "value": 7,
+   "tol": 0.5,
+   "explanation": "$2K+1=7$ for a path (derived by counting; the slide defines the field as the $K$-hop neighbourhood).",
+   "source": {
+    "file": "W7",
+    "page": 14
+   }
+  },
+  {
+   "id": "w7.l2.q4",
+   "type": "false",
+   "prompt": "Which statement is FALSE?",
+   "options": [
+    "Adding more GNN layers does not always help (unlike CNNs for image classification)",
+    "Shared neighbours grow quickly when the number of layers increases",
+    "Highly overlapping receptive fields give highly similar embeddings",
+    "Over-smoothing is desirable because we want all embeddings to be equal"
+   ],
+   "correct": 3,
+   "explanation": "We want embeddings to differentiate nodes; over-smoothing destroys that.",
+   "source": {
+    "file": "W7",
+    "page": 13
+   }
+  },
+  {
+   "id": "w7.l2.q5",
+   "type": "bug",
+   "prompt": "*“To capture long-range information I should always set the number of GNN layers $L$ as large as possible.”* What’s wrong?",
+   "options": [
+    "Nothing",
+    "Don’t set $L$ unnecessarily large: more layers can cause over-smoothing; unlike CNNs, adding GNN layers doesn’t always help",
+    "$L$ must be 1",
+    "Deeper is always cheaper"
+   ],
+   "correct": 1,
+   "explanation": "“Be cautious when adding GNN layers.”",
+   "source": {
+    "file": "W7",
+    "page": 17
+   }
+  },
+  {
+   "id": "w7.l2.q6",
+   "type": "mcq",
+   "prompt": "Why do two nodes with highly overlapped receptive fields get similar embeddings?",
+   "options": [
+    "Each embedding is determined by its receptive field",
+    "They always have the same label",
+    "They have equal degree",
+    "Because of dropout"
+   ],
+   "correct": 0,
+   "explanation": "Same address book, same opinion.",
+   "source": {
+    "file": "W7",
+    "page": 16
+   }
+  }
+ ]
+}

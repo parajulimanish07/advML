@@ -1,0 +1,158 @@
+{
+ "id": "w8.l5",
+ "title": "RGCN tasks: node classification & link prediction",
+ "blurb": "Final-layer prediction, negative sampling, Hits@k, reciprocal rank",
+ "source": [
+  {
+   "file": "W8",
+   "page": 33
+  },
+  {
+   "file": "W8",
+   "page": 35
+  },
+  {
+   "file": "W8",
+   "page": 36
+  },
+  {
+   "file": "W8",
+   "page": 37
+  },
+  {
+   "file": "W8",
+   "page": 38
+  },
+  {
+   "file": "W8",
+   "page": 39
+  },
+  {
+   "file": "W8",
+   "page": 40
+  }
+ ],
+ "hook": {
+  "title": "Ranking the suspects",
+  "text": "Link prediction in a knowledge graph is a *line-up*. For the question “Who does E have relation $r_3$ with?”, the model scores a **suspect list**: the true answer plus some impostors. Training teaches it to score the real edge high and a made-up impostor low. At evaluation we line up the true answer among *all non-training impostors* and check its **rank**. A rank of 1 is perfect; a rank of 3 means two impostors outscored it.",
+  "recall": "Remember the line-up: negatives are made-up edges that are *not* real (training) edges; evaluation checks the *rank* of the true edge: Hits@$k$ asks if it’s in the top $k$, reciprocal rank is $1/RK$."
+ },
+ "explore": {
+  "component": "linkrank",
+  "intro": "Validation edge $(E,r_3,D)$ with negatives $(E,r_3,B)$ and $(E,r_3,F)$. Set the model’s scores.",
+  "tasks": [
+   "Make the true edge rank 1, then rank 2, then rank 3. How do Hits@2 and reciprocal rank change?",
+   "Why are A and C not in the candidate list?"
+  ],
+  "takeaway": "Score $f_r(h_E^{(L)},h_A^{(L)})=(h_E^{(L)})^\\top W_rh_A^{(L)}$; loss $\\ell=-\\log\\sigma(f_{r_3}(h_E,h_A))-\\log(1-\\sigma(f_{r_3}(h_E,h_B)))$; Hits@$k=\\mathbb 1[RK\\le k]$; reciprocal rank $=1/RK$."
+ },
+ "build": {
+  "type": "order",
+  "prompt": "Order the RGCN link-prediction **training** step (slide 37).",
+  "items": [
+   "Use RGCN to score the training supervision edge $(E,r_3,A)$",
+   "Create a negative edge by perturbing it, e.g. $(E,r_3,B)$",
+   "Use the RGCN model to score the negative edge",
+   "Optimise a standard cross-entropy: maximise the supervision-edge score, minimise the negative-edge score"
+  ],
+  "explanation": "The four bullets on slide 37.",
+  "source": {
+   "file": "W8",
+   "page": 37
+  }
+ },
+ "questions": [
+  {
+   "id": "w8.l5.q1",
+   "type": "mcq",
+   "prompt": "For node classification into $K$ classes, RGCN uses:",
+   "options": [
+    "The final-layer representation $h_A^{(L)}\\in\\mathbb R^K$ (prediction head)",
+    "The first-layer embedding",
+    "A random vector",
+    "The adjacency matrix"
+   ],
+   "correct": 0,
+   "explanation": "Each entry represents the probability of a class.",
+   "source": {
+    "file": "W8",
+    "page": 33
+   }
+  },
+  {
+   "id": "w8.l5.q2",
+   "type": "mcq",
+   "prompt": "Training supervision edge $(E,r_3,A)$; training message edges include $(E,r_3,C)$. Which is a valid **negative** edge?",
+   "options": [
+    "$(E,r_3,B)$ (not in the training edges)",
+    "$(E,r_3,C)$",
+    "$(E,r_3,A)$",
+    "Any edge"
+   ],
+   "correct": 0,
+   "explanation": "“Negative edges should NOT belong to training/supervision edges: e.g. $(E,r_3,C)$ is NOT a negative edge.”",
+   "source": {
+    "file": "W8",
+    "page": 36
+   }
+  },
+  {
+   "id": "w8.l5.q3",
+   "type": "numeric",
+   "prompt": "Validation edge $(E,r_3,D)$ is ranked above $(E,r_3,F)$ but below $(E,r_3,B)$. What is its rank $RK$?",
+   "value": 2,
+   "tol": 0.5,
+   "explanation": "One negative outscores it, so $RK=1+1=2$.",
+   "source": {
+    "file": "W8",
+    "page": 38
+   }
+  },
+  {
+   "id": "w8.l5.q4",
+   "type": "numeric",
+   "prompt": "With $RK=2$, what is the reciprocal rank $1/RK$?",
+   "value": 0.5,
+   "tol": 0.005,
+   "explanation": "$1/2=0.5$.",
+   "source": {
+    "file": "W8",
+    "page": 38
+   }
+  },
+  {
+   "id": "w8.l5.q5",
+   "type": "false",
+   "prompt": "Which statement about Hits@$k$ and reciprocal rank is FALSE?",
+   "options": [
+    "Hits@$k=\\mathbb 1[RK\\le k]$",
+    "Reciprocal rank $=1/RK$",
+    "For both metrics higher is better",
+    "Hits@$k$ is larger when the true edge has a larger rank number"
+   ],
+   "correct": 3,
+   "explanation": "A larger rank number (worse position) makes Hits@k fall to 0.",
+   "source": {
+    "file": "W8",
+    "page": 38
+   }
+  },
+  {
+   "id": "w8.l5.q6",
+   "type": "mcq",
+   "prompt": "Why are $(E,r_3,A)$ and $(E,r_3,C)$ excluded from the evaluation candidates for $(E,r_3,D)$?",
+   "options": [
+    "They belong to training message/supervision edges",
+    "They have low scores",
+    "They are not nodes",
+    "They are positive for another relation"
+   ],
+   "correct": 0,
+   "explanation": "They are real training edges, not valid negatives.",
+   "source": {
+    "file": "W8",
+    "page": 38
+   }
+  }
+ ]
+}

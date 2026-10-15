@@ -1,0 +1,192 @@
+{
+ "title": "The Smoothing Specter",
+ "intro": "Everything from Week 7: GNN modules, over-smoothing, skip connections, graph manipulation, prediction heads, metrics, splits and link prediction.",
+ "questions": [
+  {
+   "id": "w7.boss.q1",
+   "type": "numeric",
+   "prompt": "Part 1. With $K=2$, how many nodes are in the receptive field of node 10 (interior of the path)?",
+   "value": 5,
+   "tol": 0.5,
+   "explanation": "$2K+1=5$: nodes 8–12.",
+   "source": {
+    "file": "W7",
+    "page": 14
+   },
+   "scenario": "**Scenario A (receptive fields on a path graph).** A long path graph $\\dots-1-2-3-4-5-\\dots$ with a $K$-layer GNN. The receptive field of a node is its $K$-hop neighbourhood (a node and everything within $K$ hops).",
+   "step": "Scenario A · part 1 of 3"
+  },
+  {
+   "id": "w7.boss.q2",
+   "type": "numeric",
+   "prompt": "Part 2. With $K=2$, how many nodes are shared by the receptive fields of node 10 and node 13 (distance 3)?",
+   "value": 2,
+   "tol": 0.5,
+   "explanation": "Fields: 8–12 and 11–15; shared: 11 and 12.",
+   "source": {
+    "file": "W7",
+    "page": 15
+   },
+   "scenario": "**Scenario A (receptive fields on a path graph).** A long path graph $\\dots-1-2-3-4-5-\\dots$ with a $K$-layer GNN. The receptive field of a node is its $K$-hop neighbourhood (a node and everything within $K$ hops).",
+   "step": "Scenario A · part 2 of 3"
+  },
+  {
+   "id": "w7.boss.q3",
+   "type": "mcq",
+   "prompt": "Part 3. Raising $K$ to 8 for both nodes makes their embeddings:",
+   "options": [
+    "More different, since each sees more of the graph",
+    "More similar, since their receptive fields overlap more: the over-smoothing effect",
+    "Identical regardless of the graph",
+    "Unaffected"
+   ],
+   "correct": 1,
+   "explanation": "Highly overlapped receptive fields give highly similar embeddings.",
+   "source": {
+    "file": "W7",
+    "page": 16
+   },
+   "scenario": "**Scenario A (receptive fields on a path graph).** A long path graph $\\dots-1-2-3-4-5-\\dots$ with a $K$-layer GNN. The receptive field of a node is its $K$-hop neighbourhood (a node and everything within $K$ hops).",
+   "step": "Scenario A · part 3 of 3"
+  },
+  {
+   "id": "w7.boss.q4",
+   "type": "numeric",
+   "prompt": "Part 1. What is the precision?",
+   "value": 0.75,
+   "tol": 0.005,
+   "explanation": "$30/(30+10)=0.75$.",
+   "source": {
+    "file": "W7",
+    "page": 42
+   },
+   "scenario": "**Scenario B (evaluation).** A node classifier on the positive class gives $TP=30$, $FP=10$, $FN=20$, $TN=140$.",
+   "step": "Scenario B · part 1 of 3"
+  },
+  {
+   "id": "w7.boss.q5",
+   "type": "numeric",
+   "prompt": "Part 2. What is the recall?",
+   "value": 0.6,
+   "tol": 0.005,
+   "explanation": "$30/(30+20)=0.6$.",
+   "source": {
+    "file": "W7",
+    "page": 42
+   },
+   "scenario": "**Scenario B (evaluation).** A node classifier on the positive class gives $TP=30$, $FP=10$, $FN=20$, $TN=140$.",
+   "step": "Scenario B · part 2 of 3"
+  },
+  {
+   "id": "w7.boss.q6",
+   "type": "numeric",
+   "prompt": "Part 3. What is the F1-score (3 decimals)?",
+   "value": 0.667,
+   "tol": 0.004,
+   "explanation": "$\\frac{2\\cdot0.75\\cdot0.6}{0.75+0.6}=0.9/1.35\\approx0.667$.",
+   "source": {
+    "file": "W7",
+    "page": 42
+   },
+   "scenario": "**Scenario B (evaluation).** A node classifier on the positive class gives $TP=30$, $FP=10$, $FN=20$, $TN=140$.",
+   "step": "Scenario B · part 3 of 3"
+  },
+  {
+   "id": "w7.boss.q7",
+   "type": "mcq",
+   "prompt": "Which statement correctly contrasts the two data-splitting settings?",
+   "options": [
+    "Transductive: whole graph visible, labels split. Inductive: edges between splits broken, test on unseen graphs",
+    "Transductive: edges broken. Inductive: whole graph visible",
+    "They are identical",
+    "Transductive needs multiple graphs"
+   ],
+   "correct": 0,
+   "explanation": "Friends leaking answers vs separate classes.",
+   "source": {
+    "file": "W7",
+    "page": 46
+   }
+  },
+  {
+   "id": "w7.boss.q8",
+   "type": "bug",
+   "prompt": "*“In link prediction I also pass the supervision edges to the GNN as message edges.”*",
+   "options": [
+    "That’s required",
+    "Supervision edges are the answers and must not be fed into the GNN",
+    "Message and supervision edges are the same",
+    "Link prediction has no edges"
+   ],
+   "correct": 1,
+   "explanation": "Hidden roads stay hidden.",
+   "source": {
+    "file": "W7",
+    "page": 49
+   }
+  },
+  {
+   "id": "w7.boss.q9",
+   "type": "numeric",
+   "prompt": "$N=3$ skip connections give how many paths?",
+   "value": 8,
+   "tol": 0.5,
+   "explanation": "$2^3=8$.",
+   "source": {
+    "file": "W7",
+    "page": 21
+   }
+  },
+  {
+   "id": "w7.boss.q10",
+   "type": "mcq",
+   "prompt": "After adding a virtual node connected to all nodes, any two nodes are at distance:",
+   "options": [
+    "At most 2",
+    "Exactly 10",
+    "Unchanged",
+    "At least 5"
+   ],
+   "correct": 0,
+   "explanation": "Node → hub → node.",
+   "source": {
+    "file": "W7",
+    "page": 29
+   }
+  },
+  {
+   "id": "w7.boss.q11",
+   "type": "false",
+   "prompt": "Which statement is FALSE?",
+   "options": [
+    "Dropout at test time uses all neurons",
+    "Batch norm re-centres to zero mean and re-scales to unit variance",
+    "Global sum pooling is independent of the number of nodes",
+    "Edge head can be Linear(Concat($h_v$,$h_u$)) or a dot product"
+   ],
+   "correct": 2,
+   "explanation": "Sum pooling grows with graph size; mean is size-normalised.",
+   "source": {
+    "file": "W7",
+    "page": 38
+   }
+  },
+  {
+   "id": "w7.boss.q12",
+   "type": "bug",
+   "prompt": "*“99% accuracy proves my classifier finds nearly all positives.”*",
+   "options": [
+    "Correct",
+    "With rare positives, accuracy is dominated by TN; recall can be low",
+    "Accuracy equals recall",
+    "Accuracy ignores TN"
+   ],
+   "correct": 1,
+   "explanation": "Check precision, recall and F1.",
+   "source": {
+    "file": "W7",
+    "page": 42
+   }
+  }
+ ]
+}

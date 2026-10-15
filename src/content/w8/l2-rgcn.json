@@ -1,0 +1,163 @@
+{
+ "id": "w8.l2",
+ "title": "The relational GCN layer",
+ "blurb": "One weight matrix per relation, per-relation normalisation",
+ "source": [
+  {
+   "file": "W8",
+   "page": 11
+  },
+  {
+   "file": "W8",
+   "page": 12
+  },
+  {
+   "file": "W8",
+   "page": 14
+  },
+  {
+   "file": "W8",
+   "page": 15
+  },
+  {
+   "file": "W8",
+   "page": 18
+  },
+  {
+   "file": "W8",
+   "page": 21
+  },
+  {
+   "file": "W8",
+   "page": 22
+  },
+  {
+   "file": "W8",
+   "page": 23
+  }
+ ],
+ "hook": {
+  "title": "Different languages for different roads",
+  "text": "In GCN every neighbour is spoken to in the *same* language ($W$). In a city of many kinds of roads that's silly: you'd treat a message from a friend, a supplier and a boss identically. **RGCN** gives each relation its own *translator* $W_r$: messages arriving along relation $r_1$ are translated with $W_{r_1}$ and averaged *among that relation's neighbours*; messages along $r_2$ use $W_{r_2}$; and the node adds its own message through $W_0$.",
+  "recall": "Remember the translators: one weight matrix per relation, averaging within each relation separately ($1/|N_v^r|$), plus a self term $W_0h_v$."
+ },
+ "explore": {
+  "component": "rgcnlayer",
+  "intro": "Node A receives from $B,C,D$ via relation $r_1$ and from $E,F$ via $r_2$ (slide 22).",
+  "tasks": [
+   "Set $W_{r_2}=0$. Which neighbours still influence A?",
+   "Compare the per-relation means $(h_B+h_C+h_D)/3$ and $(h_E+h_F)/2$. Why not divide everything by 5?"
+  ],
+  "takeaway": "$h_v^{(l+1)}=\\sigma\\Big(\\sum_{r\\in R}\\sum_{u\\in N_v^r}\\frac{1}{|N_v^r|}W_r^{(l)}h_u^{(l)}+W_0^{(l)}h_v^{(l)}\\Big)$."
+ },
+ "build": {
+  "type": "order",
+  "prompt": "Order the computation of $h_A^{(1)}$ in the 2-relation RGCN example.",
+  "items": [
+   "For relation $r_1$: average the neighbour messages $W_{r_1}h_u$ over $u\\in\\{B,C,D\\}$",
+   "For relation $r_2$: average the neighbour messages $W_{r_2}h_u$ over $u\\in\\{E,F\\}$",
+   "Add the two relation sums together",
+   "Add the self term $W_0h_A^{(0)}$",
+   "Apply the non-linearity $\\sigma$"
+  ],
+  "explanation": "$h_A^1=\\sigma\\big(\\frac{W_{r_1}h_B+W_{r_1}h_C+W_{r_1}h_D}{3}+\\frac{W_{r_2}h_E+W_{r_2}h_F}{2}+W_0h_A\\big)$ (slide 23).",
+  "source": {
+   "file": "W8",
+   "page": 23
+  }
+ },
+ "questions": [
+  {
+   "id": "w8.l2.q1",
+   "type": "numeric",
+   "prompt": "Slide-22 graph with scalar features $h_B=1,h_C=2,h_D=3$ (relation $r_1$), $h_E=4,h_F=2$ (relation $r_2$), $h_A=1$. Take $W_{r_1}=1$, $W_{r_2}=0.5$, $W_0=1$, $\\sigma=$ identity. Compute $h_A^{(1)}$.",
+   "value": 4.5,
+   "tol": 0.01,
+   "explanation": "$r_1$: $(1+2+3)/3=2$; $r_2$: $(4+2)/2=3$ times $0.5$ is $1.5$; self: $1$. Total $2+1.5+1=4.5$.",
+   "source": {
+    "file": "W8",
+    "page": 23
+   }
+  },
+  {
+   "id": "w8.l2.q2",
+   "type": "mcq",
+   "prompt": "In RGCN the normalisation for relation $r$ is:",
+   "options": [
+    "$1/|N_v^r|$ (the number of neighbours **under that relation**)",
+    "$1/|V|$",
+    "1 (no normalisation)",
+    "$1/|N_v|$ over all relations"
+   ],
+   "correct": 0,
+   "explanation": "Each relation averages over its own neighbours.",
+   "source": {
+    "file": "W8",
+    "page": 21
+   }
+  },
+  {
+   "id": "w8.l2.q3",
+   "type": "mcq",
+   "prompt": "What is the role of $W_0^{(l)}h_v^{(l)}$ in the RGCN layer?",
+   "options": [
+    "The node’s own previous embedding (self term)",
+    "The messages from relation $r_1$",
+    "The normalisation",
+    "The loss"
+   ],
+   "correct": 0,
+   "explanation": "Slide 21: “node feature of layer $l$ for target $v$”.",
+   "source": {
+    "file": "W8",
+    "page": 21
+   }
+  },
+  {
+   "id": "w8.l2.q4",
+   "type": "false",
+   "prompt": "Which statement about RGCN is FALSE?",
+   "options": [
+    "Different neural network weights are used for different relation types",
+    "Each relation has its own matrix $W_r^{(l)}$",
+    "The sum is over relations $r\\in R$ and neighbours $u\\in N_v^r$",
+    "All relations share the same weight matrix $W$"
+   ],
+   "correct": 3,
+   "explanation": "Sharing one $W$ for every relation would be plain GCN.",
+   "source": {
+    "file": "W8",
+    "page": 18
+   }
+  },
+  {
+   "id": "w8.l2.q5",
+   "type": "numeric",
+   "prompt": "Single-relation example (slide 15): node D has no incoming neighbours. Using $h_D^{(1)}=\\sigma(B_1h_D^{(0)})$ with $B_1=2$, $h_D^{(0)}=1.5$, $\\sigma=$ identity, what is $h_D^{(1)}$?",
+   "value": 3,
+   "tol": 0.01,
+   "explanation": "With no neighbours only the self term remains: $2\\cdot1.5=3$.",
+   "source": {
+    "file": "W8",
+    "page": 15
+   }
+  },
+  {
+   "id": "w8.l2.q6",
+   "type": "bug",
+   "prompt": "*“In RGCN I should average over all 5 neighbours of A together, $\\frac15\\sum_u W_{r(u)}h_u$.”* What’s wrong?",
+   "options": [
+    "Nothing",
+    "Each relation is averaged within its own neighbour set: $\\frac13(\\ldots)$ for $r_1$ and $\\frac12(\\ldots)$ for $r_2$",
+    "RGCN has no averaging",
+    "The self term is missing and nothing else"
+   ],
+   "correct": 1,
+   "explanation": "Average within each relation, then add the relations up.",
+   "source": {
+    "file": "W8",
+    "page": 23
+   }
+  }
+ ]
+}

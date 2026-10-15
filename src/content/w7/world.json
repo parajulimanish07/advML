@@ -1,0 +1,19 @@
+{
+ "id": "w7",
+ "title": "Deep Graph Forge",
+ "week": "Week 7",
+ "subtitle": "GNN design, over-smoothing, augmentation, heads, metrics and splits",
+ "emoji": "⚙️",
+ "color": "#ff9f5b",
+ "status": "ready",
+ "levels": [
+  "l1-modules",
+  "l2-receptive",
+  "l3-connectivity",
+  "l4-manipulation",
+  "l5-heads",
+  "l6-metrics",
+  "l7-splits",
+  "l8-linkpred"
+ ]
+}

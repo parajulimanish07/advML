@@ -1,0 +1,190 @@
+{
+ "id": "w7.l1",
+ "title": "Modern modules inside a GNN layer",
+ "blurb": "Batch norm, dropout, activations",
+ "source": [
+  {
+   "file": "W7",
+   "page": 5
+  },
+  {
+   "file": "W7",
+   "page": 6
+  },
+  {
+   "file": "W7",
+   "page": 7
+  },
+  {
+   "file": "W7",
+   "page": 8
+  },
+  {
+   "file": "W7",
+   "page": 9
+  },
+  {
+   "file": "W7",
+   "page": 10
+  },
+  {
+   "file": "W7",
+   "page": 11
+  }
+ ],
+ "hook": {
+  "title": "Good kitchen habits",
+  "text": "Classic GNN layers are a fine recipe, but real kitchens add good habits. **Batch norm** is *tasting for balance*: before the next step, re-centre and re-scale ingredients so no one flavour overwhelms training. **Dropout** is *benching random players in practice* so the team can't lean on a few stars; on match day everyone plays. And the **activation** is the oven setting: ReLU for most dishes, sigmoid only when the output must stay in a narrow range.",
+  "recall": "Remember the kitchen habits: batch norm balances (zero mean, unit variance), dropout benches players only during practice (training), and activations set the non-linearity: ReLU by default."
+ },
+ "explore": {
+  "component": "modules",
+  "intro": "Three tabs for three modules.",
+  "tasks": [
+   "Batch norm: change shift and scale. What are the mean and variance afterwards?",
+   "Dropout: compare training vs testing. How many neurons are active in each?"
+  ],
+  "takeaway": "Batch norm: re-centre to zero mean, re-scale to unit variance (stabilises training). Dropout: zero neurons with probability $p$ in training, use all at test (prevents overfitting). ReLU is the most commonly used activation."
+ },
+ "build": {
+  "type": "fill",
+  "prompt": "Complete the module summaries.",
+  "template": "Batch norm re-centres to {0} mean and re-scales to {1} variance. Dropout turns neurons off during {2} and uses all neurons at {3}.",
+  "blanks": [
+   {
+    "options": [
+     "zero",
+     "unit",
+     "negative"
+    ],
+    "correct": 0
+   },
+   {
+    "options": [
+     "zero",
+     "unit",
+     "double"
+    ],
+    "correct": 1
+   },
+   {
+    "options": [
+     "training",
+     "testing"
+    ],
+    "correct": 0
+   },
+   {
+    "options": [
+     "training",
+     "testing"
+    ],
+    "correct": 1
+   }
+  ],
+  "explanation": "Slides 7–8.",
+  "source": {
+   "file": "W7",
+   "page": 8
+  }
+ },
+ "questions": [
+  {
+   "id": "w7.l1.q1",
+   "type": "mcq",
+   "prompt": "The goal of batch normalisation in a GNN layer is to:",
+   "options": [
+    "Stabilise neural network training",
+    "Prevent overfitting by turning neurons off",
+    "Control the importance of a message",
+    "Increase graph size"
+   ],
+   "correct": 0,
+   "explanation": "Re-centre to zero mean and re-scale to unit variance: tasting for balance. (Dropout prevents overfitting; attention/gating controls message importance.)",
+   "source": {
+    "file": "W7",
+    "page": 7
+   }
+  },
+  {
+   "id": "w7.l1.q2",
+   "type": "mcq",
+   "prompt": "Dropout during **testing** uses:",
+   "options": [
+    "All the neurons",
+    "Half the neurons at random",
+    "No neurons",
+    "Only the first layer"
+   ],
+   "correct": 0,
+   "explanation": "On match day everyone plays.",
+   "source": {
+    "file": "W7",
+    "page": 8
+   }
+  },
+  {
+   "id": "w7.l1.q3",
+   "type": "numeric",
+   "prompt": "A batch of one feature across three nodes is $[2,4,6]$. Batch-normalise the **first** value (subtract the mean, divide by the standard deviation; ignore $\\epsilon$). 3 decimals.",
+   "value": -1.225,
+   "tol": 0.004,
+   "explanation": "Mean 4, variance $((−2)^2+0+2^2)/3=8/3$, std $\\approx1.633$; $(2-4)/1.633\\approx-1.225$.",
+   "source": {
+    "file": "W7",
+    "page": 7
+   }
+  },
+  {
+   "id": "w7.l1.q4",
+   "type": "false",
+   "prompt": "Which statement is FALSE?",
+   "options": [
+    "Batch norm re-centres embeddings to zero mean",
+    "Dropout regularises a network to prevent overfitting",
+    "In a GNN, dropout is applied to the linear layer in the message function $m_u^{(l)}=W^{(l)}h_u^{(l-1)}$",
+    "At test time dropout randomly switches off neurons"
+   ],
+   "correct": 3,
+   "explanation": "Randomly benching players is a practice-time habit only.",
+   "source": {
+    "file": "W7",
+    "page": 9
+   }
+  },
+  {
+   "id": "w7.l1.q5",
+   "type": "mcq",
+   "prompt": "When should you use a sigmoid activation according to the slides?",
+   "options": [
+    "Almost always: it’s the default",
+    "Only when you want to restrict the range of your embeddings",
+    "Never",
+    "Only in the first layer"
+   ],
+   "correct": 1,
+   "explanation": "ReLU is the most commonly used; sigmoid $\\sigma(x_i)=1/(1+e^{-x_i})$ only for range restriction.",
+   "source": {
+    "file": "W7",
+    "page": 10
+   }
+  },
+  {
+   "id": "w7.l1.q6",
+   "type": "bug",
+   "prompt": "*“If I train with dropout $p=0.5$, then at test time I must also randomly drop half the neurons to match.”* What’s wrong?",
+   "options": [
+    "Nothing",
+    "At test time we use all neurons for the computation",
+    "Dropout can’t be used at train time",
+    "Test time doesn’t use any neurons"
+   ],
+   "correct": 1,
+   "explanation": "Slide 8: during testing, use all the neurons.",
+   "source": {
+    "file": "W7",
+    "page": 8
+   }
+  }
+ ]
+}

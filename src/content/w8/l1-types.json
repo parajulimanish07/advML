@@ -1,0 +1,184 @@
+{
+ "id": "w8.l1",
+ "title": "Heterogeneous graphs & relation types",
+ "blurb": "Multiple node/edge types, relation types, when types are not just features",
+ "source": [
+  {
+   "file": "W8",
+   "page": 3
+  },
+  {
+   "file": "W8",
+   "page": 4
+  },
+  {
+   "file": "W8",
+   "page": 5
+  },
+  {
+   "file": "W8",
+   "page": 6
+  },
+  {
+   "file": "W8",
+   "page": 8
+  },
+  {
+   "file": "W8",
+   "page": 9
+  },
+  {
+   "file": "W8",
+   "page": 10
+  }
+ ],
+ "hook": {
+  "title": "A city with many kinds of roads",
+  "text": "Picture a city where **people**, **shops** and **offices** are connected by *different kinds* of roads: friendships, deliveries, commutes. A “road” between a person and a shop means something very different from one between two people. A **heterogeneous graph** keeps the kinds explicit: a *relation type* is the triple (where the road starts, what kind of road, where it ends). You could just stamp a label on each node and edge and pretend it's one big map, but sometimes the kinds need different instruments altogether.",
+  "recall": "Remember the city of many roads: a relation type is (start type, edge type, end type). Types can be one-hot features, unless the types need different feature shapes or different models."
+ },
+ "explore": {
+  "component": "relations",
+  "intro": "Choose how many node and edge types exist.",
+  "tasks": [
+   "Set 2 node types and 2 edge types. How many possible relation types? Compare with the slide.",
+   "Switch to *one-hot type features*. When would this simplification fail?"
+  ],
+  "takeaway": "$G=(V,E,\\tau,\\phi)$; $r(u,v)=(\\tau(u),\\phi(u,v),\\tau(v))$. Two node types × two edge types gives 8 possible relation types. A heterogeneous graph is more expressive but costs more computation, storage and implementation complexity."
+ },
+ "build": {
+  "type": "fill",
+  "prompt": "Complete the definition of a relation type.",
+  "template": "A relation type is written $r(u,v)=$ ( {0}, {1}, {2} ).",
+  "blanks": [
+   {
+    "options": [
+     "node type of u: τ(u)",
+     "edge type φ(u,v)",
+     "node type of v: τ(v)"
+    ],
+    "correct": 0
+   },
+   {
+    "options": [
+     "node type of u: τ(u)",
+     "edge type φ(u,v)",
+     "node type of v: τ(v)"
+    ],
+    "correct": 1
+   },
+   {
+    "options": [
+     "node type of u: τ(u)",
+     "edge type φ(u,v)",
+     "node type of v: τ(v)"
+    ],
+    "correct": 2
+   }
+  ],
+  "explanation": "Slide 6: $r(u,v)=(\\tau(u),\\phi(u,v),\\tau(v))$, i.e. (node_start, edge, node_end).",
+  "source": {
+   "file": "W8",
+   "page": 6
+  }
+ },
+ "questions": [
+  {
+   "id": "w8.l1.q1",
+   "type": "numeric",
+   "prompt": "A graph has 2 node types (Paper, Author) and 2 edge types (Cite, Like). How many possible relation types $(\\text{node\\_start},\\text{edge},\\text{node\\_end})$ are there?",
+   "value": 8,
+   "tol": 0.5,
+   "explanation": "$2\\times2\\times2=8$ (slide 4 lists them).",
+   "source": {
+    "file": "W8",
+    "page": 4
+   }
+  },
+  {
+   "id": "w8.l1.q2",
+   "type": "mcq",
+   "prompt": "In a heterogeneous graph $G=(V,E,\\tau,\\phi)$, what is $\\phi$?",
+   "options": [
+    "The edge-type function: $\\phi(u,v)$ gives the type of edge $(u,v)$",
+    "The node-type function",
+    "The adjacency matrix",
+    "A loss function"
+   ],
+   "correct": 0,
+   "explanation": "$\\tau$ types nodes, $\\phi$ types edges.",
+   "source": {
+    "file": "W8",
+    "page": 6
+   }
+  },
+  {
+   "id": "w8.l1.q3",
+   "type": "mcq",
+   "prompt": "Which is a case where we **need** a true heterogeneous graph rather than one-hot type features?",
+   "options": [
+    "Author nodes have 4-dim features, paper nodes 5-dim features",
+    "All nodes have the same features",
+    "The graph has no edges",
+    "Only one relation exists"
+   ],
+   "correct": 0,
+   "explanation": "Different shapes of features per type can’t share one input layer. (Another case: relations that need different models.)",
+   "source": {
+    "file": "W8",
+    "page": 9
+   }
+  },
+  {
+   "id": "w8.l1.q4",
+   "type": "false",
+   "prompt": "Which statement is FALSE?",
+   "options": [
+    "Types can be treated as features by appending a one-hot indicator to nodes and edges",
+    "A heterogeneous graph can capture different types of interactions between entities",
+    "A heterogeneous graph costs the same as a homogeneous graph",
+    "Relation types capture the interaction between nodes and edges better than node types alone"
+   ],
+   "correct": 2,
+   "explanation": "It is more expressive but more expensive (computation, storage) and more complex to implement.",
+   "source": {
+    "file": "W8",
+    "page": 10
+   }
+  },
+  {
+   "id": "w8.l1.q5",
+   "type": "mcq",
+   "prompt": "(English, translate, French) and (English, translate, Chinese) are two relations. Why might they deserve different models?",
+   "options": [
+    "They represent different types of interactions",
+    "They have the same meaning",
+    "They are the same edge",
+    "Because they have the same features"
+   ],
+   "correct": 0,
+   "explanation": "Case 2 on slide 9: different relation types represent different interactions.",
+   "source": {
+    "file": "W8",
+    "page": 9
+   }
+  },
+  {
+   "id": "w8.l1.q6",
+   "type": "bug",
+   "prompt": "*“Appending one-hot type indicators always makes a heterogeneous graph exactly equivalent to a homogeneous one, so we never need heterogeneous GNNs.”* What’s wrong?",
+   "options": [
+    "Nothing",
+    "It reduces to a homogeneous graph only superficially; when types have different feature shapes or need different models, explicit heterogeneous handling is needed",
+    "One-hot vectors can’t be appended",
+    "Types never matter"
+   ],
+   "correct": 1,
+   "explanation": "Stamping labels on the map doesn’t give the roads different instruments.",
+   "source": {
+    "file": "W8",
+    "page": 9
+   }
+  }
+ ]
+}

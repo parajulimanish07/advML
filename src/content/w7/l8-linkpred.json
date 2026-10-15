@@ -1,0 +1,147 @@
+{
+ "id": "w7.l8",
+ "title": "Link prediction pipeline",
+ "blurb": "Message edges vs supervision edges",
+ "source": [
+  {
+   "file": "W7",
+   "page": 48
+  },
+  {
+   "file": "W7",
+   "page": 49
+  },
+  {
+   "file": "W7",
+   "page": 50
+  }
+ ],
+ "hook": {
+  "title": "Hiding roads from the traveller",
+  "text": "You want a model that can predict *missing roads*. There are no ready-made labels, so you **make your own game**: hide some existing roads, show the traveller the remaining map, and ask “is there a road here?” for pairs including the hidden ones. The key rule: the hidden roads (the answers) must **never** appear on the map you show, otherwise the traveller just copies them.",
+  "recall": "Remember hiding roads: supervision edges are the hidden answers and are never fed to the GNN; message edges form the map the GNN passes messages over."
+ },
+ "explore": {
+  "component": "linkpred",
+  "intro": "Click edges to turn them into supervision edges (gold) or back into message edges (blue).",
+  "tasks": [
+   "Hide two edges. How many message edges remain?",
+   "What happens if you hide almost every edge?"
+  ],
+  "takeaway": "Link prediction is unsupervised/self-supervised: we create labels and splits ourselves. **Message edges** feed the GNN; **supervision edges** are the targets and are *not* fed into the GNN."
+ },
+ "build": {
+  "type": "order",
+  "prompt": "Order a link-prediction training pipeline.",
+  "items": [
+   "Split the edges into message edges and supervision edges",
+   "Run the GNN on the message edges only to get node embeddings",
+   "Score each supervision pair with the prediction head (e.g. dot product)",
+   "Compute the loss and update the GNN"
+  ],
+  "explanation": "Slide 49: hide some edges from the GNN and let the GNN predict whether they exist; supervision edges are used as supervision and are not fed into the GNN.",
+  "source": {
+   "file": "W7",
+   "page": 49
+  }
+ },
+ "questions": [
+  {
+   "id": "w7.l8.q1",
+   "type": "mcq",
+   "prompt": "Link prediction is:",
+   "options": [
+    "Unsupervised/self-supervised: we create the labels and dataset splits ourselves",
+    "Fully supervised with given labels",
+    "Not trainable",
+    "Only for graph classification"
+   ],
+   "correct": 0,
+   "explanation": "No ready-made labels: you make your own game.",
+   "source": {
+    "file": "W7",
+    "page": 48
+   }
+  },
+  {
+   "id": "w7.l8.q2",
+   "type": "mcq",
+   "prompt": "Supervision edges are:",
+   "options": [
+    "Used as supervision for edge predictions, and not fed into the GNN",
+    "Fed into the GNN as message edges",
+    "Removed from the dataset",
+    "Duplicated"
+   ],
+   "correct": 0,
+   "explanation": "Otherwise the model copies the answer.",
+   "source": {
+    "file": "W7",
+    "page": 49
+   }
+  },
+  {
+   "id": "w7.l8.q3",
+   "type": "numeric",
+   "prompt": "A graph has 10 edges; 3 are chosen as supervision edges. How many message edges does the GNN get?",
+   "value": 7,
+   "tol": 0.5,
+   "explanation": "$10-3=7$.",
+   "source": {
+    "file": "W7",
+    "page": 49
+   }
+  },
+  {
+   "id": "w7.l8.q4",
+   "type": "false",
+   "prompt": "Which statement is FALSE?",
+   "options": [
+    "Hide some edges from the GNN and let the GNN predict if they exist",
+    "Supervision edges are used as supervision for the model’s predictions",
+    "Supervision edges are also fed into the GNN as message edges",
+    "We need to create the labels and dataset splits ourselves"
+   ],
+   "correct": 2,
+   "explanation": "That would leak the answer.",
+   "source": {
+    "file": "W7",
+    "page": 49
+   }
+  },
+  {
+   "id": "w7.l8.q5",
+   "type": "mcq",
+   "prompt": "Transductive link prediction (Week 8 recap): at **validation** time the GNN uses:",
+   "options": [
+    "Training message edges and training supervision edges to predict the validation edges",
+    "Only validation edges",
+    "Test edges",
+    "No edges"
+   ],
+   "correct": 0,
+   "explanation": "The graph grows with each phase; validation edges are the targets.",
+   "source": {
+    "file": "W8",
+    "page": 34
+   }
+  },
+  {
+   "id": "w7.l8.q6",
+   "type": "bug",
+   "prompt": "*“To make the GNN more accurate I also feed the supervision edges in as message edges.”* What’s wrong?",
+   "options": [
+    "Nothing",
+    "The model would see the answers it is supposed to predict; supervision edges must not be fed into the GNN",
+    "Message edges are always supervision edges",
+    "This is required"
+   ],
+   "correct": 1,
+   "explanation": "Copy-the-answer cheat.",
+   "source": {
+    "file": "W7",
+    "page": 49
+   }
+  }
+ ]
+}

@@ -1,0 +1,159 @@
+{
+ "id": "w7.l5",
+ "title": "The training pipeline: heads & losses",
+ "blurb": "Node/edge/graph prediction heads, cross-entropy, MSE",
+ "source": [
+  {
+   "file": "W7",
+   "page": 31
+  },
+  {
+   "file": "W7",
+   "page": 33
+  },
+  {
+   "file": "W7",
+   "page": 34
+  },
+  {
+   "file": "W7",
+   "page": 36
+  },
+  {
+   "file": "W7",
+   "page": 38
+  },
+  {
+   "file": "W7",
+   "page": 40
+  },
+  {
+   "file": "W7",
+   "page": 41
+  }
+ ],
+ "hook": {
+  "title": "One engine, different dashboards",
+  "text": "A GNN is an engine that turns a graph into a table of node embeddings. What you read off the engine depends on the **dashboard** you bolt on. Want a verdict per **node**? Add a small readout on each row. A verdict per **pair** (edge)? Read two rows together: concatenate them or take a dot product. A verdict for the **whole graph**? Pool all rows into one summary (mean, max or sum). Same engine; different instruments.",
+  "recall": "Remember the dashboards: node head = readout per row; edge head = combine two rows (concat+linear or dot product); graph head = pool every row (mean/max/sum)."
+ },
+ "explore": {
+  "component": "heads",
+  "intro": "Embeddings of four nodes (d = 3). Switch heads and pooling.",
+  "tasks": [
+   "Graph tab: add identical nodes. Which pooling changes? Which doesn’t?",
+   "Edge tab: compute the dot product by hand and check it."
+  ],
+  "takeaway": "$\\hat y_v=W_{head}h_v^{(L)}$ (node), $\\hat y_{vu}=\\text{Linear}(\\text{Concat}(h_v,h_u))$ or $h_v^\\top h_u$ (edge), $\\hat y_G=\\text{Mean/Max/Sum}(\\{h_v\\})$ (graph). Losses: cross-entropy (classification), MSE (regression)."
+ },
+ "build": {
+  "type": "order",
+  "prompt": "Order the GNN training pipeline (slide 31).",
+  "items": [
+   "Input graph",
+   "Graph neural network",
+   "Node embeddings",
+   "Prediction head",
+   "Predictions compared with labels → loss function (and evaluation metrics)"
+  ],
+  "explanation": "Input graph → GNN → node embeddings → prediction head → predictions; with labels they feed the loss function and evaluation metrics.",
+  "source": {
+   "file": "W7",
+   "page": 31
+  }
+ },
+ "questions": [
+  {
+   "id": "w7.l5.q1",
+   "type": "mcq",
+   "prompt": "Node-level prediction head with $k$ classes:",
+   "options": [
+    "$\\hat y_v=W_{head}h_v^{(L)}$ with $W_{head}\\in\\mathbb R^{k\\times d}$, then softmax",
+    "$\\hat y_v=h_v^\\top h_v$",
+    "Global sum pooling",
+    "A dot product with a random vector"
+   ],
+   "correct": 0,
+   "explanation": "A row-wise readout.",
+   "source": {
+    "file": "W7",
+    "page": 33
+   }
+  },
+  {
+   "id": "w7.l5.q2",
+   "type": "numeric",
+   "prompt": "Edge-level head “concatenation + linear” with $d=64$-dimensional node embeddings. What is the input dimension of the Linear layer?",
+   "value": 128,
+   "tol": 0.5,
+   "explanation": "Concat of two $d$-dim vectors is $2d=128$ (slide: Linear maps $2d$-dim to $k$-dim).",
+   "source": {
+    "file": "W7",
+    "page": 35
+   }
+  },
+  {
+   "id": "w7.l5.q3",
+   "type": "false",
+   "prompt": "Which statement is FALSE?",
+   "options": [
+    "A dot-product edge head applies directly to 1-way prediction (e.g. link prediction)",
+    "For $k$-way edge prediction you can use $k$ trainable matrices $W^{(1..k)}$",
+    "Graph-level heads can use global mean, max or sum pooling",
+    "Global sum pooling is unaffected by the number of nodes in the graph"
+   ],
+   "correct": 3,
+   "explanation": "Sum grows with the number of nodes; mean normalises (try it in the explorer).",
+   "source": {
+    "file": "W7",
+    "page": 36
+   }
+  },
+  {
+   "id": "w7.l5.q4",
+   "type": "mcq",
+   "prompt": "Standard losses on the slides:",
+   "options": [
+    "Cross-entropy for classification; MSE (L2 loss) for regression",
+    "MSE for classification",
+    "CE for regression",
+    "Only accuracy"
+   ],
+   "correct": 0,
+   "explanation": "$CE(y,\\hat y)=-\\sum_jy_j\\log\\hat y_j$; $MSE=\\sum_j(y_j-\\hat y_j)^2$.",
+   "source": {
+    "file": "W7",
+    "page": 40
+   }
+  },
+  {
+   "id": "w7.l5.q5",
+   "type": "numeric",
+   "prompt": "MSE from the slide: $y=(1.4,2.3,1.0,0.5,0.6)$ and $\\hat y=(0.9,2.8,2.0,0.3,0.8)$. Compute $\\sum_j(y_j-\\hat y_j)^2$.",
+   "value": 1.58,
+   "tol": 0.005,
+   "explanation": "$0.25+0.25+1.00+0.04+0.04=1.58$.",
+   "source": {
+    "file": "W7",
+    "page": 41
+   }
+  },
+  {
+   "id": "w7.l5.q6",
+   "type": "bug",
+   "prompt": "*“I can use a node-level head to classify whole graphs by just reading the first node.”* What is the issue?",
+   "options": [
+    "Nothing",
+    "A graph-level task needs a graph-level head that combines *all* node embeddings (e.g. global mean/max/sum pooling)",
+    "Heads don’t matter",
+    "Graphs don’t have nodes"
+   ],
+   "correct": 1,
+   "explanation": "One row isn’t the graph.",
+   "source": {
+    "file": "W7",
+    "page": 37
+   }
+  }
+ ]
+}

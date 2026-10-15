@@ -1,0 +1,162 @@
+{
+ "id": "w8.l6",
+ "title": "The heterogeneous GNN design space",
+ "blurb": "Per-relation messages, two-stage aggregation, type-specific layers",
+ "source": [
+  {
+   "file": "W8",
+   "page": 41
+  },
+  {
+   "file": "W8",
+   "page": 42
+  },
+  {
+   "file": "W8",
+   "page": 43
+  },
+  {
+   "file": "W8",
+   "page": 44
+  },
+  {
+   "file": "W8",
+   "page": 45
+  },
+  {
+   "file": "W8",
+   "page": 46
+  },
+  {
+   "file": "W8",
+   "page": 47
+  }
+ ],
+ "hook": {
+  "title": "Sorting the mail by sender type",
+  "text": "A node's mailbox now holds *different kinds of mail*: invoices, letters, parcels. A sensible clerk first **translates** each piece with a relation-specific rule, then **sorts by type and summarises each pile** (AGG within relation), and finally **combines the pile summaries** (AGG across relations), by summing or by stapling them side by side (concat). Even node types can have their own tiny MLP before and after.",
+  "recall": "Remember the mail clerk: message per relation, then aggregate *within* each relation, then *across* relations (e.g. concat or sum)."
+ },
+ "explore": {
+  "component": "heteroagg",
+  "intro": "Messages are computed already. Pick the two stages of aggregation.",
+  "tasks": [
+   "Compare sum vs concat as the stage-2 aggregation. Which keeps the dimension fixed?",
+   "Switch the stage-1 aggregator from mean to max."
+  ],
+  "takeaway": "Message: $m_u^{(l)}=\\text{MSG}_r^{(l)}(h_u^{(l-1)})$. Aggregation: $h_v^{(l)}=\\text{AGG}_{all}^{(l)}(\\text{AGG}_r^{(l)}(\\{m_u:u\\in N_r(v)\\}))$, e.g. Concat/Sum."
+ },
+ "build": {
+  "type": "order",
+  "prompt": "Order the heterogeneous message-passing stages.",
+  "items": [
+   "Compute a message for each neighbour with the message function of its relation type",
+   "Aggregate the messages within each relation type with $\\text{AGG}_r$",
+   "Aggregate across the relation types with $\\text{AGG}_{all}$ (e.g. concatenate or sum)"
+  ],
+  "explanation": "Slides 42–43: a different message function per relation, then 2-stage aggregation.",
+  "source": {
+   "file": "W8",
+   "page": 43
+  }
+ },
+ "questions": [
+  {
+   "id": "w8.l6.q1",
+   "type": "mcq",
+   "prompt": "In heterogeneous message computation the number of message types equals:",
+   "options": [
+    "The number of relation types",
+    "The number of nodes",
+    "1",
+    "The number of layers"
+   ],
+   "correct": 0,
+   "explanation": "“Num of message type = Num of relation type.”",
+   "source": {
+    "file": "W8",
+    "page": 42
+   }
+  },
+  {
+   "id": "w8.l6.q2",
+   "type": "mcq",
+   "prompt": "The 2-stage aggregation is:",
+   "options": [
+    "AGG over each relation type, then AGG across relation types",
+    "AGG across relation types, then within each",
+    "AGG over nodes only",
+    "No aggregation"
+   ],
+   "correct": 0,
+   "explanation": "Inner $\\text{AGG}_r$, outer $\\text{AGG}_{all}$.",
+   "source": {
+    "file": "W8",
+    "page": 43
+   }
+  },
+  {
+   "id": "w8.l6.q3",
+   "type": "numeric",
+   "prompt": "Stage 1 gives a 3-dim vector for each of 4 relation types. With **concatenation** as stage 2, what is the dimension of $h_v^{(l)}$?",
+   "value": 12,
+   "tol": 0.5,
+   "explanation": "$4\\times3=12$; sum would keep dimension 3.",
+   "source": {
+    "file": "W8",
+    "page": 43
+   }
+  },
+  {
+   "id": "w8.l6.q4",
+   "type": "false",
+   "prompt": "Which statement is FALSE?",
+   "options": [
+    "MLP layers can be applied per node type: $h_v^{(l)}=\\text{MLP}_{T(v)}(h_v^{(l)})$",
+    "Skip connections and batch/layer norm remain useful for heterogeneous GNNs",
+    "Neighbour sampling can be done within each relation type or across the full graph",
+    "Heterogeneous GNNs cannot use prediction heads"
+   ],
+   "correct": 3,
+   "explanation": "Slides 46–47 give node, edge and graph heads, including type-specific variants.",
+   "source": {
+    "file": "W8",
+    "page": 47
+   }
+  },
+  {
+   "id": "w8.l6.q5",
+   "type": "mcq",
+   "prompt": "Heterogeneous **node-level** prediction head:",
+   "options": [
+    "$\\hat y_v=\\text{Head}_{node,T(v)}(h_v^{(L)})=W_{T(v)}^{(H)}h_v^{(L)}$ (type-specific)",
+    "One head regardless of type",
+    "No head",
+    "The adjacency matrix"
+   ],
+   "correct": 0,
+   "explanation": "Each node type has its own $W^{(H)}_{T(v)}$.",
+   "source": {
+    "file": "W8",
+    "page": 47
+   }
+  },
+  {
+   "id": "w8.l6.q6",
+   "type": "bug",
+   "prompt": "*“Neighbour sampling in heterogeneous graphs must treat all relations as one pool.”* What do the slides say?",
+   "options": [
+    "That’s right",
+    "There are two common options: sample within each relation type (ensuring each type is covered) or sample across the full graph",
+    "Sampling is forbidden",
+    "Only relation $r_1$ can be sampled"
+   ],
+   "correct": 1,
+   "explanation": "The mail clerk can sample per type or globally.",
+   "source": {
+    "file": "W8",
+    "page": 45
+   }
+  }
+ ]
+}

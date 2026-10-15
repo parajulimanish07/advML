@@ -1,0 +1,175 @@
+{
+ "id": "w8.l4",
+ "title": "Scalability II: basis learning",
+ "blurb": "Share basis matrices across relations",
+ "source": [
+  {
+   "file": "W8",
+   "page": 29
+  },
+  {
+   "file": "W8",
+   "page": 30
+  },
+  {
+   "file": "W8",
+   "page": 31
+  },
+  {
+   "file": "W8",
+   "page": 32
+  }
+ ],
+ "hook": {
+  "title": "A shared paint palette",
+  "text": "Instead of mixing every relation's colour from scratch, give *all* relations one shared **palette** of $B$ basis colours $V_1,\\dots,V_B$. Each relation then only records its own **recipe**: how much of each palette colour to mix, $a_{r1},\\dots,a_{rB}$. If the palette has a handful of colours but there are hundreds of relations, you save enormously. If every relation gets its own palette colour ($B\\approx|R|$), you've saved nothing.",
+  "recall": "Remember the shared palette: $W_r=\\sum_ba_{rb}V_b$ with bases shared by all relations; huge savings when $B\\ll|R|$, none when $B\\approx|R|$."
+ },
+ "explore": {
+  "component": "rgcnparams",
+  "params": {
+   "tab": "basis"
+  },
+  "intro": "Switch to the *Basis learning* tab.",
+  "tasks": [
+   "Keep $|R|=100$. Increase $B$ from 1 to 50. When do the savings disappear?",
+   "With $B\\ll|R|$ what is the saving factor?"
+  ],
+  "takeaway": "$W_r=\\sum_{b=1}^Ba_{rb}V_b$; parameters per layer: $(d^{(l+1)}\\times d^{(l)}+|R|)\\times B$ instead of $d^{(l+1)}\\times d^{(l)}\\times|R|$. Basis matrices are per layer and learned with backprop."
+ },
+ "build": {
+  "type": "fill",
+  "prompt": "Complete basis learning.",
+  "template": "$W_r=\\sum_{b=1}^{B}$ {0} $V_b$, where the $V_b$ are {1} across relations and the {2} are specific to relation $r$.",
+  "blanks": [
+   {
+    "options": [
+     "a_rb (importance weight)",
+     "V_b",
+     "the node feature h_u"
+    ],
+    "correct": 0
+   },
+   {
+    "options": [
+     "shared",
+     "different for each relation",
+     "fixed to zero"
+    ],
+    "correct": 0
+   },
+   {
+    "options": [
+     "coefficients a_rb",
+     "basis matrices V_b",
+     "node embeddings"
+    ],
+    "correct": 0
+   }
+  ],
+  "explanation": "Slide 29: represent each relation’s matrix as a linear combination of basis transformations; $\\{V_b\\}$ are shared; $a_{rb}$ are the importance weights for relation $r$ and basis $V_b$.",
+  "source": {
+   "file": "W8",
+   "page": 29
+  }
+ },
+ "questions": [
+  {
+   "id": "w8.l4.q1",
+   "type": "numeric",
+   "prompt": "$d^{(l+1)}=d^{(l)}=64$, $|R|=100$ relations, $B=5$ bases. Parameters per layer with basis learning $(d^{(l+1)}d^{(l)}+|R|)\\cdot B$?",
+   "value": 20980,
+   "tol": 1,
+   "explanation": "$(4096+100)\\cdot5=20{,}980$, compared with $4096\\cdot100=409{,}600$ for the full model.",
+   "source": {
+    "file": "W8",
+    "page": 31
+   }
+  },
+  {
+   "id": "w8.l4.q2",
+   "type": "mcq",
+   "prompt": "When does basis learning give significant savings?",
+   "options": [
+    "When $B\\ll|R|$",
+    "When $B\\approx|R|$",
+    "When $B>|R|$",
+    "Never"
+   ],
+   "correct": 0,
+   "explanation": "Few palette colours, many relations.",
+   "source": {
+    "file": "W8",
+    "page": 32
+   }
+  },
+  {
+   "id": "w8.l4.q3",
+   "type": "mcq",
+   "prompt": "In basis learning which quantities are shared across relations?",
+   "options": [
+    "The basis matrices $V_b$",
+    "The coefficients $a_{rb}$",
+    "Both",
+    "Neither"
+   ],
+   "correct": 0,
+   "explanation": "Each relation owns only its coefficients.",
+   "source": {
+    "file": "W8",
+    "page": 29
+   }
+  },
+  {
+   "id": "w8.l4.q4",
+   "type": "false",
+   "prompt": "Which statement is FALSE?",
+   "options": [
+    "Basis matrices and coefficients are all learnable by backpropagation",
+    "Typically each layer has its own set of basis matrices",
+    "Bases are usually shared across layers",
+    "When $B\\approx|R|$ the parameter savings diminish"
+   ],
+   "correct": 2,
+   "explanation": "“Typically, basis matrices are not shared across layers.”",
+   "source": {
+    "file": "W8",
+    "page": 31
+   }
+  },
+  {
+   "id": "w8.l4.q5",
+   "type": "mcq",
+   "prompt": "For the “writes/cites” example with $B=2$ bases: $W_{writes}=?$",
+   "options": [
+    "$a_1^{writes}V_1+a_2^{writes}V_2$",
+    "$V_1V_2$",
+    "$a_1^{cites}V_1+a_2^{cites}V_2$",
+    "$V_1+V_2$ with no coefficients"
+   ],
+   "correct": 0,
+   "explanation": "Each relation mixes the shared bases with its own coefficients.",
+   "source": {
+    "file": "W8",
+    "page": 30
+   }
+  },
+  {
+   "id": "w8.l4.q6",
+   "type": "bug",
+   "prompt": "*“With $B=|R|$ bases we get the best regularisation, since every relation has its own basis.”* What’s wrong?",
+   "options": [
+    "Nothing",
+    "With $B\\approx|R|$ the parameter savings diminish; basis learning helps when $B\\ll|R|$",
+    "$B$ can never equal $|R|$",
+    "Bases should be 1"
+   ],
+   "correct": 1,
+   "explanation": "A palette with one colour per relation saves nothing.",
+   "source": {
+    "file": "W8",
+    "page": 32
+   }
+  }
+ ]
+}

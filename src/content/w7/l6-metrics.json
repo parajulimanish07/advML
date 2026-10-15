@@ -1,0 +1,121 @@
+{
+ "id": "w7.l6",
+ "title": "Evaluation metrics",
+ "blurb": "Accuracy, precision, recall, F1",
+ "source": [
+  {
+   "file": "W7",
+   "page": 42
+  }
+ ],
+ "hook": {
+  "title": "Airport security",
+  "text": "A scanner flags bags. **Precision**: of the bags it flagged, how many truly held something. **Recall**: of all the bags that truly held something, how many did it catch. If only 1% of bags are dangerous, a scanner that flags *nothing* is 99% accurate and completely useless. **F1** combines precision and recall into one number that punishes lopsided performance.",
+  "recall": "Remember airport security: precision = trustworthiness of the alarms, recall = coverage of the real threats, accuracy can flatter a lazy model when positives are rare."
+ },
+ "explore": {
+  "component": "metrics",
+  "intro": "Set the confusion counts yourself.",
+  "tasks": [
+   "Start with TP=40, FP=10, FN=20, TN=130. Then raise TN to 400. What moves?",
+   "Make FP and FN both large. What does F1 do?"
+  ],
+  "takeaway": "Accuracy $=\\frac{TP+TN}{N}$, precision $=\\frac{TP}{TP+FP}$, recall $=\\frac{TP}{TP+FN}$, F1 $=\\frac{2PR}{P+R}$."
+ },
+ "build": {
+  "type": "predict",
+  "prompt": "With $TP=30$, $FP=10$, $FN=30$, **predict the recall** $=\\frac{TP}{TP+FN}$ before revealing.",
+  "kind": "numeric",
+  "value": 0.5,
+  "tol": 0.005,
+  "reveal": "Recall $=30/(30+30)=0.5$: the scanner caught half of the real threats. (Precision would be $30/40=0.75$.)",
+  "source": {
+   "file": "W7",
+   "page": 42
+  }
+ },
+ "questions": [
+  {
+   "id": "w7.l6.q1",
+   "type": "numeric",
+   "prompt": "$TP=40$, $FP=10$, $FN=20$, $TN=130$. What is the precision?",
+   "value": 0.8,
+   "tol": 0.005,
+   "explanation": "$40/(40+10)=0.8$.",
+   "source": {
+    "file": "W7",
+    "page": 42
+   }
+  },
+  {
+   "id": "w7.l6.q2",
+   "type": "numeric",
+   "prompt": "Same counts. What is the recall (3 decimals)?",
+   "value": 0.667,
+   "tol": 0.004,
+   "explanation": "$40/(40+20)=0.667$.",
+   "source": {
+    "file": "W7",
+    "page": 42
+   }
+  },
+  {
+   "id": "w7.l6.q3",
+   "type": "numeric",
+   "prompt": "Same counts. What is the F1-score (3 decimals)?",
+   "value": 0.727,
+   "tol": 0.004,
+   "explanation": "$\\frac{2PR}{P+R}=\\frac{2\\cdot0.8\\cdot0.667}{0.8+0.667}\\approx0.727$.",
+   "source": {
+    "file": "W7",
+    "page": 42
+   }
+  },
+  {
+   "id": "w7.l6.q4",
+   "type": "numeric",
+   "prompt": "Same counts. What is the accuracy?",
+   "value": 0.85,
+   "tol": 0.005,
+   "explanation": "$(40+130)/200=0.85$.",
+   "source": {
+    "file": "W7",
+    "page": 42
+   }
+  },
+  {
+   "id": "w7.l6.q5",
+   "type": "mcq",
+   "prompt": "For multi-class classification the slides report:",
+   "options": [
+    "Accuracy $=\\frac1N\\sum_i\\mathbb 1[\\arg\\max\\hat y^{(i)}=y^{(i)}]$",
+    "Only F1",
+    "Only recall",
+    "Mean squared error"
+   ],
+   "correct": 0,
+   "explanation": "Fraction of data points whose arg-max prediction equals the label.",
+   "source": {
+    "file": "W7",
+    "page": 42
+   }
+  },
+  {
+   "id": "w7.l6.q6",
+   "type": "bug",
+   "prompt": "*“The model is 99% accurate, so it finds nearly all the positives.”* What’s wrong?",
+   "options": [
+    "Nothing",
+    "With rare positives accuracy is dominated by TN; recall may be tiny. Check precision, recall and F1",
+    "Accuracy is always recall",
+    "99% is impossible"
+   ],
+   "correct": 1,
+   "explanation": "The do-nothing scanner.",
+   "source": {
+    "file": "W7",
+    "page": 42
+   }
+  }
+ ]
+}

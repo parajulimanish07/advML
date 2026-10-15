@@ -1,0 +1,196 @@
+{
+ "id": "w7.l4",
+ "title": "Graph manipulation",
+ "blurb": "Feature augmentation, virtual nodes/edges, neighbour & subgraph sampling",
+ "source": [
+  {
+   "file": "W7",
+   "page": 23
+  },
+  {
+   "file": "W7",
+   "page": 24
+  },
+  {
+   "file": "W7",
+   "page": 25
+  },
+  {
+   "file": "W7",
+   "page": 26
+  },
+  {
+   "file": "W7",
+   "page": 28
+  },
+  {
+   "file": "W7",
+   "page": 29
+  },
+  {
+   "file": "W7",
+   "page": 30
+  }
+ ],
+ "hook": {
+  "title": "Re-drawing the road map",
+  "text": "The map you were given is rarely the best map to *travel* on. No landmarks (features)? Label each town with a number. Roads too thin and winding (sparse)? Build a **highway hub** connected to every town, or add shortcuts over two-hop roads. A mega-city with a million roads (dense)? Don't query every road: **sample a few each time**. A whole continent (too large)? Work on a **small region** at a time.",
+  "recall": "Remember the road map: each problem has its fix: no features → augment features; too sparse → virtual edges/nodes; too dense → sample neighbours; too large → sample subgraphs."
+ },
+ "explore": {
+  "component": "graphmanip",
+  "intro": "Two tabs: a sparse chain with a virtual node, and a dense hub with neighbour sampling.",
+  "tasks": [
+   "Make the path 30 nodes long. What is the end-to-end distance with and without a virtual node?",
+   "Sample 2 of the hub’s 8 neighbours several times."
+  ],
+  "takeaway": "Feature augmentation (constants or one-hot unique IDs); virtual edges (2-hop) and a virtual node (distance ≤ 2); neighbour sampling to cut cost; subgraph sampling when the graph doesn’t fit on a GPU."
+ },
+ "build": {
+  "type": "fill",
+  "prompt": "Match each problem with its fix.",
+  "template": "No node features → {0}.  Too sparse → {1}.  Too dense → {2}.  Too large → {3}.",
+  "blanks": [
+   {
+    "options": [
+     "feature augmentation",
+     "virtual nodes/edges",
+     "neighbour sampling",
+     "subgraph sampling"
+    ],
+    "correct": 0
+   },
+   {
+    "options": [
+     "feature augmentation",
+     "virtual nodes/edges",
+     "neighbour sampling",
+     "subgraph sampling"
+    ],
+    "correct": 1
+   },
+   {
+    "options": [
+     "feature augmentation",
+     "virtual nodes/edges",
+     "neighbour sampling",
+     "subgraph sampling"
+    ],
+    "correct": 2
+   },
+   {
+    "options": [
+     "feature augmentation",
+     "virtual nodes/edges",
+     "neighbour sampling",
+     "subgraph sampling"
+    ],
+    "correct": 3
+   }
+  ],
+  "explanation": "Slide 25 lists exactly these four pairs.",
+  "source": {
+   "file": "W7",
+   "page": 25
+  }
+ },
+ "questions": [
+  {
+   "id": "w7.l4.q1",
+   "type": "mcq",
+   "prompt": "The input graph has only an adjacency matrix and no node features. Standard approaches:",
+   "options": [
+    "Assign constant values, or unique IDs as one-hot vectors",
+    "Delete the graph",
+    "Use dropout",
+    "Increase batch size"
+   ],
+   "correct": 0,
+   "explanation": "Label each town with a constant or a unique ID.",
+   "source": {
+    "file": "W7",
+    "page": 26
+   }
+  },
+  {
+   "id": "w7.l4.q2",
+   "type": "numeric",
+   "prompt": "Two nodes in a sparse graph have shortest-path distance 10. After adding a virtual node connected to **all** nodes, what is the distance between them?",
+   "value": 2,
+   "tol": 0.5,
+   "explanation": "Via the hub: node → virtual node → node = 2 hops. The slide: all nodes then have a distance of 2.",
+   "source": {
+    "file": "W7",
+    "page": 29
+   }
+  },
+  {
+   "id": "w7.l4.q3",
+   "type": "mcq",
+   "prompt": "For a *too dense* graph with high-degree nodes the slides suggest:",
+   "options": [
+    "Sample neighbours when doing message passing",
+    "Add virtual edges",
+    "Add features",
+    "Remove all edges"
+   ],
+   "correct": 0,
+   "explanation": "Randomly choose, e.g., 2 neighbours per step; cost drops greatly, embeddings stay similar.",
+   "source": {
+    "file": "W7",
+    "page": 30
+   }
+  },
+  {
+   "id": "w7.l4.q4",
+   "type": "false",
+   "prompt": "Which statement is FALSE?",
+   "options": [
+    "Connecting 2-hop neighbours via virtual edges can turn an author–paper graph into an author–author collaboration graph",
+    "A virtual node connects to all nodes in the graph",
+    "Neighbour sampling greatly reduces computational cost",
+    "Adding a virtual node makes message passing in a sparse graph worse"
+   ],
+   "correct": 3,
+   "explanation": "“Benefits: greatly improves message passing in sparse graphs.”",
+   "source": {
+    "file": "W7",
+    "page": 29
+   }
+  },
+  {
+   "id": "w7.l4.q5",
+   "type": "mcq",
+   "prompt": "For a graph too large to fit its computation graph on a GPU:",
+   "options": [
+    "Sample subgraphs to compute embeddings",
+    "Add virtual nodes",
+    "Use constants as features",
+    "Increase dropout"
+   ],
+   "correct": 0,
+   "explanation": "Work on a small region at a time.",
+   "source": {
+    "file": "W7",
+    "page": 25
+   }
+  },
+  {
+   "id": "w7.l4.q6",
+   "type": "bug",
+   "prompt": "*“Sampling a different set of neighbours each time makes the embeddings meaningless.”* What does the slide say?",
+   "options": [
+    "That’s right",
+    "Each time different nodes may be sampled, but we still get embeddings similar to using all the neighbours, with greatly reduced cost",
+    "Sampling always increases cost",
+    "Sampling only works for trees"
+   ],
+   "correct": 1,
+   "explanation": "A random subset per step approximates the full neighbourhood.",
+   "source": {
+    "file": "W7",
+    "page": 30
+   }
+  }
+ ]
+}

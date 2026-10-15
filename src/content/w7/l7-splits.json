@@ -1,0 +1,181 @@
+{
+ "id": "w7.l7",
+ "title": "Dataset splits: transductive vs inductive",
+ "blurb": "Why random splits fail, graph-aware splitting",
+ "source": [
+  {
+   "file": "W7",
+   "page": 43
+  },
+  {
+   "file": "W7",
+   "page": 44
+  },
+  {
+   "file": "W7",
+   "page": 45
+  },
+  {
+   "file": "W7",
+   "page": 46
+  },
+  {
+   "file": "W7",
+   "page": 47
+  }
+ ],
+ "hook": {
+  "title": "Exam leakage among friends",
+  "text": "Usually you randomly split students into a training set and a test set. But on a graph, nodes are *friends*: if a test student's friends are all in the training set, their answers leak into the test student's embedding. Graph datasets need a careful rule. **Transductive**: everyone is present at both times (you see the full class roster and friendships) but you hide some students' *answers* until test time. **Inductive**: split the friendship graph into separate classes; the test class is one you have never seen.",
+  "recall": "Remember friends leaking exam answers: nodes aren’t independent. Transductive = same graph, split the labels. Inductive = break the edges, test on unseen graphs."
+ },
+ "explore": {
+  "component": "split",
+  "intro": "Six nodes. Flip between the settings and between training and validation time.",
+  "tasks": [
+   "Transductive: at validation time which nodes does the GNN see? Which labels are used?",
+   "Inductive: which edges disappear?"
+  ],
+  "takeaway": "Transductive: one graph, entire graph visible, only labels split (node/edge tasks). Inductive: multiple graphs, edges between splits broken, each split sees only its own graph (node/edge/graph tasks); graph classification only makes sense inductively."
+ },
+ "build": {
+  "type": "fill",
+  "prompt": "Complete the definitions.",
+  "template": "Transductive: the {0} graph is observed in all splits; only the {1} are split. Inductive: edges between splits are {2}.",
+  "blanks": [
+   {
+    "options": [
+     "entire",
+     "training-only",
+     "empty"
+    ],
+    "correct": 0
+   },
+   {
+    "options": [
+     "labels",
+     "edges",
+     "features"
+    ],
+    "correct": 0
+   },
+   {
+    "options": [
+     "broken",
+     "kept",
+     "duplicated"
+    ],
+    "correct": 0
+   }
+  ],
+  "explanation": "Slides 44–46.",
+  "source": {
+   "file": "W7",
+   "page": 46
+  }
+ },
+ "questions": [
+  {
+   "id": "w7.l7.q1",
+   "type": "mcq",
+   "prompt": "Why can’t we split a graph’s nodes randomly like ordinary data points?",
+   "options": [
+    "Nodes are not independent",
+    "Graphs have no labels",
+    "Nodes can’t be sampled",
+    "Graphs are always too small"
+   ],
+   "correct": 0,
+   "explanation": "“Here, data points are NOT independent.”",
+   "source": {
+    "file": "W7",
+    "page": 43
+   }
+  },
+  {
+   "id": "w7.l7.q2",
+   "type": "mcq",
+   "prompt": "In the **transductive** setting:",
+   "options": [
+    "The entire graph is observed in all splits; only the node labels are split",
+    "Edges between splits are broken",
+    "Each split is a different graph",
+    "Labels are never used"
+   ],
+   "correct": 0,
+   "explanation": "Compute embeddings with the entire graph at training and validation time; evaluate on different nodes’ labels.",
+   "source": {
+    "file": "W7",
+    "page": 44
+   }
+  },
+  {
+   "id": "w7.l7.q3",
+   "type": "mcq",
+   "prompt": "In the **inductive** setting:",
+   "options": [
+    "Edges between splits are broken to get multiple graphs; each split only sees its own graph",
+    "The whole graph is visible in every split",
+    "There is a single graph",
+    "No generalisation is needed"
+   ],
+   "correct": 0,
+   "explanation": "A successful model should generalise to unseen graphs.",
+   "source": {
+    "file": "W7",
+    "page": 45
+   }
+  },
+  {
+   "id": "w7.l7.q4",
+   "type": "false",
+   "prompt": "Which statement is FALSE?",
+   "options": [
+    "Transductive applies to node/edge prediction tasks",
+    "Inductive applies to node/edge/graph tasks",
+    "Only the inductive setting is well defined for graph classification",
+    "The transductive setting is well defined for graph classification"
+   ],
+   "correct": 3,
+   "explanation": "For graph classification we have to test on unseen graphs.",
+   "source": {
+    "file": "W7",
+    "page": 47
+   }
+  },
+  {
+   "id": "w7.l7.q5",
+   "type": "mcq",
+   "prompt": "Your dataset consists of a **single** graph. Which setting fits?",
+   "options": [
+    "Transductive",
+    "Inductive with multiple graphs",
+    "Neither",
+    "Graph-level only"
+   ],
+   "correct": 0,
+   "explanation": "“The dataset consists of one graph.”",
+   "source": {
+    "file": "W7",
+    "page": 46
+   }
+  },
+  {
+   "id": "w7.l7.q6",
+   "type": "bug",
+   "prompt": "*“In the inductive setting, validation nodes may use the training nodes’ edges when computing embeddings.”* What’s wrong?",
+   "options": [
+    "Nothing",
+    "Each split can only observe the graph(s) within the split",
+    "Inductive means the whole graph is visible",
+    "Validation nodes have no embeddings"
+   ],
+   "correct": 1,
+   "explanation": "Edges between splits are broken.",
+   "source": {
+    "file": "W7",
+    "page": 45
+   }
+  }
+ ]
+}

@@ -1,0 +1,17 @@
+{
+ "id": "w8",
+ "title": "Relation Realm",
+ "week": "Week 8",
+ "subtitle": "Heterogeneous graphs, relation types, RGCN, link prediction ranking",
+ "emoji": "🔗",
+ "color": "#ff6b81",
+ "status": "ready",
+ "levels": [
+  "l1-types",
+  "l2-rgcn",
+  "l3-block",
+  "l4-basis",
+  "l5-tasks",
+  "l6-design"
+ ]
+}

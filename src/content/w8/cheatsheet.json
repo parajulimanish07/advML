@@ -1,0 +1,84 @@
+{
+ "title": "Week 8 Cheat Sheet: Heterogeneous Graphs & RGCN",
+ "items": [
+  {
+   "label": "Heterogeneous graph",
+   "note": "$G=(V,E,\\tau,\\phi)$; relation type = (node_start, edge, node_end). 2 node × 2 edge types = 8 relation types.",
+   "source": {
+    "file": "W8",
+    "page": 6
+   },
+   "latex": "r(u,v)=(\\tau(u),\\phi(u,v),\\tau(v))"
+  },
+  {
+   "label": "Types vs features",
+   "note": "One-hot types reduce to homogeneous; true heterogeneity needed for different feature shapes or relation-specific models.",
+   "source": {
+    "file": "W8",
+    "page": 9
+   }
+  },
+  {
+   "label": "RGCN",
+   "note": "One $W_r$ per relation, normalise per relation, plus self term.",
+   "source": {
+    "file": "W8",
+    "page": 21
+   },
+   "latex": "h_v^{(l+1)}=\\sigma\\Big(\\sum_{r}\\sum_{u\\in N_v^r}\\tfrac{1}{|N_v^r|}W_r^{(l)}h_u^{(l)}+W_0^{(l)}h_v^{(l)}\\Big)"
+  },
+  {
+   "label": "Parameter growth",
+   "note": "Each relation has $L$ matrices of size $d^{(l+1)}\\times d^{(l)}$: grows with $|R|$, overfitting.",
+   "source": {
+    "file": "W8",
+    "page": 24
+   }
+  },
+  {
+   "label": "Block-diagonal",
+   "note": "$B$ blocks cut parameters to $d^{(l+1)}d^{(l)}/B$; no cross-block interaction.",
+   "source": {
+    "file": "W8",
+    "page": 26
+   },
+   "latex": "B\\cdot\\frac{d^{(l+1)}}{B}\\cdot\\frac{d^{(l)}}{B}"
+  },
+  {
+   "label": "Basis learning",
+   "note": "Shared bases $V_b$, per-relation coefficients; large savings when $B\\ll|R|$.",
+   "source": {
+    "file": "W8",
+    "page": 29
+   },
+   "latex": "W_r=\\sum_{b=1}^Ba_{rb}V_b,\\ \\#=(d^{(l+1)}d^{(l)}+|R|)B"
+  },
+  {
+   "label": "Link prediction",
+   "note": "Score $h_E^\\top W_rh_A$; negatives by perturbing the supervision edge (not training edges); CE loss.",
+   "source": {
+    "file": "W8",
+    "page": 37
+   },
+   "latex": "\\ell=-\\log\\sigma(f_{r_3}(h_E,h_A))-\\log(1-\\sigma(f_{r_3}(h_E,h_B)))"
+  },
+  {
+   "label": "Ranking metrics",
+   "note": "Hits@k and reciprocal rank (higher is better).",
+   "source": {
+    "file": "W8",
+    "page": 38
+   },
+   "latex": "\\mathrm{Hits@}k=\\mathbb 1[RK\\le k],\\ \\mathrm{RR}=1/RK"
+  },
+  {
+   "label": "Heterogeneous GNN design",
+   "note": "Per-relation message; AGG within then across relations; per-type MLPs; sampling per relation or global; type-specific heads.",
+   "source": {
+    "file": "W8",
+    "page": 43
+   },
+   "latex": "h_v=\\mathrm{AGG}_{all}(\\mathrm{AGG}_r(\\{m_u\\}))"
+  }
+ ]
+}

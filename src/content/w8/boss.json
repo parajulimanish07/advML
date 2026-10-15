@@ -1,0 +1,183 @@
+{
+ "title": "The Relation Colossus",
+ "intro": "Everything from Week 8: relation types, RGCN, scalability tricks, link prediction and the heterogeneous design space.",
+ "questions": [
+  {
+   "id": "w8.boss.q1",
+   "type": "numeric",
+   "prompt": "Part 1. What is the $r_1$ term $\\frac{1}{|N^{r_1}|}\\sum W_{r_1}h_u$?",
+   "value": 4,
+   "tol": 0.01,
+   "explanation": "$(2+4+6)/3=4$ times $W_{r_1}=1$.",
+   "source": {
+    "file": "W8",
+    "page": 21
+   },
+   "scenario": "**Scenario A (RGCN layer).** Node $v$ has 3 neighbours via relation $r_1$ with scalar embeddings $2, 4, 6$ and 2 neighbours via relation $r_2$ with embeddings $1, 3$. Its own embedding is $h_v^{(0)}=2$. Weights: $W_{r_1}=1$, $W_{r_2}=2$, $W_0=0.5$. Use $\\sigma=$ identity.",
+   "step": "Scenario A · part 1 of 3"
+  },
+  {
+   "id": "w8.boss.q2",
+   "type": "numeric",
+   "prompt": "Part 2. What is the $r_2$ term?",
+   "value": 4,
+   "tol": 0.01,
+   "explanation": "$(1+3)/2=2$ times $W_{r_2}=2$ gives 4.",
+   "source": {
+    "file": "W8",
+    "page": 21
+   },
+   "scenario": "**Scenario A (RGCN layer).** Node $v$ has 3 neighbours via relation $r_1$ with scalar embeddings $2, 4, 6$ and 2 neighbours via relation $r_2$ with embeddings $1, 3$. Its own embedding is $h_v^{(0)}=2$. Weights: $W_{r_1}=1$, $W_{r_2}=2$, $W_0=0.5$. Use $\\sigma=$ identity.",
+   "step": "Scenario A · part 2 of 3"
+  },
+  {
+   "id": "w8.boss.q3",
+   "type": "numeric",
+   "prompt": "Part 3. Compute $h_v^{(1)}$ including the self term $W_0h_v^{(0)}$.",
+   "value": 9,
+   "tol": 0.01,
+   "explanation": "$4+4+0.5\\cdot2=9$.",
+   "source": {
+    "file": "W8",
+    "page": 23
+   },
+   "scenario": "**Scenario A (RGCN layer).** Node $v$ has 3 neighbours via relation $r_1$ with scalar embeddings $2, 4, 6$ and 2 neighbours via relation $r_2$ with embeddings $1, 3$. Its own embedding is $h_v^{(0)}=2$. Weights: $W_{r_1}=1$, $W_{r_2}=2$, $W_0=0.5$. Use $\\sigma=$ identity.",
+   "step": "Scenario A · part 3 of 3"
+  },
+  {
+   "id": "w8.boss.q4",
+   "type": "numeric",
+   "prompt": "Part 1. Parameters per layer with a full weight matrix for each relation ($d^{(l+1)}d^{(l)}|R|$)?",
+   "value": 204800,
+   "tol": 1,
+   "explanation": "$32\\cdot32\\cdot200=204{,}800$.",
+   "source": {
+    "file": "W8",
+    "page": 24
+   },
+   "scenario": "**Scenario B (parameters).** A heterogeneous graph has $|R|=200$ relation types. A layer maps $d^{(l)}=32$ to $d^{(l+1)}=32$.",
+   "step": "Scenario B · part 1 of 3"
+  },
+  {
+   "id": "w8.boss.q5",
+   "type": "numeric",
+   "prompt": "Part 2. Parameters per layer with $B=4$ diagonal blocks?",
+   "value": 51200,
+   "tol": 1,
+   "explanation": "$204{,}800/4=51{,}200$.",
+   "source": {
+    "file": "W8",
+    "page": 26
+   },
+   "scenario": "**Scenario B (parameters).** A heterogeneous graph has $|R|=200$ relation types. A layer maps $d^{(l)}=32$ to $d^{(l+1)}=32$.",
+   "step": "Scenario B · part 2 of 3"
+  },
+  {
+   "id": "w8.boss.q6",
+   "type": "numeric",
+   "prompt": "Part 3. Parameters per layer with basis learning using $B=5$ bases, $(d^{(l+1)}d^{(l)}+|R|)\\cdot B$?",
+   "value": 6120,
+   "tol": 1,
+   "explanation": "$(1024+200)\\cdot5=6120$.",
+   "source": {
+    "file": "W8",
+    "page": 31
+   },
+   "scenario": "**Scenario B (parameters).** A heterogeneous graph has $|R|=200$ relation types. A layer maps $d^{(l)}=32$ to $d^{(l+1)}=32$.",
+   "step": "Scenario B · part 3 of 3"
+  },
+  {
+   "id": "w8.boss.q7",
+   "type": "numeric",
+   "prompt": "Part 1. What is the rank $RK$ of the true edge?",
+   "value": 2,
+   "tol": 0.5,
+   "explanation": "Only $B$ ($2.0$) outscores $D$ ($1.2$); $F=0.3$ and $G=-1.0$ are lower. So $RK=1+1=2$.",
+   "source": {
+    "file": "W8",
+    "page": 38
+   },
+   "scenario": "**Scenario C (link prediction evaluation).** For the validation edge $(E,r_3,D)$ the model assigns scores: $D=1.2$, $B=2.0$, $F=0.3$, $G=-1.0$ (the true edge is $D$; $B,F,G$ are valid negatives).",
+   "step": "Scenario C · part 1 of 3"
+  },
+  {
+   "id": "w8.boss.q8",
+   "type": "numeric",
+   "prompt": "Part 2. What is Hits@3?",
+   "value": 1,
+   "tol": 0.5,
+   "explanation": "$RK=2\\le3$, so 1.",
+   "source": {
+    "file": "W8",
+    "page": 38
+   },
+   "scenario": "**Scenario C (link prediction evaluation).** For the validation edge $(E,r_3,D)$ the model assigns scores: $D=1.2$, $B=2.0$, $F=0.3$, $G=-1.0$ (the true edge is $D$; $B,F,G$ are valid negatives).",
+   "step": "Scenario C · part 2 of 3"
+  },
+  {
+   "id": "w8.boss.q9",
+   "type": "numeric",
+   "prompt": "Part 3. What is the reciprocal rank?",
+   "value": 0.5,
+   "tol": 0.005,
+   "explanation": "$1/RK=1/2$.",
+   "source": {
+    "file": "W8",
+    "page": 38
+   },
+   "scenario": "**Scenario C (link prediction evaluation).** For the validation edge $(E,r_3,D)$ the model assigns scores: $D=1.2$, $B=2.0$, $F=0.3$, $G=-1.0$ (the true edge is $D$; $B,F,G$ are valid negatives).",
+   "step": "Scenario C · part 3 of 3"
+  },
+  {
+   "id": "w8.boss.q10",
+   "type": "false",
+   "prompt": "Which statement is FALSE?",
+   "options": [
+    "Relation type = (node_start, edge, node_end)",
+    "Block-diagonal weights prevent cross-block feature interaction",
+    "Basis learning gives large savings when $B\\ll|R|$",
+    "Negative edges for training may include the training message edges"
+   ],
+   "correct": 3,
+   "explanation": "Negative edges should NOT belong to training message/supervision edges.",
+   "source": {
+    "file": "W8",
+    "page": 36
+   }
+  },
+  {
+   "id": "w8.boss.q11",
+   "type": "mcq",
+   "prompt": "The 2-stage heterogeneous aggregation is:",
+   "options": [
+    "AGG within each relation, then AGG across relations",
+    "AGG across nodes, then relations",
+    "Only one stage",
+    "Random"
+   ],
+   "correct": 0,
+   "explanation": "Mail sorted by type, then combined.",
+   "source": {
+    "file": "W8",
+    "page": 43
+   }
+  },
+  {
+   "id": "w8.boss.q12",
+   "type": "bug",
+   "prompt": "*“RGCN shares one weight matrix $W$ for all relation types.”*",
+   "options": [
+    "That’s right",
+    "RGCN uses a separate $W_r^{(l)}$ for each relation $r$ (plus $W_0$ for the node itself)",
+    "RGCN has no weights",
+    "RGCN uses only $W_0$"
+   ],
+   "correct": 1,
+   "explanation": "One translator per relation.",
+   "source": {
+    "file": "W8",
+    "page": 18
+   }
+  }
+ ]
+}
